@@ -1,3 +1,9 @@
+/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
-console.log('test');
+import CanvasViewController = require('./CanvasViewController');
+
+document.addEventListener('DOMContentLoaded', () => {
+  var controller = new CanvasViewController();
+  document.body.appendChild(controller.view);
+});
