@@ -1,0 +1,16 @@
+{
+  "name": "sketch-field",
+  "version": "0.0.1",
+  "authors": [
+    "Ryohei Ikegami <iofg2100@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

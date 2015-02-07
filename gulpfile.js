@@ -38,10 +38,12 @@ gulp.task('watch-bundle', function() {
   var bundler = watchify(browserify('./src/index.ts', args))
     .plugin('tsify', {
       noImplicitAny: true
-    });
+    })
+    .transform('debowerify');
 
   function bundle () {
-    return bundler.bundle()
+    return bundler
+      .bundle()
       .on('error', notify.onError('Error: <%= error.message %>'))
       .pipe(source('bundle.js'))
       .pipe(notify("Build Finished"))
@@ -57,6 +59,7 @@ gulp.task('release-bundle', function() {
     .plugin('tsify', {
       noImplicitAny: true
     })
+    .transform('debowerify')
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
