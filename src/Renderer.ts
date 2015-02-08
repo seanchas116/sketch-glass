@@ -10,9 +10,11 @@ class Renderer {
   strokes: Stroke[] = [];
   immediateStroke = new Stroke();
   isRenderQueued = false;
+  devicePixelRatio: number;
 
-  constructor(context: CanvasRenderingContext2D) {
+  constructor(context: CanvasRenderingContext2D, devicePixelRatio: number) {
     this.context = context;
+    this.devicePixelRatio = devicePixelRatio;
   }
 
   add(stroke: Stroke) {
@@ -20,10 +22,10 @@ class Renderer {
   }
 
   updateImmediate() {
-    //requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
       this.renderStroke(this.immediateStroke);
       this.immediateStroke.points = [];
-    //});
+    });
   }
 
   update() {
@@ -46,6 +48,7 @@ class Renderer {
 
     var context = this.context;
     context.globalCompositeOperation = stroke.composition;
+    context.setTransform.apply(context, this.getTransform());
 
     if (count === 1) {
       var pos = stroke.points[0];
@@ -70,6 +73,11 @@ class Renderer {
 
       context.stroke();
     }
+  }
+
+  getTransform() {
+    var scale = this.devicePixelRatio;
+    return [ scale, 0, 0, scale, 0, 0];
   }
 }
 
