@@ -27,7 +27,6 @@
   },
   "private": true,
   "dependencies": {
-    "gl-matrix": "git://github.com/toji/gl-matrix.git",
     "lodash": "^3.1.0",
     "rx": "^2.3.25"
   }

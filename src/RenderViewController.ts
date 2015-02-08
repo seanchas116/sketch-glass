@@ -1,22 +1,22 @@
-/// <reference path="../../typings/bundle.d.ts" />
+/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
 import Renderer = require('./Renderer');
 
 //var DEVICE_PIXEL_RATIO = window.devicePixelRatio || 1;
-var DEVICE_PIXEL_RATIO = 2;
+var DEVICE_PIXEL_RATIO = 1;
 
 class RenderViewController {
 
   view: HTMLCanvasElement;
-  gl: WebGLRenderingContext;
+  context: CanvasRenderingContext2D;
   renderer: Renderer;
 
   constructor() {
     this.view = document.createElement('canvas');
-    var gl = this.gl = this.view.getContext('webgl', { antialias: false, preserveDrawingBuffer: true });
+    this.context = this.view.getContext('2d');
 
-    this.renderer = new Renderer(gl);
+    this.renderer = new Renderer(this.context);
 
     window.addEventListener('resize', this._resize.bind(this));
     this._resize();
@@ -27,8 +27,7 @@ class RenderViewController {
     var height = window.innerHeight;
     this.view.width = width * DEVICE_PIXEL_RATIO;
     this.view.height = height * DEVICE_PIXEL_RATIO;
-    this.gl.viewport(0, 0, width * DEVICE_PIXEL_RATIO, height * DEVICE_PIXEL_RATIO);
-    this.renderer.resize(width, height);
+    this.renderer.update();
   }
 }
 
