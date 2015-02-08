@@ -48,6 +48,8 @@ class Renderer {
     var context = this.context;
     context.globalCompositeOperation = stroke.composition;
     context.setTransform.apply(context, this.getTransform());
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
 
     if (count === 1) {
       var pos = stroke.points[0];
