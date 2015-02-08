@@ -10,11 +10,10 @@ class Renderer {
   strokes: Stroke[] = [];
   immediateStroke = new Stroke();
   isRenderQueued = false;
-  devicePixelRatio: number;
+  devicePixelRatio = 1;
 
-  constructor(context: CanvasRenderingContext2D, devicePixelRatio: number) {
+  constructor(context: CanvasRenderingContext2D) {
     this.context = context;
-    this.devicePixelRatio = devicePixelRatio;
   }
 
   add(stroke: Stroke) {
@@ -22,10 +21,10 @@ class Renderer {
   }
 
   updateImmediate() {
-    requestAnimationFrame(() => {
+    //requestAnimationFrame(() => {
       this.renderStroke(this.immediateStroke);
       this.immediateStroke.points = [];
-    });
+    //});
   }
 
   update() {

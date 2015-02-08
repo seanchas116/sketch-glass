@@ -3,9 +3,6 @@
 
 import Renderer = require('./Renderer');
 
-var DEVICE_PIXEL_RATIO = window.devicePixelRatio || 1;
-//var DEVICE_PIXEL_RATIO = 1;
-
 class RenderViewController {
 
   view: HTMLCanvasElement;
@@ -16,7 +13,7 @@ class RenderViewController {
     this.view = document.createElement('canvas');
     this.context = this.view.getContext('2d');
 
-    this.renderer = new Renderer(this.context, DEVICE_PIXEL_RATIO);
+    this.renderer = new Renderer(this.context);
 
     window.addEventListener('resize', this._resize.bind(this));
     this._resize();
@@ -25,8 +22,11 @@ class RenderViewController {
   _resize() {
     var width = window.innerWidth;
     var height = window.innerHeight;
-    this.view.width = width * DEVICE_PIXEL_RATIO;
-    this.view.height = height * DEVICE_PIXEL_RATIO;
+    var devicePixelRatio = window.devicePixelRatio || 1;
+    console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
+    this.view.width = width * devicePixelRatio;
+    this.view.height = height * devicePixelRatio;
+    this.renderer.devicePixelRatio = devicePixelRatio;
     this.renderer.update();
   }
 }
