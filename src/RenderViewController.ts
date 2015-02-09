@@ -26,6 +26,8 @@ class RenderViewController {
     console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
     this.view.width = width * devicePixelRatio;
     this.view.height = height * devicePixelRatio;
+    this.renderer.width = this.view.width;
+    this.renderer.height = this.view.height;
     this.renderer.devicePixelRatio = devicePixelRatio;
     this.renderer.update();
   }

@@ -37,7 +37,8 @@ gulp.task('watch-bundle', function() {
   });
   var bundler = watchify(browserify('./src/index.ts', args))
     .plugin('tsify', {
-      noImplicitAny: true
+      noImplicitAny: true,
+      target: 'ES5'
     })
     .transform('debowerify');
 
@@ -57,7 +58,8 @@ gulp.task('watch-bundle', function() {
 gulp.task('release-bundle', function() {
   return browserify('./src/index.ts')
     .plugin('tsify', {
-      noImplicitAny: true
+      noImplicitAny: true,
+      target: 'ES5'
     })
     .transform('debowerify')
     .bundle()
