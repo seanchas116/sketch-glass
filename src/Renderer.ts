@@ -45,6 +45,7 @@ class Renderer {
   }
 
   render() {
+    // TODO: double buffering
     this.strokes.forEach(this.renderStroke.bind(this));
     this.isRenderQueued = false;
   }
