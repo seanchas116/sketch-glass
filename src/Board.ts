@@ -37,6 +37,7 @@ class Board {
     var stroke = this.currentStroke = new Stroke();
     stroke.width = this.strokeWidth;
     stroke.color = this.strokeColor;
+    stroke.points.push(pos);
 
     var immediateStroke = this.renderer.immediateStroke = new Stroke();
     immediateStroke.width = stroke.width;
