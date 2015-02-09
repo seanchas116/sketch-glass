@@ -56,7 +56,6 @@ class CanvasViewController {
     var diff = center.mult(1 / scale).sub(centerStart);
 
     var transform = Transform.translation(diff).merge(Transform.scale(scale));
-    console.log(transform);
 
     this.board.transform = this.initialTransform.merge(transform);
     this.renderer.update();
