@@ -31,7 +31,7 @@ class Renderer {
 
   updateImmediate() {
     //requestAnimationFrame(() => {
-      this.renderStroke(this.immediateStroke);
+      this.renderStroke(this.immediateStroke, false);
       this.immediateStroke.points = [];
     //});
   }
@@ -54,7 +54,7 @@ class Renderer {
     this.isRenderQueued = false;
   }
 
-  renderStroke(stroke: Stroke) {
+  renderStroke(stroke: Stroke, smooth = true) {
     var count = stroke.points.length;
     if (count === 0) {
       return;
@@ -83,7 +83,12 @@ class Renderer {
           context.moveTo(pos.x, pos.y);
         }
         else {
-          context.lineTo(pos.x, pos.y);
+          var curve = stroke.curveAt(i);
+          context.bezierCurveTo(
+            curve.control1.x, curve.control1.y,
+            curve.control2.x, curve.control2.y,
+            curve.end.x, curve.end.y
+          );
         }
       });
 

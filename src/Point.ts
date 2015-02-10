@@ -21,6 +21,10 @@ class Point {
     return new Point(this.x * a, this.y * a);
   }
 
+  div(a: number) {
+    return new Point(this.x / a, this.y / a);
+  }
+
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
