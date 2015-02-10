@@ -7,7 +7,7 @@ import Board = require('./Board');
 import Point = require('./Point');
 import Transform = require('./Transform');
 
-function touchPoint(touch: any) {
+function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
 }
 
@@ -84,7 +84,7 @@ class CanvasViewController {
     this.board.endStroke();
   }
 
-  onTouchMove(ev: any) {
+  onTouchMove(ev: TouchEvent) {
     if (this.isPressed) {
       if (ev.touches.length === 1) {
         var touch = ev.touches[0];
@@ -99,7 +99,7 @@ class CanvasViewController {
     }
     ev.preventDefault();
   }
-  onTouchStart(ev: any) {
+  onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       var touch = ev.touches[0];
       this.board.beginStroke(touchPoint(touch));
@@ -110,7 +110,7 @@ class CanvasViewController {
     }
     ev.preventDefault();
   }
-  onTouchEnd(ev: any) {
+  onTouchEnd(ev: TouchEvent) {
     this.isPressed = false;
     this.board.endStroke();
     this.pinchEnd();
