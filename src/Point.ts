@@ -17,7 +17,7 @@ class Point {
     return new Point(this.x - a.x, this.y - a.y);
   }
 
-  mult(a: number) {
+  mul(a: number) {
     return new Point(this.x * a, this.y * a);
   }
 

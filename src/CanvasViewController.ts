@@ -53,10 +53,10 @@ class CanvasViewController {
 
     var scale = points[0].sub(points[1]).length / this.pinchStartPoints[0].sub(this.pinchStartPoints[1]).length;
 
-    var centerStart = this.pinchStartPoints[0].add(this.pinchStartPoints[1]).mult(0.5);
-    var center = points[0].add(points[1]).mult(0.5);
+    var centerStart = this.pinchStartPoints[0].add(this.pinchStartPoints[1]).mul(0.5);
+    var center = points[0].add(points[1]).mul(0.5);
 
-    var diff = center.sub(centerStart.mult(scale));
+    var diff = center.sub(centerStart.mul(scale));
 
     var transform = Transform.scale(scale).merge(Transform.translation(diff));
 
