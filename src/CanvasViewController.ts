@@ -35,6 +35,8 @@ class CanvasViewController {
     view.addEventListener('touchmove', this.onTouchMove.bind(this));
     view.addEventListener('touchstart', this.onTouchStart.bind(this));
     view.addEventListener('touchend', this.onTouchEnd.bind(this));
+
+    view.addEventListener('wheel', this.onWheel.bind(this));
   }
 
   pinchStart(points: Point[]) {
@@ -112,6 +114,14 @@ class CanvasViewController {
     this.isPressed = false;
     this.board.endStroke();
     this.pinchEnd();
+    ev.preventDefault();
+  }
+
+  onWheel(ev: WheelEvent) {
+    var t = this.board.transform;
+    t.dx -= ev.deltaX;
+    t.dy -= ev.deltaY;
+    this.renderer.update();
     ev.preventDefault();
   }
 }
