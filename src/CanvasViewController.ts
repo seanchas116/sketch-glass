@@ -10,14 +10,17 @@ function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
 }
 
+enum InteractionState {
+  None, Pressed, Pinching
+}
+
 class CanvasViewController {
 
   view: HTMLElement;
   renderer: Renderer;
   board: Board;
-  isPressed = false;
+  interactionState = InteractionState.None;
   pinchStartPoints: Point[];
-  isPinching = false;
   initialTransform = Transform.identity();
 
   constructor() {
@@ -38,13 +41,13 @@ class CanvasViewController {
   }
 
   pinchStart(points: Point[]) {
-    this.isPinching = true;
+    this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.board.transform;
   }
 
   pinchMove(points: Point[]) {
-    if (!this.isPinching) {
+    if (this.interactionState !== InteractionState.Pinching) {
       this.pinchStart(points);
     }
 
@@ -62,37 +65,45 @@ class CanvasViewController {
   }
 
   pinchEnd() {
-    this.isPinching = false;
+    this.interactionState = InteractionState.None;
+  }
+
+  pressStart(point: Point) {
+    this.interactionState = InteractionState.Pressed;
+    this.board.beginStroke(point);
+  }
+
+  pressMove(point: Point) {
+    if (this.interactionState === InteractionState.Pressed) {
+      this.board.strokeTo(point);
+    }
+  }
+
+  pressEnd() {
+    if (this.interactionState === InteractionState.Pressed) {
+      this.board.endStroke();
+    }
   }
 
   onMouseMove(ev: MouseEvent) {
     //console.log(`mouse move at ${ev.clientX}, ${ev.clientY}`);
-    if (this.isPressed) {
-      this.board.strokeTo(new Point(ev.clientX, ev.clientY));
-    }
+    this.pressMove(new Point(ev.clientX, ev.clientY));
   }
   onMouseDown(ev: MouseEvent) {
     //console.log(`mouse down at ${ev.clientX}, ${ev.clientY}`);
-    this.board.beginStroke(new Point(ev.clientX, ev.clientY));
-    this.isPressed = true;
+    this.pressStart(new Point(ev.clientX, ev.clientY));
   }
   onMouseUp(ev: MouseEvent) {
     //console.log(`mouse up at ${ev.clientX}, ${ev.clientY}`);
-    this.isPressed = false;
-    this.board.endStroke();
+    this.pressEnd();
   }
 
   onTouchMove(ev: TouchEvent) {
-    if (this.isPressed) {
-      if (ev.touches.length === 1) {
-        var touch = ev.touches[0];
-        this.board.strokeTo(touchPoint(touch));
-      }
-      else {
-        this.board.cancelStroke();
-      }
+    if (ev.touches.length === 1) {
+      var touch = ev.touches[0];
+      this.pressMove(touchPoint(touch));
     }
-    if (ev.touches.length === 2) {
+    else if (ev.touches.length === 2) {
       this.pinchMove([0,1].map(i => touchPoint(ev.touches[i])));
     }
     ev.preventDefault();
@@ -100,8 +111,7 @@ class CanvasViewController {
   onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       var touch = ev.touches[0];
-      this.board.beginStroke(touchPoint(touch));
-      this.isPressed = true;
+      this.pressStart(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
       this.pinchStart([0,1].map(i => touchPoint(ev.touches[i])));
@@ -109,8 +119,7 @@ class CanvasViewController {
     ev.preventDefault();
   }
   onTouchEnd(ev: TouchEvent) {
-    this.isPressed = false;
-    this.board.endStroke();
+    this.pressEnd();
     this.pinchEnd();
     ev.preventDefault();
   }
