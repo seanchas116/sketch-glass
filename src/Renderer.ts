@@ -39,7 +39,6 @@ class Renderer {
   update() {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
-      this.clear();
       requestAnimationFrame(this.render.bind(this));
     }
   }
@@ -50,7 +49,7 @@ class Renderer {
   }
 
   render() {
-    // TODO: double buffering
+    this.clear();
     this.strokes.forEach(this.renderStroke.bind(this));
     this.isRenderQueued = false;
   }
