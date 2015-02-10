@@ -7,6 +7,7 @@ import Stroke = require('./Stroke');
 
 class Renderer {
 
+  view: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
   strokes: Stroke[] = [];
   immediateStroke = new Stroke();
@@ -16,8 +17,12 @@ class Renderer {
   width = 0;
   height = 0;
 
-  constructor(context: CanvasRenderingContext2D) {
-    this.context = context;
+  constructor() {
+    this.view = document.createElement('canvas');
+    this.context = this.view.getContext('2d');
+
+    window.addEventListener('resize', this.onResize.bind(this));
+    this.onResize();
   }
 
   add(stroke: Stroke) {
@@ -41,7 +46,7 @@ class Renderer {
 
   clear() {
     this.context.setTransform(1, 0, 0, 1, 0, 0); // clear transform
-    this.context.clearRect(0, 0, this.width, this.height); // clear all
+    this.context.clearRect(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio); // clear all
   }
 
   render() {
@@ -94,6 +99,16 @@ class Renderer {
   updateTransform() {
     var t = this.createTransform();
     this.context.setTransform(t.m11, t.m12, t.m21, t.m22, t.dx, t.dy);
+  }
+
+  onResize() {
+    var width = this.width = window.innerWidth;
+    var height = this.height = window.innerHeight;
+    var devicePixelRatio = this.devicePixelRatio = window.devicePixelRatio || 1;
+    console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
+    this.view.width = width * devicePixelRatio;
+    this.view.height = height * devicePixelRatio;
+    this.update();
   }
 }
 

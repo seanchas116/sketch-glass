@@ -1,7 +1,6 @@
 /// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
-import RenderViewController = require('./RenderViewController');
 import Renderer = require('./Renderer');
 import Board = require('./Board');
 import Point = require('./Point');
@@ -22,10 +21,9 @@ class CanvasViewController {
   initialTransform = Transform.identity();
 
   constructor() {
-    var renderViewController = new RenderViewController();
-    var view = this.view = renderViewController.view;
 
-    this.renderer = renderViewController.renderer;
+    this.renderer = new Renderer();
+    var view = this.view = this.renderer.view;
     this.board = new Board(this.renderer);
 
     view.addEventListener('mousemove', this.onMouseMove.bind(this));
