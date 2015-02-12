@@ -3,12 +3,12 @@
 import Point = require('./Point');
 
 class Transform {
-  m11 = 1;
-  m12 = 0;
-  m21 = 0;
-  m22 = 1;
-  dx = 0;
-  dy = 0;
+  m11: number;
+  m12: number;
+  m21: number;
+  m22: number;
+  dx: number;
+  dy: number;
 
   constructor(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number) {
     this.m11 = m11;
