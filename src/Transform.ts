@@ -57,12 +57,6 @@ class Transform {
       this.dx * scale, this.dy * scale);
   }
 
-  transform(point: Point) {
-    var x = this.m11 * point.x + this.m21 * point.y + this.dx;
-    var y = this.m12 * point.x + this.m22 * point.y + this.dy;
-    return new Point(x, y);
-  }
-
   static identity() {
     return new Transform(1, 0, 0, 1, 0, 0);
   }

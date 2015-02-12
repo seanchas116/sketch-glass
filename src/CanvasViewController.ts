@@ -88,7 +88,7 @@ class CanvasViewController {
   pressStart(pos: Point) {
     this.interactionState = InteractionState.Pressed;
 
-    pos = this.transform.invert().transform(pos);
+    pos = pos.transform(this.transform.invert());
     var stroke = this.currentStroke = new Stroke();
     stroke.width = this.strokeWidth;
     stroke.color = this.strokeColor;
@@ -99,18 +99,21 @@ class CanvasViewController {
 
   pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
-      pos = this.transform.invert().transform(pos);
+      pos = pos.transform(this.transform.invert());
       this.currentStroke.points.push(pos);
-      this.currentStrokeRenderer.render();
+      this.currentStrokeRenderer.update();
     }
   }
 
   pressEnd() {
     if (this.interactionState === InteractionState.Pressed) {
       this.renderer.strokes.push(this.currentStroke);
-      this.renderer.drawOther(this.currentStrokeRenderer);
-      this.currentStrokeRenderer.strokes = [];
-      this.currentStrokeRenderer.render();
+
+      requestAnimationFrame(() => {
+        this.renderer.drawOther(this.currentStrokeRenderer);
+        this.currentStrokeRenderer.strokes = [];
+        this.currentStrokeRenderer.clear();
+      });
 
       this.interactionState = InteractionState.None;
     }
@@ -164,6 +167,7 @@ class CanvasViewController {
   onWheel(ev: WheelEvent) {
     var transform = this.transform.translate(new Point(-ev.deltaX, -ev.deltaY));
     this.updateTransform(transform);
+    this.renderer.update();
     ev.preventDefault();
   }
 }

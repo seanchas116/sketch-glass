@@ -1,6 +1,8 @@
 'use strict';
 
 import Point = require('./Point');
+import Rect = require('./Rect');
+var Bezier = require('./vendor/bezier');
 
 class Curve {
   start: Point;
@@ -13,6 +15,12 @@ class Curve {
     this.control1 = control1;
     this.control2 = control2;
     this.end = end;
+  }
+
+  boundingRect() {
+    var bezier = new Bezier([this.start, this.control1, this.control2, this.end]);
+    var bbox = bezier.bbox();
+    return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));
   }
 
   static catmullRom(prev: Point, start: Point, end: Point, next: Point) {

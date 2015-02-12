@@ -28,6 +28,26 @@ class Point {
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
+
+  floor() {
+    return new Point(Math.floor(this.x), Math.floor(this.y));
+  }
+
+  ceil() {
+    return new Point(Math.ceil(this.x), Math.ceil(this.y));
+  }
+
+  transform(t: Transform) {
+    var x = t.m11 * this.x + t.m21 * this.y + t.dx;
+    var y = t.m12 * this.x + t.m22 * this.y + t.dy;
+    return new Point(x, y);
+  }
+
+  toString() {
+    return `Point(${this.x},${this.y})`;
+  }
 }
 
 export = Point;
+
+import Transform = require('./Transform');

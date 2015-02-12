@@ -2,6 +2,7 @@
 'use strict';
 
 import Point = require('./Point');
+import Rect = require('./Rect');
 import Transform = require('./Transform');
 import Stroke = require('./Stroke');
 
@@ -31,13 +32,32 @@ class Renderer {
   update() {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
-      requestAnimationFrame(this.render.bind(this));
+      requestAnimationFrame(() => {
+        this.clear();
+        this.render();
+        this.isRenderQueued = false;
+      });
     }
   }
 
   clear() {
     this.clearTransform();
     this.context.clearRect(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio);
+    this.setTransform();
+  }
+
+  clearStrokes() {
+    this.clearTransform();
+
+    var rect = this.strokes
+      .map(stroke => stroke.boundingRect())
+      .reduce((union, rect) => union.union(rect))
+      .transform(this.createTransform())
+      .boundingIntegerRect();
+
+    console.log(`clearing ${rect}`);
+    this.context.clearRect(rect.x, rect.y, rect.width, rect.height);
+
     this.setTransform();
   }
 
@@ -48,9 +68,7 @@ class Renderer {
   }
 
   render() {
-    this.clear();
     this.strokes.forEach(this.renderStroke.bind(this));
-    this.isRenderQueued = false;
   }
 
   renderStroke(stroke: Stroke, smooth = true) {
