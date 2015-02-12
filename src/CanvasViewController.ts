@@ -2,9 +2,11 @@
 'use strict';
 
 import Renderer = require('./Renderer');
-import Board = require('./Board');
+import Stroke = require('./Stroke');
 import Point = require('./Point');
+import Color = require('./Color');
 import Transform = require('./Transform');
+import _ = require('lodash');
 
 function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
@@ -17,17 +19,31 @@ enum InteractionState {
 class CanvasViewController {
 
   view: HTMLElement;
+
   renderer: Renderer;
-  board: Board;
+  currentStrokeRenderer: Renderer;
+
   interactionState = InteractionState.None;
   pinchStartPoints: Point[];
+
+  transform = Transform.identity();
   initialTransform = Transform.identity();
+
+  currentStroke: Stroke;
+  isStroking = false;
+  strokeWidth = 2;
+  strokeColor = new Color(0,0,0,1);
 
   constructor() {
 
     this.renderer = new Renderer();
-    var view = this.view = this.renderer.view;
-    this.board = new Board(this.renderer);
+    this.currentStrokeRenderer = new Renderer();
+
+    var view = this.view = document.createElement('div');
+    view.style.width = '100%';
+    view.style.height = '100%';
+    view.appendChild(this.renderer.view);
+    view.appendChild(this.currentStrokeRenderer.view);
 
     view.addEventListener('mousemove', this.onMouseMove.bind(this));
     view.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -43,7 +59,7 @@ class CanvasViewController {
   pinchStart(points: Point[]) {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
-    this.initialTransform = this.board.transform;
+    this.initialTransform = this.transform;
   }
 
   pinchMove(points: Point[]) {
@@ -60,7 +76,8 @@ class CanvasViewController {
 
     var transform = Transform.scale(scale).merge(Transform.translation(diff));
 
-    this.board.transform = this.initialTransform.merge(transform);
+    var transform = this.initialTransform.merge(transform);
+    this.updateTransform(transform);
     this.renderer.update();
   }
 
@@ -68,21 +85,41 @@ class CanvasViewController {
     this.interactionState = InteractionState.None;
   }
 
-  pressStart(point: Point) {
+  pressStart(pos: Point) {
     this.interactionState = InteractionState.Pressed;
-    this.board.beginStroke(point);
+
+    pos = this.transform.invert().transform(pos);
+    var stroke = this.currentStroke = new Stroke();
+    stroke.width = this.strokeWidth;
+    stroke.color = this.strokeColor;
+    stroke.points.push(pos);
+
+    this.currentStrokeRenderer.strokes = [stroke];
   }
 
-  pressMove(point: Point) {
+  pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
-      this.board.strokeTo(point);
+      pos = this.transform.invert().transform(pos);
+      this.currentStroke.points.push(pos);
+      this.currentStrokeRenderer.render();
     }
   }
 
   pressEnd() {
     if (this.interactionState === InteractionState.Pressed) {
-      this.board.endStroke();
+      this.renderer.strokes.push(this.currentStroke);
+      this.renderer.drawOther(this.currentStrokeRenderer);
+      this.currentStrokeRenderer.strokes = [];
+      this.currentStrokeRenderer.render();
+
+      this.interactionState = InteractionState.None;
     }
+  }
+
+  updateTransform(transform: Transform) {
+    this.transform = transform;
+    this.renderer.transform = transform;
+    this.currentStrokeRenderer.transform = transform;
   }
 
   onMouseMove(ev: MouseEvent) {
@@ -125,10 +162,8 @@ class CanvasViewController {
   }
 
   onWheel(ev: WheelEvent) {
-    var t = this.board.transform;
-    t.dx -= ev.deltaX;
-    t.dy -= ev.deltaY;
-    this.renderer.update();
+    var transform = this.transform.translate(new Point(-ev.deltaX, -ev.deltaY));
+    this.updateTransform(transform);
     ev.preventDefault();
   }
 }

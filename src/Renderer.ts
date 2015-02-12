@@ -10,7 +10,6 @@ class Renderer {
   view: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
   strokes: Stroke[] = [];
-  immediateStroke = new Stroke();
   isRenderQueued = false;
   devicePixelRatio = 1;
   transform = Transform.identity();
@@ -29,13 +28,6 @@ class Renderer {
     this.strokes.push(stroke);
   }
 
-  updateImmediate() {
-    //requestAnimationFrame(() => {
-      this.renderStroke(this.immediateStroke, false);
-      this.immediateStroke.points = [];
-    //});
-  }
-
   update() {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
@@ -44,8 +36,15 @@ class Renderer {
   }
 
   clear() {
-    this.context.setTransform(1, 0, 0, 1, 0, 0); // clear transform
-    this.context.clearRect(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio); // clear all
+    this.clearTransform();
+    this.context.clearRect(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio);
+    this.setTransform();
+  }
+
+  drawOther(other: Renderer) {
+    this.clearTransform();
+    this.context.drawImage(other.view, 0, 0);
+    this.setTransform();
   }
 
   render() {
@@ -64,7 +63,7 @@ class Renderer {
     context.globalCompositeOperation = stroke.composition;
     context.lineCap = 'round';
     context.lineJoin = 'round';
-    this.updateTransform();
+    this.setTransform();
 
     if (count === 1) {
       var pos = stroke.points[0];
@@ -96,11 +95,15 @@ class Renderer {
     }
   }
 
+  clearTransform() {
+    this.context.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
   createTransform() {
     return this.transform.merge(Transform.scale(this.devicePixelRatio));
   }
 
-  updateTransform() {
+  setTransform() {
     var t = this.createTransform();
     this.context.setTransform(t.m11, t.m12, t.m21, t.m22, t.dx, t.dy);
   }

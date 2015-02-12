@@ -45,6 +45,18 @@ class Transform {
     return new Transform(m11, m12, m21, m22, dx, dy);
   }
 
+  translate(delta: Point) {
+    return new Transform(
+      this.m11, this.m12, this.m21, this.m22,
+      this.dx + delta.x, this.dy + delta.y);
+  }
+
+  scale(scale: number) {
+    return new Transform(
+      this.m11 * scale, this.m12 * scale, this.m21 * scale, this.m22 * scale,
+      this.dx * scale, this.dy * scale);
+  }
+
   transform(point: Point) {
     var x = this.m11 * point.x + this.m21 * point.y + this.dx;
     var y = this.m12 * point.x + this.m22 * point.y + this.dy;
