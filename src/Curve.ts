@@ -31,6 +31,15 @@ class Curve {
       end
     );
   }
+
+  static bSpline(c0: Point, c1: Point, c2: Point, c3: Point) {
+    return new Curve(
+      c0.add(c1.mul(4)).add(c2).div(6),
+      c1.mul(2).add(c2).div(3),
+      c2.mul(2).add(c1).div(3),
+      c3.add(c2.mul(4)).add(c1).div(6)
+    );
+  }
 }
 
 export = Curve;

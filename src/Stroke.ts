@@ -42,7 +42,7 @@ class Stroke {
     var end = this.points[i];
     var next = this.points[i + 1];
 
-    return Curve.catmullRom(prev || start, start, end, next || end);
+    return Curve.bSpline(prev || start, start, end, next || end);
   }
 }
 
