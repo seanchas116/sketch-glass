@@ -12,6 +12,7 @@ var watchify = require('watchify');
 var sourcemaps = require('gulp-sourcemaps');
 var xtend = require('xtend');
 var tslint = require('gulp-tslint');
+var deploy = require('gulp-gh-pages');
 
 function notifyError () {
   return plumber({
@@ -72,6 +73,11 @@ gulp.task('release-bundle', function() {
     .pipe(sourcemaps.write('./'))
     .pipe(notify("Build Finished"))
     .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('deploy', ['release-bundle'], function() {
+  return gulp.src('./dist/**/*')
+    .pipe(deploy());
 });
 
 gulp.task('default', ['watch-lint', 'watch-bundle']);
