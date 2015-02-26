@@ -16,7 +16,7 @@ enum InteractionState {
   None, Pressed, Pinching
 }
 
-class CanvasViewController {
+class CanvasController {
 
   view: HTMLElement;
 
@@ -172,4 +172,4 @@ class CanvasViewController {
   }
 }
 
-export = CanvasViewController;
+export = CanvasController;
