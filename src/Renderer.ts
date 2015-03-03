@@ -18,7 +18,9 @@ class Renderer {
   height = 0;
 
   constructor() {
-    this.view = document.createElement('canvas');
+    var view = this.view = document.createElement('canvas');
+    var style: any = view.style;
+    style.webkitTransform = style.transform = 'translate3d(0,0,0)';
     this.context = this.view.getContext('2d');
 
     window.addEventListener('resize', this.onResize.bind(this));
