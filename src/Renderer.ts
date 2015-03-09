@@ -66,7 +66,7 @@ class Renderer {
   update() {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
-      requestAnimationFrame(() => {
+      process.nextTick(() => {
         this.beginRendering();
         this.render();
         this.isRenderQueued = false;

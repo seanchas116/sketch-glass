@@ -114,7 +114,7 @@ class CanvasController {
     if (this.interactionState === InteractionState.Pressed) {
       this.renderer.strokes.push(this.currentStroke);
 
-      requestAnimationFrame(() => {
+      process.nextTick(() => {
         this.renderer.drawOther(this.currentStrokeRenderer);
         this.currentStrokeRenderer.strokes = [];
         this.currentStrokeRenderer.dirtyWhole();
