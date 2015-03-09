@@ -5,5 +5,5 @@ import CanvasController = require('./CanvasController');
 
 document.addEventListener('DOMContentLoaded', () => {
   var controller = new CanvasController();
-  document.body.appendChild(controller.view);
+  document.body.appendChild(controller.element);
 });

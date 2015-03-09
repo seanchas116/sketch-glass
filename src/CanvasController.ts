@@ -18,7 +18,7 @@ enum InteractionState {
 
 class CanvasController {
 
-  view: HTMLElement;
+  element: HTMLElement;
 
   renderer: Renderer;
   currentStrokeRenderer: Renderer;
@@ -36,24 +36,23 @@ class CanvasController {
 
   constructor() {
 
-    this.renderer = new Renderer();
-    this.currentStrokeRenderer = new Renderer();
+    this.renderer = new Renderer({tiled: false});
+    this.currentStrokeRenderer = new Renderer({tiled: true});
 
-    var view = this.view = document.createElement('div');
-    view.style.width = '100%';
-    view.style.height = '100%';
-    view.appendChild(this.renderer.view);
-    view.appendChild(this.currentStrokeRenderer.view);
+    var elem = this.element = document.createElement('div');
+    elem.className = 'canvas-area';
+    elem.appendChild(this.renderer.element);
+    elem.appendChild(this.currentStrokeRenderer.element);
 
-    view.addEventListener('mousemove', this.onMouseMove.bind(this));
-    view.addEventListener('mousedown', this.onMouseDown.bind(this));
-    view.addEventListener('mouseup', this.onMouseUp.bind(this));
+    elem.addEventListener('mousemove', this.onMouseMove.bind(this));
+    elem.addEventListener('mousedown', this.onMouseDown.bind(this));
+    elem.addEventListener('mouseup', this.onMouseUp.bind(this));
 
-    view.addEventListener('touchmove', this.onTouchMove.bind(this));
-    view.addEventListener('touchstart', this.onTouchStart.bind(this));
-    view.addEventListener('touchend', this.onTouchEnd.bind(this));
+    elem.addEventListener('touchmove', this.onTouchMove.bind(this));
+    elem.addEventListener('touchstart', this.onTouchStart.bind(this));
+    elem.addEventListener('touchend', this.onTouchEnd.bind(this));
 
-    view.addEventListener('wheel', this.onWheel.bind(this));
+    elem.addEventListener('wheel', this.onWheel.bind(this));
   }
 
   pinchStart(points: Point[]) {
@@ -92,7 +91,7 @@ class CanvasController {
     var stroke = this.currentStroke = new Stroke();
     stroke.width = this.strokeWidth;
     stroke.color = this.strokeColor;
-    stroke.points.push(pos);
+    stroke.addPoint(pos);
 
     this.currentStrokeRenderer.strokes = [stroke];
   }
@@ -100,8 +99,14 @@ class CanvasController {
   pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.transform.invert());
-      this.currentStroke.points.push(pos);
-      this.currentStrokeRenderer.update();
+
+      var stroke = this.currentStroke;
+      var renderer = this.currentStrokeRenderer;
+
+      renderer.addDirtyRect(stroke.unfinalizedBoundingRect);
+      stroke.addPoint(pos);
+      renderer.addDirtyRect(stroke.unfinalizedBoundingRect);
+      renderer.update();
     }
   }
 
@@ -112,6 +117,7 @@ class CanvasController {
       requestAnimationFrame(() => {
         this.renderer.drawOther(this.currentStrokeRenderer);
         this.currentStrokeRenderer.strokes = [];
+        this.currentStrokeRenderer.dirtyWhole();
         this.currentStrokeRenderer.clear();
       });
 

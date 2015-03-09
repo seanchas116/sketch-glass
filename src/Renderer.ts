@@ -1,28 +1,52 @@
 /// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
+import _ = require('lodash');
 import Point = require('./Point');
 import Rect = require('./Rect');
 import Transform = require('./Transform');
 import Stroke = require('./Stroke');
+import RendererTile = require('./RendererTile');
+
+interface RendererOptions {
+  tiled?: boolean;
+}
 
 class Renderer {
 
-  view: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
+  isTiled = true;
+  tileSize = 256;
+  element = document.createElement('div');
+  tiles: RendererTile[] = [];
   strokes: Stroke[] = [];
   isRenderQueued = false;
   devicePixelRatio = 1;
-  transform = Transform.identity();
   width = 0;
   height = 0;
+  dirtyRect = Rect.empty;
 
-  constructor() {
-    var view = this.view = document.createElement('canvas');
-    var style: any = view.style;
-    style.webkitTransform = style.transform = 'translate3d(0,0,0)';
-    this.context = this.view.getContext('2d');
+  _transform = Transform.identity();
+  transformToPixel = Transform.identity();
 
+  set transform(transform: Transform) {
+    this._transform = transform;
+    this.transformToPixel = transform.scale(this.devicePixelRatio);
+    this.dirtyWhole();
+    this.updateTileTransforms();
+  }
+
+  get transform() {
+    return this._transform;
+  }
+
+  constructor(opts: RendererOptions) {
+    var options = {
+      tiled: true
+    };
+    _.assign(options, opts);
+
+    this.isTiled = options.tiled;
+    this.element.className = 'canvas-area__renderer';
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
   }
@@ -31,11 +55,19 @@ class Renderer {
     this.strokes.push(stroke);
   }
 
+  addDirtyRect(rect: Rect) {
+    this.dirtyRect = this.dirtyRect.union(rect.transform(this.transformToPixel).boundingIntegerRect());
+  }
+
+  dirtyWhole() {
+    this.dirtyRect = Rect.fromMetrics(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio);
+  }
+
   update() {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
       requestAnimationFrame(() => {
-        this.clear();
+        this.beginRendering();
         this.render();
         this.isRenderQueued = false;
       });
@@ -43,98 +75,97 @@ class Renderer {
   }
 
   clear() {
-    this.clearTransform();
-    this.context.clearRect(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio);
-    this.setTransform();
+    this.beginRendering();
   }
 
-  clearStrokes() {
-    this.clearTransform();
-
-    var rect = this.strokes
-      .map(stroke => stroke.boundingRect())
-      .reduce((union, rect) => union.union(rect))
-      .transform(this.createTransform())
-      .boundingIntegerRect();
-
-    console.log(`clearing ${rect}`);
-    this.context.clearRect(rect.x, rect.y, rect.width, rect.height);
-
-    this.setTransform();
+  beginRendering() {
+    this.tiles.forEach(tile => {
+      tile.beginRendering(this.dirtyRect);
+    });
+    this.dirtyRect = Rect.empty;
   }
 
   drawOther(other: Renderer) {
-    this.clearTransform();
-    this.context.drawImage(other.view, 0, 0);
-    this.setTransform();
+    this.tiles.forEach(tile => {
+      other.tiles.forEach(otherTile => {
+        tile.drawOther(otherTile);
+      });
+    });
   }
 
   render() {
-    this.strokes.forEach(this.renderStroke.bind(this));
+    this.tiles.forEach(tile => {
+      this.strokes.forEach(stroke => {
+        tile.drawStroke(stroke);
+      })
+    });
   }
 
-  renderStroke(stroke: Stroke, smooth = true) {
-    var count = stroke.points.length;
-    if (count === 0) {
-      return;
-    }
-
-    var context = this.context;
-    context.globalCompositeOperation = stroke.composition;
-    context.lineCap = 'round';
-    context.lineJoin = 'round';
-    this.setTransform();
-
-    if (count === 1) {
-      var pos = stroke.points[0];
-      context.fillStyle = stroke.color.toString();
-      context.beginPath();
-      context.arc(pos.x, pos.y, stroke.width / 2, 0, Math.PI * 2);
-      context.fill();
-    }
-    if (count > 1) {
-      context.lineWidth = stroke.width;
-      context.strokeStyle = stroke.color.toString();
-      context.beginPath();
-
-      stroke.points.forEach((pos, i) => {
-        if (i === 0) {
-          context.moveTo(pos.x, pos.y);
-        }
-        else {
-          var curve = stroke.curveAt(i);
-          context.bezierCurveTo(
-            curve.control1.x, curve.control1.y,
-            curve.control2.x, curve.control2.y,
-            curve.end.x, curve.end.y
-          );
-        }
-      });
-
-      context.stroke();
-    }
-  }
-
-  clearTransform() {
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-  }
-
-  createTransform() {
-    return this.transform.merge(Transform.scale(this.devicePixelRatio));
-  }
-
-  setTransform() {
-    var t = this.createTransform();
-    this.context.setTransform(t.m11, t.m12, t.m21, t.m22, t.dx, t.dy);
+  updateTileTransforms() {
+    this.tiles.forEach(tile => {
+      tile.setRendererTransform(this.transformToPixel);
+    });
   }
 
   onResize() {
     var width = this.width = window.innerWidth;
     var height = this.height = window.innerHeight;
     var devicePixelRatio = this.devicePixelRatio = window.devicePixelRatio || 1;
+    this.transformToPixel = this.transform.scale(devicePixelRatio);
     console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
-    this.view.width = width * devicePixelRatio;
-    this.view.height = height * devicePixelRatio;
+
+    this.rebuildTiles();
+    this.update();
+  }
+
+  rebuildTiles() {
+    var pixelWidth = this.width * this.devicePixelRatio;
+    var pixelHeight = this.height * this.devicePixelRatio;
+
+    var tileSize = this.isTiled ? this.tileSize * this.devicePixelRatio : Math.max(pixelWidth, pixelHeight);
+
+    var tileXCount = Math.ceil(pixelWidth / tileSize);
+    var tileYCount = Math.ceil(pixelHeight / tileSize);
+
+    this.tiles.forEach(tile => {
+      this.element.removeChild(tile.element);
+    });
+    this.tiles = [];
+
+    for (var tileY = 0; tileY < tileYCount; ++tileY) {
+      var tileHeight: number;
+      if (tileY === tileYCount - 1) {
+        tileHeight = pixelHeight % tileSize;
+        if (tileHeight === 0) {
+          tileHeight = tileSize;
+        }
+      }
+      else {
+        tileHeight = tileSize;
+      }
+
+      for (var tileX = 0; tileX < tileXCount; ++tileX) {
+        var tileWidth: number;
+        if (tileX === tileXCount - 1) {
+          tileWidth = pixelWidth % tileSize;
+          if (tileWidth === 0) {
+            tileWidth = tileSize;
+          }
+        }
+        else {
+          tileWidth = tileSize;
+        }
+
+        var topLeft = new Point(tileX, tileY).mul(tileSize);
+        var bottomRight = topLeft.add(new Point(tileWidth, tileHeight));
+        var tile = new RendererTile(new Rect(topLeft, bottomRight));
+
+        this.tiles.push(tile);
+        this.element.appendChild(tile.element);
+      }
+    }
+
+    this.updateTileTransforms();
     this.update();
   }
 }

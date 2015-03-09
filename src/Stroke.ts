@@ -12,35 +12,49 @@ class Stroke {
   composition = 'source-over';
   width = 1;
 
-  toCurves() {
-    if (this.points.length <= 1) {
-      return [];
-    }
-    return _.times(this.points.length - 1, i => this.curveAt(i + 1));
+  curves: Curve[] = [];
+  finalizedBoundingRect = Rect.empty;
+  unfinalizedBoundingRect = Rect.empty;
+  lastCurveBoundingRect = Rect.empty;
+
+  get boundingRect() {
+    return this.finalizedBoundingRect.union(this.lastCurveBoundingRect);
   }
 
-  boundingRect() {
-    if (this.points.length === 0) {
-      return Rect.empty();
-    }
-    else if (this.points.length === 1) {
-      var p = this.points[0];
+  addPoint(point: Point) {
+    this.points.push(point);
+
+    var count = this.points.length;
+
+    if (count === 1) {
       var radius = this.width * 0.5;
-      return new Rect(p.sub(new Point(radius, radius)), p.add(new Point(radius, radius)));
+      var rect = new Rect(point.sub(new Point(radius, radius)), point.add(new Point(radius, radius)));
+      this.finalizedBoundingRect = rect;
     }
     else {
-      return this.toCurves()
-        .map(curve => curve.boundingRect())
-        .reduce((union, rect) => union.union(rect))
-        .outset(this.width * 0.5);
+      if (count >= 3) {
+        var curve = this.curves[count - 3] = this.curveAt(count - 3);
+
+        var rect = curve.boundingRect.outset(this.width * 0.5);
+        this.finalizedBoundingRect = this.finalizedBoundingRect.union(rect);
+      }
+
+      if (count >= 2) {
+        var curve = this.curveAt(count - 2);
+        this.curves.push(curve);
+
+        var rect = curve.boundingRect.outset(this.width * 0.5);
+        this.unfinalizedBoundingRect = this.lastCurveBoundingRect.union(rect);
+        this.lastCurveBoundingRect = rect;
+      }
     }
   }
 
   curveAt(i: number) {
-    var prev = this.points[i - 2];
-    var start = this.points[i - 1];
-    var end = this.points[i];
-    var next = this.points[i + 1];
+    var prev = this.points[i - 1];
+    var start = this.points[i];
+    var end = this.points[i + 1];
+    var next = this.points[i + 2];
 
     return Curve.bSpline(prev || start, start, end, next || end);
   }

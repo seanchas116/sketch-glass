@@ -25,15 +25,39 @@ class Rect {
     return this.max.y - this.min.y;
   }
 
+  get isEmpty() {
+    return this.max.x < this.min.x || this.max.y < this.min.y;
+  }
+
   union(other: Rect) {
+    if (this.isEmpty) {
+      return other;
+    }
+    if (other.isEmpty) {
+      return this;
+    }
+
     var min = new Point(Math.min(this.min.x, other.min.x), Math.min(this.min.y, other.min.y));
     var max = new Point(Math.max(this.max.x, other.max.x), Math.max(this.max.y, other.max.y));
+    return new Rect(min, max);
+  }
+
+  intersection(other: Rect) {
+    if (this.isEmpty || other.isEmpty) {
+      return Rect.empty;
+    }
+    var min = new Point(Math.max(this.min.x, other.min.x), Math.max(this.min.y, other.min.y));
+    var max = new Point(Math.min(this.max.x, other.max.x), Math.min(this.max.y, other.max.y));
     return new Rect(min, max);
   }
 
   outset(offset: number) {
     var diff = new Point(offset, offset);
     return new Rect(this.min.sub(diff), this.max.add(diff));
+  }
+
+  translate(offset: Point) {
+    return new Rect(this.min.add(offset), this.max.add(offset));
   }
 
   transform(transform: Transform) {
@@ -51,14 +75,22 @@ class Rect {
     return `Rect(${this.min},${this.max})`
   }
 
+  equals(other: Rect) {
+    return this.min.equals(other.min) && this.max.equals(other.max);
+  }
+
   static fromPoints(p1: Point, p2: Point) {
     var min = new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
     var max = new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
     return new Rect(min, max);
   }
 
-  static empty() {
-    return new Rect(new Point(0,0), new Point(0,0));
+  static fromMetrics(x: number, y: number, width: number, height: number) {
+    return new Rect(new Point(x, y), new Point(x + width, y + height));
+  }
+
+  static get empty() {
+    return new Rect(new Point(0,0), new Point(-1,-1));
   }
 }
 

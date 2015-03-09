@@ -9,15 +9,17 @@ class Curve {
   control1: Point;
   control2: Point;
   end: Point;
+  boundingRect: Rect;
 
   constructor(start: Point, control1: Point, control2: Point, end: Point) {
     this.start = start;
     this.control1 = control1;
     this.control2 = control2;
     this.end = end;
+    this.boundingRect = this.calcBoundingRect();
   }
 
-  boundingRect() {
+  calcBoundingRect() {
     var bezier = new Bezier([this.start, this.control1, this.control2, this.end]);
     var bbox = bezier.bbox();
     return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));

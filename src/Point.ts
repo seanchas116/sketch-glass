@@ -25,6 +25,10 @@ class Point {
     return new Point(this.x / a, this.y / a);
   }
 
+  negate() {
+    return new Point(-this.x, -this.y);
+  }
+
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
@@ -45,6 +49,10 @@ class Point {
 
   toString() {
     return `Point(${this.x},${this.y})`;
+  }
+
+  equals(other: Point) {
+    return this.x === other.x && this.y === other.y;
   }
 }
 
