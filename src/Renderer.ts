@@ -8,6 +8,8 @@ import Transform = require('./Transform');
 import Stroke = require('./Stroke');
 import RendererTile = require('./RendererTile');
 
+var TILE_SIZE = 256;
+
 interface RendererOptions {
   tiled?: boolean;
 }
@@ -15,7 +17,6 @@ interface RendererOptions {
 class Renderer {
 
   isTiled = true;
-  tileSize = 256;
   element = document.createElement('div');
   tiles: RendererTile[] = [];
   strokes: Stroke[] = [];
@@ -119,10 +120,24 @@ class Renderer {
   }
 
   rebuildTiles() {
-    var pixelWidth = this.width * this.devicePixelRatio;
-    var pixelHeight = this.height * this.devicePixelRatio;
+    var dpr = this.devicePixelRatio;
 
-    var tileSize = this.isTiled ? this.tileSize * this.devicePixelRatio : Math.max(pixelWidth, pixelHeight);
+    var pixelWidth = this.width * dpr;
+    var pixelHeight = this.height * dpr;
+
+    var tileSize: number;
+
+    if (this.isTiled) {
+      // tile size: the maximum multiple of devicePixelRatio which does not exceed TILE_SIZE
+      var dpr = this.devicePixelRatio;
+      tileSize = Math.floor(TILE_SIZE / dpr) * dpr;
+      while (Math.floor(tileSize) !== tileSize) {
+        tileSize -= dpr;
+      }
+    }
+    else {
+      tileSize =  Math.max(pixelWidth, pixelHeight);
+    }
 
     var tileXCount = Math.ceil(pixelWidth / tileSize);
     var tileYCount = Math.ceil(pixelHeight / tileSize);
