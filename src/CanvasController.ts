@@ -94,6 +94,10 @@ class CanvasController {
     stroke.addPoint(pos);
 
     this.currentStrokeRenderer.strokes = [stroke];
+
+    var renderer = this.currentStrokeRenderer;
+    renderer.addDirtyRect(stroke.lastCurveBoundingRect);
+    renderer.update();
   }
 
   pressMove(pos: Point) {
