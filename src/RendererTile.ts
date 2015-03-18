@@ -13,7 +13,7 @@ class RendererTile {
   rect = Rect.empty;
   rendererTransform = Transform.identity();
   transform = Transform.identity();
-  isActive = false;
+  isBlank = true;
   renderingRect = Rect.empty;
 
   constructor(rect: Rect) {
@@ -42,14 +42,13 @@ class RendererTile {
   }
 
   // clear and clip
-  beginRendering(rect: Rect) {
+  beginRendering(rect: Rect, clear = true) {
 
     var clearRect = this.rect.intersection(rect);
     if (clearRect.isEmpty) {
       this.renderingRect = Rect.empty;
       return;
     }
-
 
     var renderingRect = this.renderingRect = clearRect.translate(this.rect.min.negate());
 
@@ -58,11 +57,11 @@ class RendererTile {
     context.restore();
     context.save();
 
-    if (this.isActive) {
+    if (!this.isBlank && clear) {
       context.clearRect(renderingRect.x, renderingRect.y, renderingRect.width, renderingRect.height);
 
       if (clearRect.equals(this.rect)) {
-        this.isActive = false;
+        this.isBlank = true;
       }
     }
 
@@ -73,11 +72,11 @@ class RendererTile {
   }
 
   drawOther(other: RendererTile) {
-    if (!other.isActive) {
+    if (other.isBlank) {
       return;
     }
 
-    this.isActive = true;
+    this.isBlank = false;
 
     var context = this.context;
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -97,7 +96,7 @@ class RendererTile {
       return;
     }
 
-    this.isActive = true;
+    this.isBlank = false;
 
     var count = stroke.points.length;
     if (count === 0) {

@@ -79,14 +79,15 @@ class Renderer {
     this.beginRendering();
   }
 
-  beginRendering() {
+  beginRendering(clear = true) {
     this.tiles.forEach(tile => {
-      tile.beginRendering(this.dirtyRect);
+      tile.beginRendering(this.dirtyRect, clear);
     });
     this.dirtyRect = Rect.empty;
   }
 
   drawOther(other: Renderer) {
+    this.beginRendering(false);
     this.tiles.forEach(tile => {
       other.tiles.forEach(otherTile => {
         tile.drawOther(otherTile);

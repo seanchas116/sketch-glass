@@ -119,10 +119,14 @@ class CanvasController {
       this.renderer.strokes.push(this.currentStroke);
 
       process.nextTick(() => {
+        this.renderer.addDirtyRect(this.currentStroke.boundingRect);
         this.renderer.drawOther(this.currentStrokeRenderer);
         this.currentStrokeRenderer.strokes = [];
-        this.currentStrokeRenderer.dirtyWhole();
+        this.currentStrokeRenderer.addDirtyRect(this.currentStroke.boundingRect);
         this.currentStrokeRenderer.clear();
+        this.currentStrokeRenderer.tiles.forEach(tile => {
+          tile.isBlank = true;
+        });
       });
 
       this.interactionState = InteractionState.None;
