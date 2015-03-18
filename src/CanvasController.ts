@@ -103,9 +103,9 @@ class CanvasController {
       var stroke = this.currentStroke;
       var renderer = this.currentStrokeRenderer;
 
-      renderer.addDirtyRect(stroke.unfinalizedBoundingRect);
+      renderer.addDirtyRect(stroke.lastCurveBoundingRect);
       stroke.addPoint(pos);
-      renderer.addDirtyRect(stroke.unfinalizedBoundingRect);
+      renderer.addDirtyRect(stroke.lastCurveBoundingRect);
       renderer.update();
     }
   }

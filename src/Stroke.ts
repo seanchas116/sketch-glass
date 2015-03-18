@@ -14,7 +14,6 @@ class Stroke {
 
   curves: Curve[] = [];
   finalizedBoundingRect = Rect.empty;
-  unfinalizedBoundingRect = Rect.empty;
   lastCurveBoundingRect = Rect.empty;
 
   get boundingRect() {
@@ -29,7 +28,7 @@ class Stroke {
     if (count === 1) {
       var radius = this.width * 0.5;
       var rect = new Rect(point.sub(new Point(radius, radius)), point.add(new Point(radius, radius)));
-      this.finalizedBoundingRect = rect;
+      this.finalizedBoundingRect = this.lastCurveBoundingRect = rect;
     }
     else {
       if (count >= 3) {
@@ -43,9 +42,7 @@ class Stroke {
         var curve = this.curveAt(count - 2);
         this.curves.push(curve);
 
-        var rect = curve.boundingRect.outset(this.width * 0.5);
-        this.unfinalizedBoundingRect = this.lastCurveBoundingRect.union(rect);
-        this.lastCurveBoundingRect = rect;
+        this.lastCurveBoundingRect = curve.boundingRect.outset(this.width * 0.5);
       }
     }
   }
