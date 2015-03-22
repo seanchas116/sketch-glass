@@ -16,6 +16,9 @@
     },
     "lodash/lodash.d.ts": {
       "ref": "42c8a3b74c05f6887ce21dd63c6234e424f9f8fe"
+    },
+    "touch-events/touch-events.d.ts": {
+      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
     }
   }
 }
