@@ -90,4 +90,4 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('default', ['watch-lint', 'watch-bundle']);
+gulp.task('default', ['watch-lint', 'watch-bundle', 'webserver']);
