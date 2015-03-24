@@ -21,18 +21,6 @@ function notifyError () {
   });
 }
 
-gulp.task('lint', function() {
-  return gulp.src('./src/**/*.ts')
-    .pipe(notifyError())
-    .pipe(tslint())
-    .pipe(tslint.report('verbose'))
-    .pipe(notify('Lint Finished'));
-});
-
-gulp.task('watch-lint', ['lint'], function() {
-  return gulp.watch('./src/**/*.ts', ['lint']);
-});
-
 gulp.task('watch-bundle', function() {
   var args = xtend(watchify.args, {
     debug: true
@@ -90,4 +78,4 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('default', ['watch-lint', 'watch-bundle', 'webserver']);
+gulp.task('default', ['watch-bundle', 'webserver']);
