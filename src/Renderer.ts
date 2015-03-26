@@ -8,7 +8,7 @@ import Transform = require('./Transform');
 import Stroke = require('./Stroke');
 import RendererTile = require('./RendererTile');
 
-var TILE_SIZE = 256;
+var TILE_SIZE = 128;
 
 interface RendererOptions {
   tiled?: boolean;
