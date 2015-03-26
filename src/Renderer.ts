@@ -67,7 +67,7 @@ class Renderer {
   update() {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
-      process.nextTick(() => {
+      setImmediate(() => {
         this.beginRendering();
         this.render();
         this.isRenderQueued = false;
