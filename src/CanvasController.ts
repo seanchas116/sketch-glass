@@ -6,6 +6,7 @@ import Stroke = require('./Stroke');
 import Point = require('./Point');
 import Color = require('./Color');
 import Transform = require('./Transform');
+import Background = require('./Background');
 import _ = require('lodash');
 
 function touchPoint(touch: Touch) {
@@ -35,9 +36,8 @@ class CanvasController {
   strokeColor = new Color(0,0,0,1);
 
   constructor() {
-
-    this.renderer = new Renderer({tiled: false});
-    this.currentStrokeRenderer = new Renderer({tiled: true});
+    this.renderer = new Renderer({tiled: false, background: new Background(new Color(255,255,255,1))});
+    this.currentStrokeRenderer = new Renderer({tiled: true, background: new Background(new Color(0,0,0,0))});
 
     var elem = this.element = document.createElement('div');
     elem.className = 'canvas-area';

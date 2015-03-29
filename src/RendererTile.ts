@@ -5,6 +5,7 @@ import Point = require('./Point');
 import Rect = require('./Rect');
 import Transform = require('./Transform');
 import Stroke = require('./Stroke');
+import Background = require("./Background");
 
 class RendererTile {
 
@@ -15,9 +16,12 @@ class RendererTile {
   transform = Transform.identity();
   isBlank = true;
   renderingRect = Rect.empty;
+  background: Background;
 
-  constructor(rect: Rect) {
+  constructor(rect: Rect, background: Background) {
     this.rect = rect;
+    this.background = background;
+
     var elem = this.element = document.createElement('canvas');
     elem.width = rect.width;
     elem.height = rect.height;
@@ -33,8 +37,25 @@ class RendererTile {
     style.height = `${rect.height / dpr}px`;
     style.opacity = '0';
 
-    this.context = elem.getContext('2d');
+    this.context = elem.getContext('2d', {alpha: !background.isOpaque});
     this.context.save();
+
+    if (background.isOpaque) {
+      this.isBlank = false;
+      this.clear();
+    }
+  }
+
+  _clearRect(rect: Rect) {
+    if (this.background.isOpaque) {
+      this.context.restore();
+      this.context.save();
+
+      this.context.fillStyle = this.background.color.toString();
+      this.context.fillRect(rect.x, rect.y, rect.width, rect.height);
+    } else {
+      this.context.clearRect(rect.x, rect.y, rect.width, rect.height);
+    }
   }
 
   setRendererTransform(transform: Transform) {
@@ -48,7 +69,7 @@ class RendererTile {
     }
     this.context.restore();
     this.context.save();
-    this.context.clearRect(0, 0, this.rect.width, this.rect.height);
+    this._clearRect(Rect.fromMetrics(0, 0, this.rect.width, this.rect.height));
 
     this.element.style.opacity = '0';
     this.isBlank = true;
@@ -76,7 +97,7 @@ class RendererTile {
     context.save();
 
     if (!this.isBlank && clear) {
-      context.clearRect(renderingRect.x, renderingRect.y, renderingRect.width, renderingRect.height);
+      this._clearRect(renderingRect);
 
       if (clearRect.equals(this.rect)) {
         this.isBlank = true;

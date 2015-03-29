@@ -7,11 +7,13 @@ import Rect = require('./Rect');
 import Transform = require('./Transform');
 import Stroke = require('./Stroke');
 import RendererTile = require('./RendererTile');
+import Background = require("./Background");
 
 var TILE_SIZE = 128;
 
 interface RendererOptions {
-  tiled?: boolean;
+  tiled: boolean;
+  background: Background;
 }
 
 class Renderer {
@@ -25,6 +27,7 @@ class Renderer {
   width = 0;
   height = 0;
   dirtyRect = Rect.empty;
+  background: Background;
 
   _transform = Transform.identity();
   transformToPixel = Transform.identity();
@@ -41,12 +44,9 @@ class Renderer {
   }
 
   constructor(opts: RendererOptions) {
-    var options = {
-      tiled: true
-    };
-    _.assign(options, opts);
+    this.isTiled = opts.tiled;
+    this.background = opts.background;
 
-    this.isTiled = options.tiled;
     this.element.className = 'canvas-area__renderer';
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
@@ -176,7 +176,7 @@ class Renderer {
 
         var topLeft = new Point(tileX, tileY).mul(tileSize);
         var bottomRight = topLeft.add(new Point(tileWidth, tileHeight));
-        var tile = new RendererTile(new Rect(topLeft, bottomRight));
+        var tile = new RendererTile(new Rect(topLeft, bottomRight), this.background);
 
         this.tiles.push(tile);
         this.element.appendChild(tile.element);
