@@ -64,15 +64,19 @@ class Renderer {
     this.dirtyRect = Rect.fromMetrics(0, 0, this.width * this.devicePixelRatio, this.height * this.devicePixelRatio);
   }
 
-  update() {
+  updateLater(defer = requestAnimationFrame.bind(window)) {
     if (!this.isRenderQueued) {
       this.isRenderQueued = true;
-      setImmediate(() => {
-        this.beginRendering();
-        this.render();
+      defer(() => {
+        this.update();
         this.isRenderQueued = false;
       });
     }
+  }
+
+  update() {
+    this.beginRendering();
+    this.render();
   }
 
   clear() {

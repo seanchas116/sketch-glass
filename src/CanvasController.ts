@@ -97,7 +97,7 @@ class CanvasController {
 
     var renderer = this.currentStrokeRenderer;
     renderer.addDirtyRect(stroke.lastCurveBoundingRect);
-    renderer.update();
+    renderer.updateLater(setImmediate.bind(window));
   }
 
   pressMove(pos: Point) {
@@ -110,7 +110,7 @@ class CanvasController {
       renderer.addDirtyRect(stroke.lastCurveBoundingRect);
       stroke.addPoint(pos);
       renderer.addDirtyRect(stroke.lastCurveBoundingRect);
-      renderer.update();
+      renderer.updateLater(setImmediate.bind(window));
     }
   }
 
@@ -118,7 +118,7 @@ class CanvasController {
     if (this.interactionState === InteractionState.Pressed) {
       this.renderer.strokes.push(this.currentStroke);
 
-      setImmediate(() => {
+      requestAnimationFrame(() => {
         this.renderer.addDirtyRect(this.currentStroke.boundingRect);
         this.renderer.drawOther(this.currentStrokeRenderer);
         this.currentStrokeRenderer.strokes = [];
