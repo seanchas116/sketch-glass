@@ -122,7 +122,6 @@ class CanvasController {
         this.renderer.addDirtyRect(this.currentStroke.boundingRect);
         this.renderer.drawOther(this.currentStrokeRenderer);
         this.currentStrokeRenderer.strokes = [];
-        this.currentStrokeRenderer.addDirtyRect(this.currentStroke.boundingRect);
         this.currentStrokeRenderer.clear();
         this.currentStrokeRenderer.tiles.forEach(tile => {
           tile.isBlank = true;

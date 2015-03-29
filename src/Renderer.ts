@@ -76,7 +76,9 @@ class Renderer {
   }
 
   clear() {
-    this.beginRendering();
+    this.tiles.forEach((tile) => {
+      tile.clear();
+    });
   }
 
   beginRendering(clear = true) {

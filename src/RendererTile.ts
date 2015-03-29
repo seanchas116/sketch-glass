@@ -31,6 +31,7 @@ class RendererTile {
     style.top = `${rect.y / dpr}px`
     style.width = `${rect.width / dpr}px`;
     style.height = `${rect.height / dpr}px`;
+    style.opacity = '0';
 
     this.context = elem.getContext('2d');
     this.context.save();
@@ -39,6 +40,23 @@ class RendererTile {
   setRendererTransform(transform: Transform) {
     this.rendererTransform = transform;
     this.transform = transform.translate(this.rect.min.negate());
+  }
+
+  clear() {
+    if (this.isBlank) {
+      return;
+    }
+    this.context.restore();
+    this.context.save();
+    this.context.clearRect(0, 0, this.rect.width, this.rect.height);
+
+    this.element.style.opacity = '0';
+    this.isBlank = true;
+  }
+
+  activate() {
+    this.element.style.opacity = '1';
+    this.isBlank = false;
   }
 
   // clear and clip
@@ -76,7 +94,7 @@ class RendererTile {
       return;
     }
 
-    this.isBlank = false;
+    this.activate();
 
     var context = this.context;
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -96,7 +114,7 @@ class RendererTile {
       return;
     }
 
-    this.isBlank = false;
+    this.activate();
 
     var count = stroke.points.length;
     if (count === 0) {
