@@ -59,6 +59,9 @@ class CanvasController {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.transform;
+    requestAnimationFrame(() => {
+      this.currentStrokeRenderer.clear();
+    });
   }
 
   pinchMove(points: Point[]) {
