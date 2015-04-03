@@ -18,15 +18,13 @@ class RendererTile {
   renderingRect = Rect.empty;
   background: Background;
 
-  constructor(rect: Rect, background: Background) {
+  constructor(rect: Rect, background: Background, dpr: number) {
     this.rect = rect;
     this.background = background;
 
     var elem = this.element = document.createElement('canvas');
     elem.width = rect.width;
     elem.height = rect.height;
-
-    var dpr = window.devicePixelRatio || 0;
 
     elem.className = 'canvas-area__renderer-tile'
     var style = elem.style;

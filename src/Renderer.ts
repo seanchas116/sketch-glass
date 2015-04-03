@@ -180,7 +180,7 @@ class Renderer {
 
         var topLeft = new Point(tileX, tileY).mul(tileSize);
         var bottomRight = topLeft.add(new Point(tileWidth, tileHeight));
-        var tile = new RendererTile(new Rect(topLeft, bottomRight), this.background);
+        var tile = new RendererTile(new Rect(topLeft, bottomRight), this.background, dpr);
 
         this.tiles.push(tile);
         this.element.appendChild(tile.element);
