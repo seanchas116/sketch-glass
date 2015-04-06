@@ -30,7 +30,12 @@ class Renderer {
   shader: FillShader;
 
   constructor(opts: RendererOptions) {
-    var gl = this.gl = this.element.getContext("webgl", {antialias: false});
+    var gl = this.gl = this.element.getContext("webgl", {
+      alpha: false,
+      antialias: false,
+      depth: false,
+      premultipliedAlpha: true
+    });
     this.shader = new FillShader(gl);
 
     this.background = opts.background;
