@@ -22,7 +22,6 @@ class CanvasController {
   element: HTMLElement;
 
   renderer: Renderer;
-  currentStrokeRenderer: Renderer;
 
   interactionState = InteractionState.None;
   pinchStartPoints: Point[];
@@ -36,13 +35,11 @@ class CanvasController {
   strokeColor = new Color(0,0,0,1);
 
   constructor() {
-    this.renderer = new Renderer({tiled: false, background: new Background(new Color(255,255,255,1))});
-    this.currentStrokeRenderer = new Renderer({tiled: true, background: new Background(new Color(0,0,0,0))});
+    this.renderer = new Renderer({background: new Background(new Color(255,255,255,1))});
 
     var elem = this.element = document.createElement('div');
     elem.className = 'canvas-area';
     elem.appendChild(this.renderer.element);
-    elem.appendChild(this.currentStrokeRenderer.element);
 
     elem.addEventListener('mousemove', this.onMouseMove.bind(this));
     elem.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -59,9 +56,6 @@ class CanvasController {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.transform;
-    requestAnimationFrame(() => {
-      this.currentStrokeRenderer.clear();
-    });
   }
 
   pinchMove(points: Point[]) {
@@ -76,7 +70,7 @@ class CanvasController {
 
     var diff = center.sub(centerStart.mul(scale));
 
-    var transform = Transform.scale(scale).merge(Transform.translation(diff));
+    var transform = Transform.scale(scale, scale).merge(Transform.translation(diff));
 
     var transform = this.initialTransform.merge(transform);
     this.updateTransform(transform);
@@ -91,46 +85,25 @@ class CanvasController {
     this.interactionState = InteractionState.Pressed;
 
     pos = pos.transform(this.transform.invert());
-    var stroke = this.currentStroke = new Stroke();
+    var stroke = this.currentStroke = this.renderer.newStroke();
     stroke.width = this.strokeWidth;
     stroke.color = this.strokeColor;
     stroke.addPoint(pos);
 
-    this.currentStrokeRenderer.strokes = [stroke];
-
-    var renderer = this.currentStrokeRenderer;
-    renderer.addDirtyRect(stroke.lastCurveBoundingRect);
-    renderer.updateLater(setImmediate.bind(window));
+    this.renderer.addStroke(stroke);
+    this.renderer.update(true);
   }
 
   pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.transform.invert());
-
-      var stroke = this.currentStroke;
-      var renderer = this.currentStrokeRenderer;
-
-      renderer.addDirtyRect(stroke.lastCurveBoundingRect);
-      stroke.addPoint(pos);
-      renderer.addDirtyRect(stroke.lastCurveBoundingRect);
-      renderer.updateLater(setImmediate.bind(window));
+      this.currentStroke.addPoint(pos);
+      this.renderer.update(true);
     }
   }
 
   pressEnd() {
     if (this.interactionState === InteractionState.Pressed) {
-      this.renderer.strokes.push(this.currentStroke);
-
-      requestAnimationFrame(() => {
-        this.renderer.addDirtyRect(this.currentStroke.boundingRect);
-        this.renderer.drawOther(this.currentStrokeRenderer);
-        this.currentStrokeRenderer.strokes = [];
-        this.currentStrokeRenderer.clear();
-        this.currentStrokeRenderer.tiles.forEach(tile => {
-          tile.isBlank = true;
-        });
-      });
-
       this.interactionState = InteractionState.None;
     }
   }
@@ -138,7 +111,6 @@ class CanvasController {
   updateTransform(transform: Transform) {
     this.transform = transform;
     this.renderer.transform = transform;
-    this.currentStrokeRenderer.transform = transform;
   }
 
   onMouseMove(ev: MouseEvent) {

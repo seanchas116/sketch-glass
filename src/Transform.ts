@@ -51,18 +51,22 @@ class Transform {
       this.dx + delta.x, this.dy + delta.y);
   }
 
-  scale(scale: number) {
+  scale(scaleX: number, scaleY: number) {
     return new Transform(
-      this.m11 * scale, this.m12 * scale, this.m21 * scale, this.m22 * scale,
-      this.dx * scale, this.dy * scale);
+      this.m11 * scaleX, this.m12 * scaleX, this.m21 * scaleY, this.m22 * scaleY,
+      this.dx * scaleX, this.dy * scaleY);
+  }
+
+  toData() {
+    return new Float32Array([this.m11, this.m12, 0, this.m21, this.m22, 0, this.dx, this.dy, 1]);
   }
 
   static identity() {
     return new Transform(1, 0, 0, 1, 0, 0);
   }
 
-  static scale(scale: number) {
-    return new Transform(scale, 0, 0, scale, 0, 0);
+  static scale(scaleX: number, scaleY: number) {
+    return new Transform(scaleX, 0, 0, scaleY, 0, 0);
   }
 
   static translation(translation: Point) {

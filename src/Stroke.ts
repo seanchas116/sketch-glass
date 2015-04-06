@@ -9,51 +9,45 @@ import _ = require('lodash');
 class Stroke {
   points: Point[] = [];
   color = new Color(0,0,0,1);
-  composition = 'source-over';
   width = 1;
+  type = "pen";
+  polygon: Point[] = [];
+  gl: WebGLRenderingContext;
+  buffer: WebGLBuffer;
 
-  curves: Curve[] = [];
-  finalizedBoundingRect = Rect.empty;
-  lastCurveBoundingRect = Rect.empty;
-
-  get boundingRect() {
-    return this.finalizedBoundingRect.union(this.lastCurveBoundingRect);
+  constructor(gl: WebGLRenderingContext) {
+    this.gl = gl;
+    this.buffer = gl.createBuffer();
   }
 
   addPoint(point: Point) {
     this.points.push(point);
 
-    var count = this.points.length;
-
-    if (count === 1) {
-      var radius = this.width * 0.5;
-      var rect = new Rect(point.sub(new Point(radius, radius)), point.add(new Point(radius, radius)));
-      this.finalizedBoundingRect = this.lastCurveBoundingRect = rect;
+    if (this.points.length >= 2) {
+      var last = this.points[this.points.length - 2];
+      var normal = point.sub(last).normalize().rotate90();
+      var toLeft = normal.mul(this.width / 2);
+      var toRight = normal.mul(-this.width / 2);
+      this.polygon.push(last.add(toLeft));
+      this.polygon.push(last.add(toRight));
+      this.polygon.push(point.add(toLeft));
+      this.polygon.push(point.add(toRight));
     }
-    else {
-      if (count >= 3) {
-        var curve = this.curves[count - 3] = this.curveAt(count - 3);
 
-        var rect = curve.boundingRect.outset(this.width * 0.5);
-        this.finalizedBoundingRect = this.finalizedBoundingRect.union(rect);
-      }
-
-      if (count >= 2) {
-        var curve = this.curveAt(count - 2);
-        this.curves.push(curve);
-
-        this.lastCurveBoundingRect = curve.boundingRect.outset(this.width * 0.5);
-      }
-    }
+    this._updatePolygon();
   }
 
-  curveAt(i: number) {
-    var prev = this.points[i - 1];
-    var start = this.points[i];
-    var end = this.points[i + 1];
-    var next = this.points[i + 2];
+  _updatePolygon() {
 
-    return Curve.bSpline(prev || start, start, end, next || end);
+    var data = new Float32Array(this.polygon.length * 2);
+    this.polygon.forEach((p, i) => {
+      data[i * 2] = p.x;
+      data[i * 2 + 1] = p.y;
+    });
+
+    var gl = this.gl;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
   }
 }
 
