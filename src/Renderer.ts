@@ -39,6 +39,8 @@ class Renderer {
     this.shader = new FillShader(gl);
 
     this.background = opts.background;
+    var backColor = this.background.color;
+    gl.clearColor(backColor.r, backColor.g, backColor.b, backColor.a);
 
     this.element.className = 'canvas-area__renderer';
     window.addEventListener('resize', this.onResize.bind(this));
@@ -71,8 +73,7 @@ class Renderer {
   render() {
     var gl = this.gl;
     var shader = this.shader;
-
-    gl.clearColor(1, 1, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
     shader.use();
     shader.setViewportTransform(this.viewportTransform);
