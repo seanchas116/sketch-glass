@@ -29,6 +29,14 @@ class Point {
     return new Point(-this.x, -this.y);
   }
 
+  rotate90() {
+    return new Point(-this.y, this.x);
+  }
+
+  normalize() {
+    return this.div(this.length);
+  }
+
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
