@@ -2,7 +2,7 @@
 
 import Point = require('./Point');
 import Rect = require('./Rect');
-var Bezier = require('./vendor/bezier');
+var Bezier = require('bezier');
 
 class Curve {
   start: Point;

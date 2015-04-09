@@ -29,6 +29,7 @@
   },
   "private": true,
   "dependencies": {
+    "bezier-js": "^1.0.4",
     "lodash": "^3.1.0",
     "rx": "^2.3.25",
     "setimmediate": "^1.0.2"
