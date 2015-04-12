@@ -83,7 +83,7 @@ class Renderer {
       shader.setColor(stroke.color);
       gl.bindBuffer(gl.ARRAY_BUFFER, stroke.buffer);
       gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 0, 0);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, stroke.polygon.length);
+      gl.drawArrays(gl.TRIANGLES, 0, stroke.polygon.length);
     });
   }
 
