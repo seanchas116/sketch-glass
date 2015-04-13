@@ -81,9 +81,10 @@ class Renderer {
 
     this.strokes.forEach((stroke) => {
       shader.setColor(stroke.color);
-      gl.bindBuffer(gl.ARRAY_BUFFER, stroke.buffer);
+      gl.bindBuffer(gl.ARRAY_BUFFER, stroke.vertexBuffer);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, stroke.indexBuffer);
       gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 0, 0);
-      gl.drawArrays(gl.TRIANGLES, 0, stroke.polygon.length);
+      gl.drawElements(gl.TRIANGLES, stroke.indices.length, gl.UNSIGNED_SHORT, 0);
     });
   }
 

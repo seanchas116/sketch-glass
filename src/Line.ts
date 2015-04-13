@@ -9,6 +9,7 @@ class Line {
   b: number;
   c: number;
 
+  // normal vector directs toward left
   get normal() {
     return new Point(this.a, this.b);
   }
@@ -22,30 +23,66 @@ class Line {
     this.c = c;
   }
 
-  crossing(other: Line) {
-    var m11 = this.a;
-    var m12 = other.a;
-    var m21 = this.b;
-    var m22 = other.b;
-    var det = m11 * m22 - m12 * m21;
+  intersection(other: Line, fallback?: Point) {
+    var a1 = this.a;
+    var b1 = this.b;
+    var c1 = this.c;
+    var a2 = other.a;
+    var b2 = other.b;
+    var c2 = other.c;
+
+    var det = a1 * b2 - b1 * a2;
     if (det === 0) {
-      return null;
+      if (fallback === undefined) {
+        console.warn(`no intersection point for ${this} and ${other}`);
+        return new Point(0, 0);
+      }
+      return fallback;
     }
-    var i11 = m22 / det;
-    var i12 = -m12 / det;
-    var i21 = -m21 / det;
-    var i22 = m11 / det;
 
     return new Point(
-      i11 * this.a + i21 * other.a,
-      i12 * this.a + i22 * other.a
-    );
+      b2 * c1 - b1 * c2,
+      a1 * c2 - a2 * c1
+    ).div(det);
+  }
+
+  // left: > 0
+  // on line: = 0
+  // right: < 0
+  signedDistance(p: Point) {
+    return this.normal.dot(p) - this.c;
+  }
+
+  bisector(other: Line, fallback?: Line) {
+    var i = this.intersection(other, null);
+    if (!i) {
+      if (fallback === undefined) {
+        console.warn(`no bisector line for ${this} and ${other}`);
+        return new Line(1, 0, 0);
+      }
+      return fallback;
+    }
+    var n = this.normal.add(other.normal).normalize();
+    var d = n.dot(i);
+    return new Line(n.x, n.y, d);
+  }
+
+  // translate to left
+  translate(d: number) {
+    return new Line(this.a, this.b, this.c + d);
+  }
+
+  toString() {
+    return `Line(${this.a}x + ${this.b}y = ${this.c})`;
+  }
+
+  static fromPointAndNormal(p: Point, n: Point) {
+    return new Line(n.x, n.y, n.dot(p));
   }
 
   static fromTwoPoints(p1: Point, p2: Point) {
-    var normal = p2.sub(p1).normalize().rotate90();
-    var c = normal.dot(p1);
-    return new Line(normal.x, normal.y, c);
+    var n = p2.sub(p1).normalize().rotate90();
+    return this.fromPointAndNormal(p1, n);
   }
 }
 

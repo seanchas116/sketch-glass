@@ -5,21 +5,61 @@ import Curve = require('./Curve');
 import Color = require('./Color');
 import Rect = require('./Rect');
 import QuadraticCurve = require("./QuadraticCurve");
+import Line = require("./Line");
+import util = require("./util");
 import _ = require('lodash');
+
+var arrayPush = Array.prototype.push;
+
+function leftRightPos(direction: Point, pos: Point, width: number): [Point, Point] {
+  var normal = direction.normalize().rotate90().mul(width * 0.5);
+  return [pos.add(normal), pos.sub(normal)];
+}
+
+function convexIndices(vertexCount: number, offset: number) {
+  /*
+    example:
+    [
+      0, 1, 2,
+      0, 2, 3,
+      0, 3, 4,
+      0, 4, 5
+    ]
+  */
+
+  var faceCount = vertexCount - 2;
+  var indices = new Array(faceCount * 3);
+
+  for (var i = 0; i < faceCount; ++i) {
+    indices[3 * i] = offset;
+    indices[3 * i + 1] = offset + i + 1;
+    indices[3 * i + 2] = offset + i + 2;
+  }
+
+  return indices;
+}
 
 class Stroke {
   points: Point[] = [];
   color = new Color(0,0,0,1);
   width = 1;
   type = "pen";
-  polygon: Point[] = [];
+  vertices: Point[] = [];
+  indices: number[] = [];
   gl: WebGLRenderingContext;
-  buffer: WebGLBuffer;
-  lastPolygonCount = 0;
+  vertexBuffer: WebGLBuffer;
+  indexBuffer: WebGLBuffer;
+  quadCurves: QuadraticCurve[] = [];
+  _lastQuadControl: Point;
+
+  _prevVertexCount = 0;
+  _prevIndexCount = 0;
+  _prevLastQuadControl: Point;
 
   constructor(gl: WebGLRenderingContext) {
     this.gl = gl;
-    this.buffer = gl.createBuffer();
+    this.vertexBuffer = gl.createBuffer();
+    this.indexBuffer = gl.createBuffer();
   }
 
   addPoint(point: Point) {
@@ -28,29 +68,39 @@ class Stroke {
     var count = this.points.length;
 
     if (count >= 3) {
+      this._popCurve();
       // recalculate last curve
-      this._popCurvePolygon();
-      this._pushCurvePolygon(this._curveAt(count - 3));
+      this._pushCurve(this._curveAt(count - 3));
     }
     if (count >= 2) {
       // push curve
-      this._pushCurvePolygon(this._curveAt(count - 2));
+      this._pushCurve(this._curveAt(count - 2));
     }
 
-    this._updatePolygon();
+    this._updateBuffer();
   }
 
-  _updatePolygon() {
+  _updateBuffer(final = false) {
 
-    var data = new Float32Array(this.polygon.length * 2);
-    this.polygon.forEach((p, i) => {
-      data[i * 2] = p.x;
-      data[i * 2 + 1] = p.y;
+    //console.log(this.vertices.toString());
+    //console.log(this.indices.toString());
+
+    var vertexData = new Float32Array(this.vertices.length * 2);
+    this.vertices.forEach((p, i) => {
+      vertexData[i * 2] = p.x;
+      vertexData[i * 2 + 1] = p.y;
     });
 
+    var indexData = new Uint16Array(this.indices);
+
     var gl = this.gl;
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    var mode = final ? gl.STATIC_DRAW : gl.STREAM_DRAW;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertexData, mode);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, mode);
   }
 
   _curveAt(i: number) {
@@ -62,19 +112,131 @@ class Stroke {
     return Curve.bSpline(prev || start, start, end, next || end);
   }
 
-  _pushCurvePolygon(curve: Curve) {
+  _pushCurve(curve: Curve) {
     var curves = QuadraticCurve.fromCubic(curve);
-    this.lastPolygonCount = curves.length * 3;
 
-    curves.forEach((curve) => {
-      this.polygon.push(curve.start);
-      this.polygon.push(curve.control);
-      this.polygon.push(curve.end);
-    });
+    this._prevVertexCount = this.vertices.length;
+    this._prevIndexCount = this.indices.length;
+    this._prevLastQuadControl = this._lastQuadControl;
+
+    curves.forEach(this._pushQuadCurve.bind(this));
   }
 
-  _popCurvePolygon() {
-    this.polygon.splice(this.polygon.length - this.lastPolygonCount, this.lastPolygonCount);
+  _pushQuadCurve(curve: QuadraticCurve) {
+    var hw = 0.5 * this.width;
+
+    var p1 = curve.start;
+    var p2 = curve.end;
+
+    if (p1.fuzzyEquals(p2)) {
+      return;
+    }
+
+    var c = curve.control;
+
+    var p1p2 = Line.fromTwoPoints(p1, p2);
+    var h = p1p2.signedDistance(c);
+    console.log(`h: ${h}`);
+
+    var p1c = Line.fromTwoPoints(p1, c);
+    var cp2 = Line.fromTwoPoints(c, p2);
+
+    var isStart = !this._lastQuadControl;
+
+    var border1 = Line.fromPointAndNormal(p1, p1c.normal.rotate90());
+
+    if (!isStart) {
+      var p1c0 = Line.fromTwoPoints(p1, this._lastQuadControl);
+      border1 = p1c0.bisector(p1c, border1);
+
+      this.vertices.splice(-2, 2);
+    }
+    var border2 = Line.fromPointAndNormal(p2, cp2.normal.rotate90());
+
+    if (Math.abs(h) < util.EPSILON) {
+      // all points are on single line
+
+      var right = p1p2.translate(-hw);
+      var left = p1p2.translate(hw);
+      var v11 = border1.intersection(right);
+      var v12 = border1.intersection(left);
+      var v21 = border2.intersection(right);
+      var v22 = border2.intersection(left);
+
+      this._pushPolygon(
+        [v11, v12, v21, v22],
+        [
+          0, 1, 3,
+          0, 3, 2
+        ]
+      );
+    } else if (h > 0) {
+      // control points is in left
+
+      var right = p1p2.translate(-hw);
+      var left1 = p1c.translate(hw);
+      var left2 = cp2.translate(hw);
+      console.log(right.toString());
+      console.log(left1.toString());
+      console.log(left2.toString());
+
+      var v11 = border1.intersection(right);
+      var v12 = border1.intersection(left1);
+      var vc = left1.intersection(left2);
+      var v21 = border2.intersection(right);
+      var v22 = border2.intersection(left2);
+
+      if (!vc) {
+        return;
+      }
+
+      this._pushPolygon(
+        [v11, v12, vc, v21, v22],
+        [
+          0, 1, 2,
+          0, 2, 4,
+          0, 4, 3
+        ]
+      );
+    } else {
+      // control points is in right
+
+      var left = p1p2.translate(hw);
+      var right1 = p1c.translate(-hw);
+      var right2 = cp2.translate(-hw);
+      console.log(left.toString());
+      console.log(right1.toString());
+      console.log(right2.toString());
+
+      var v11 = border1.intersection(right1);
+      var v12 = border1.intersection(left);
+      var vc = right1.intersection(right2);
+      var v21 = border2.intersection(right2);
+      var v22 = border2.intersection(left);
+
+      this._pushPolygon(
+        [v11, v12, vc, v21, v22],
+        [
+          0, 1, 4,
+          0, 4, 3,
+          0, 3, 2
+        ]
+      );
+    }
+
+    this._lastQuadControl = c;
+  }
+
+  _pushPolygon(vertices: Point[], indices: number[]) {
+    console.log(`pushing vertices ${vertices}`);
+    arrayPush.apply(this.indices, indices.map(n => n + this.vertices.length));
+    arrayPush.apply(this.vertices, vertices);
+  }
+
+  _popCurve() {
+    this.vertices.splice(this._prevVertexCount);
+    this.indices.splice(this._prevIndexCount);
+    this._lastQuadControl = this._prevLastQuadControl;
   }
 }
 

@@ -1,5 +1,7 @@
 'use strict';
 
+import util = require("./util");
+
 class Point {
   x: number;
   y: number;
@@ -77,6 +79,11 @@ class Point {
 
   equals(other: Point) {
     return this.x === other.x && this.y === other.y;
+  }
+
+  fuzzyEquals(other: Point) {
+    return Math.abs(this.x - other.x) < util.EPSILON
+      && Math.abs(this.y - other.y) < util.EPSILON;
   }
 }
 

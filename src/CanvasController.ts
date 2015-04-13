@@ -31,7 +31,7 @@ class CanvasController {
 
   currentStroke: Stroke;
   isStroking = false;
-  strokeWidth = 2;
+  strokeWidth = 10;
   strokeColor = new Color(0,0,0,1);
 
   constructor() {
