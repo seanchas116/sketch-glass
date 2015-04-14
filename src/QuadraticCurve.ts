@@ -24,8 +24,8 @@ class QuadraticCurve {
   }
 
   split(t: number) {
-    var beziers: any[] = this._bezier().split(t);
-    return beziers.map(QuadraticCurve._fromBezier);
+    var beziers = this._bezier().split(t);
+    return [beziers.left, beziers.right].map(QuadraticCurve._fromBezier);
   }
 
   _bezier() {

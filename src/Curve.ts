@@ -23,8 +23,8 @@ class Curve {
   }
 
   split(t: number) {
-    var beziers: any[] = this._bezier().split(t);
-    return beziers.map(Curve._fromBezier);
+    var beziers = this._bezier().split(t);
+    return [beziers.left, beziers.right].map(Curve._fromBezier);
   }
 
   calcBoundingRect() {
