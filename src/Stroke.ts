@@ -90,7 +90,9 @@ class Stroke {
   }
 
   _pushCurve(curve: Curve) {
-    var curves = QuadraticCurve.fromCubic(curve);
+    var curves = QuadraticCurve.fromCubic(curve)
+      .map(toObtuseCurves)
+      .reduce((a, x) => a.concat(x));
 
     this._prevVertexCount = this.vertices.length;
     this._prevIndexCount = this.indices.length;
@@ -229,6 +231,18 @@ class Stroke {
     this.indices.splice(this._prevIndexCount);
     this._lastQuadControl = this._prevLastQuadControl;
   }
+}
+
+// eliminate quadratic curves with acute control point
+function toObtuseCurves(curve: QuadraticCurve): QuadraticCurve[] {
+  var cp1 = curve.start.sub(curve.control);
+  var cp2 = curve.end.sub(curve.control);
+  if (cp1.dot(cp2) > 0) {
+    return curve.split(0.5)
+      .map(toObtuseCurves)
+      .reduce((a, x) => a.concat(x));
+  }
+  return [curve];
 }
 
 export = Stroke;
