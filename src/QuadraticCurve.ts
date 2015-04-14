@@ -23,6 +23,11 @@ class QuadraticCurve {
     return new Point(xy.x, xy.y);
   }
 
+  split(t: number) {
+    var beziers: any[] = this._bezier().split(t);
+    return beziers.map(QuadraticCurve._fromBezier);
+  }
+
   _bezier() {
     return new Bezier([this.start, this.control, this.end]);
   }
@@ -35,6 +40,11 @@ class QuadraticCurve {
     var torelance = cubicCurve.end.sub(cubicCurve.start).length / 100;
     var result = cubicToQuadratic(cubicCurve, torelance * torelance);
     return result;
+  }
+
+  static _fromBezier(bezier: any) {
+    var points: Point[] = bezier.points.map((p: any) => new Point(p.x, p.y));
+    return new QuadraticCurve(points[0], points[1], points[2]);
   }
 }
 
