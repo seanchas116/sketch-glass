@@ -32,10 +32,8 @@ class QuadraticCurve {
   }
 
   static fromCubic(cubicCurve: Curve) {
-    console.log(`input: ${cubicCurve}`);
     var torelance = cubicCurve.end.sub(cubicCurve.start).length / 100;
     var result = cubicToQuadratic(cubicCurve, torelance * torelance);
-    console.log(`result: ${result}`);
     return result;
   }
 }
