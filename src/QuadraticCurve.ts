@@ -54,7 +54,7 @@ function cubicToQuadratic(cubicCurve: Curve, torelanceSquare: number): Quadratic
     return [quadraticCurve];
   }
 
-  return cubicCurve.divide()
+  return cubicCurve.split(0.5)
     .map(c => cubicToQuadratic(c, torelanceSquare))
     .reduce((a, b) => a.concat(b));
 }
