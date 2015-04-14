@@ -76,6 +76,20 @@ class Transform {
   static translation(translation: Point) {
     return new Transform(1, 0, 0, 1, translation.x, translation.y);
   }
+
+  static fromPoints(s1: Point, s2: Point, s3: Point, d1: Point, d2: Point, d3: Point) {
+    var s1s2 = s2.sub(s1);
+    var s1s3 = s3.sub(s1);
+    var d1d2 = d2.sub(d1);
+    var d1d3 = d3.sub(d1);
+
+    var result = Transform.translation(s1.negate())
+      .merge(new Transform(s1s2.x, s1s2.y, s1s3.x, s1s3.y, 0, 0).invert())
+      .merge(new Transform(d1d2.x, d1d2.y, d1d3.x, d1d3.y, 0, 0))
+      .merge(Transform.translation(d1));
+
+    return result;
+  }
 }
 
 export = Transform;
