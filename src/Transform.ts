@@ -61,6 +61,10 @@ class Transform {
     return new Float32Array([this.m11, this.m12, 0, this.m21, this.m22, 0, this.dx, this.dy, 1]);
   }
 
+  toString() {
+    return `Transform([${this.m11},${this.m12}],[${this.m21},${this.m22}],[${this.dx},${this.dy}])`;
+  }
+
   static identity() {
     return new Transform(1, 0, 0, 1, 0, 0);
   }
