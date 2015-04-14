@@ -12,34 +12,6 @@ import _ = require('lodash');
 
 var arrayPush = Array.prototype.push;
 
-function leftRightPos(direction: Point, pos: Point, width: number): [Point, Point] {
-  var normal = direction.normalize().rotate90().mul(width * 0.5);
-  return [pos.add(normal), pos.sub(normal)];
-}
-
-function convexIndices(vertexCount: number, offset: number) {
-  /*
-    example:
-    [
-      0, 1, 2,
-      0, 2, 3,
-      0, 3, 4,
-      0, 4, 5
-    ]
-  */
-
-  var faceCount = vertexCount - 2;
-  var indices = new Array(faceCount * 3);
-
-  for (var i = 0; i < faceCount; ++i) {
-    indices[3 * i] = offset;
-    indices[3 * i + 1] = offset + i + 1;
-    indices[3 * i + 2] = offset + i + 2;
-  }
-
-  return indices;
-}
-
 class Stroke {
   points: Point[] = [];
   color = new Color(0,0,0,1);
