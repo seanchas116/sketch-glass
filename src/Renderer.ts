@@ -36,6 +36,12 @@ class Renderer {
       depth: false,
       premultipliedAlpha: true
     });
+    if (!gl.getExtension("OES_standard_derivatives")) {
+      console.warn("OES_standard_derivatives not supported");
+    }
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
     this.shader = new FillShader(gl);
 
     this.background = opts.background;
@@ -81,9 +87,11 @@ class Renderer {
 
     this.strokes.forEach((stroke) => {
       shader.setColor(stroke.color);
+      shader.setWidth(stroke.width * this.transform.m11);
       gl.bindBuffer(gl.ARRAY_BUFFER, stroke.vertexBuffer);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, stroke.indexBuffer);
-      gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 16, 0);
+      gl.vertexAttribPointer(this.shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
       gl.drawElements(gl.TRIANGLES, stroke.indices.length, gl.UNSIGNED_SHORT, 0);
     });
   }

@@ -7,6 +7,7 @@ import Rect = require('./Rect');
 import QuadraticCurve = require("./QuadraticCurve");
 import Line = require("./Line");
 import util = require("./util");
+import Transform = require("./Transform");
 import _ = require('lodash');
 
 var arrayPush = Array.prototype.push;
@@ -45,12 +46,14 @@ class Stroke {
   width = 1;
   type = "pen";
   vertices: Point[] = [];
+  uvCoords: Point[] = [];
   indices: number[] = [];
   gl: WebGLRenderingContext;
   vertexBuffer: WebGLBuffer;
   indexBuffer: WebGLBuffer;
   quadCurves: QuadraticCurve[] = [];
   _lastQuadControl: Point;
+  _quadCount = 0;
 
   _prevVertexCount = 0;
   _prevIndexCount = 0;
@@ -81,15 +84,17 @@ class Stroke {
   }
 
   _updateBuffer(final = false) {
+    var vertexData = new Float32Array(this.vertices.length * 4);
 
-    //console.log(this.vertices.toString());
-    //console.log(this.indices.toString());
-
-    var vertexData = new Float32Array(this.vertices.length * 2);
-    this.vertices.forEach((p, i) => {
-      vertexData[i * 2] = p.x;
-      vertexData[i * 2 + 1] = p.y;
-    });
+    for (var i = 0; i < this.vertices.length; ++i) {
+      var xy = this.vertices[i];
+      var uv = this.uvCoords[i];
+      var i4 = i * 4;
+      vertexData[i4] = xy.x;
+      vertexData[i4 + 1] = xy.y;
+      vertexData[i4 + 2] = uv.x;
+      vertexData[i4 + 3] = uv.y;
+    }
 
     var indexData = new Uint16Array(this.indices);
 
@@ -136,7 +141,6 @@ class Stroke {
 
     var p1p2 = Line.fromTwoPoints(p1, p2);
     var h = p1p2.signedDistance(c);
-    console.log(`h: ${h}`);
 
     var p1c = Line.fromTwoPoints(p1, c);
     var cp2 = Line.fromTwoPoints(c, p2);
@@ -148,8 +152,6 @@ class Stroke {
     if (!isStart) {
       var p1c0 = Line.fromTwoPoints(p1, this._lastQuadControl);
       border1 = p1c0.bisector(p1c, border1);
-
-      this.vertices.splice(-2, 2);
     }
     var border2 = Line.fromPointAndNormal(p2, cp2.normal.rotate90());
 
@@ -163,78 +165,95 @@ class Stroke {
       var v21 = border2.intersection(right);
       var v22 = border2.intersection(left);
 
+      if (!isStart) {
+        this.vertices.splice(-2, 2, v11, v12);
+      }
+
       this._pushPolygon(
         [v11, v12, v21, v22],
+        [new Point(10000, 0), new Point(-10000, 0), new Point(10000, 1), new Point(-10000, 1)],
         [
           0, 1, 3,
           0, 3, 2
         ]
       );
-    } else if (h > 0) {
-      // control points is in left
-
-      var right = p1p2.translate(-hw);
-      var left1 = p1c.translate(hw);
-      var left2 = cp2.translate(hw);
-      console.log(right.toString());
-      console.log(left1.toString());
-      console.log(left2.toString());
-
-      var v11 = border1.intersection(right);
-      var v12 = border1.intersection(left1);
-      var vc = left1.intersection(left2);
-      var v21 = border2.intersection(right);
-      var v22 = border2.intersection(left2);
-
-      if (!vc) {
-        return;
-      }
-
-      this._pushPolygon(
-        [v11, v12, vc, v21, v22],
-        [
-          0, 1, 2,
-          0, 2, 4,
-          0, 4, 3
-        ]
-      );
     } else {
-      // control points is in right
+      var xy2uv = Transform.fromPoints(p1, c, p2, new Point(0, 0), new Point(0.5, 0), new Point(1, 1));
 
-      var left = p1p2.translate(hw);
-      var right1 = p1c.translate(-hw);
-      var right2 = cp2.translate(-hw);
-      console.log(left.toString());
-      console.log(right1.toString());
-      console.log(right2.toString());
+      if (h > 0) {
+        // control points is in left
 
-      var v11 = border1.intersection(right1);
-      var v12 = border1.intersection(left);
-      var vc = right1.intersection(right2);
-      var v21 = border2.intersection(right2);
-      var v22 = border2.intersection(left);
+        var right = p1p2.translate(-hw);
+        var left1 = p1c.translate(hw);
+        var left2 = cp2.translate(hw);
 
-      this._pushPolygon(
-        [v11, v12, vc, v21, v22],
-        [
-          0, 1, 4,
-          0, 4, 3,
-          0, 3, 2
-        ]
-      );
+        var v11 = border1.intersection(right);
+        var v12 = border1.intersection(left1);
+        var vc = left1.intersection(left2);
+        var v21 = border2.intersection(right);
+        var v22 = border2.intersection(left2);
+
+        if (!isStart) {
+          this.vertices.splice(-2, 2, v11, v12);
+        }
+
+        var vertices = [v11, v12, vc, v21, v22];
+
+        this._pushPolygon(
+          vertices,
+          vertices.map(v => v.transform(xy2uv)),
+          [
+            0, 1, 2,
+            0, 2, 4,
+            0, 4, 3
+          ]
+        );
+      } else {
+        // control points is in right
+
+        var left = p1p2.translate(hw);
+        var right1 = p1c.translate(-hw);
+        var right2 = cp2.translate(-hw);
+
+        var v11 = border1.intersection(right1);
+        var v12 = border1.intersection(left);
+        var vc = right1.intersection(right2);
+        var v21 = border2.intersection(right2);
+        var v22 = border2.intersection(left);
+
+        if (!isStart) {
+          this.vertices.splice(-2, 2, v11, v12);
+        }
+
+        var vertices = [v11, v12, vc, v21, v22];
+
+        this._pushPolygon(
+          vertices,
+          vertices.map(v => v.transform(xy2uv)),
+          [
+            0, 1, 4,
+            0, 4, 3,
+            0, 3, 2
+          ]
+        );
+      }
     }
 
     this._lastQuadControl = c;
   }
 
-  _pushPolygon(vertices: Point[], indices: number[]) {
-    console.log(`pushing vertices ${vertices}`);
+  _pushPolygon(vertices: Point[], uvCoords: Point[], indices: number[]) {
+    if (vertices.length !== uvCoords.length) {
+      throw new Error("wrong uv coords count");
+    }
     arrayPush.apply(this.indices, indices.map(n => n + this.vertices.length));
     arrayPush.apply(this.vertices, vertices);
+    arrayPush.apply(this.uvCoords, uvCoords);
   }
 
   _popCurve() {
     this.vertices.splice(this._prevVertexCount);
+    this.uvCoords.splice(this._prevVertexCount);
     this.indices.splice(this._prevIndexCount);
     this._lastQuadControl = this._prevLastQuadControl;
   }
