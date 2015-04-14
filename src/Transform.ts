@@ -24,8 +24,8 @@ class Transform {
     // [P u] [Q v]   [PQ Pv + u]
     // [0 1] [0 1] = [0  1     ]
     var m11 = other.m11 * this.m11 + other.m21 * this.m12;
-    var m12 = other.m11 * this.m21 + other.m21 * this.m22;
-    var m21 = other.m12 * this.m11 + other.m22 * this.m12;
+    var m21 = other.m11 * this.m21 + other.m21 * this.m22;
+    var m12 = other.m12 * this.m11 + other.m22 * this.m12;
     var m22 = other.m12 * this.m21 + other.m22 * this.m22;
     var dx = other.m11 * this.dx + other.m21 * this.dy + other.dx;
     var dy = other.m12 * this.dx + other.m22 * this.dy + other.dy;
