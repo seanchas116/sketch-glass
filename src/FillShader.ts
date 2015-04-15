@@ -8,21 +8,19 @@ class FillShader extends Shader {
 
   aPosition: number;
   aUVCoord: number;
-  uViewportTransform: WebGLUniformLocation;
-  uSceneTransform: WebGLUniformLocation;
+  uTransform: WebGLUniformLocation;
   uColor: WebGLUniformLocation;
   uHalfWidth: WebGLUniformLocation;
 
   get vertexShader() {
     return `
-      uniform mat3 uViewportTransform;
-      uniform mat3 uSceneTransform;
+      uniform mat3 uTransform;
       attribute vec2 aPosition;
       attribute vec2 aUVCoord;
       varying vec2 vUVCoord;
       void main(void) {
         vUVCoord = aUVCoord;
-        vec3 pos = uViewportTransform * uSceneTransform * vec3(aPosition, 1.0);
+        vec3 pos = uTransform * vec3(aPosition, 1.0);
         gl_Position = vec4(pos.xy, 0.0, 1.0);
       }
     `;
@@ -43,8 +41,7 @@ class FillShader extends Shader {
 
     this.aPosition = gl.getAttribLocation(this.program, 'aPosition');
     this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord');
-    this.uViewportTransform = gl.getUniformLocation(this.program, 'uViewportTransform');
-    this.uSceneTransform = gl.getUniformLocation(this.program, 'uSceneTransform');
+    this.uTransform = gl.getUniformLocation(this.program, 'uTransform');
     this.uColor = gl.getUniformLocation(this.program, 'uColor');
 
     gl.enableVertexAttribArray(this.aPosition);
@@ -59,12 +56,9 @@ class FillShader extends Shader {
     this.gl.uniform1f(this.uHalfWidth, width * 0.5);
   }
 
-  setViewportTransform(transform: Transform) {
-    this.gl.uniformMatrix3fv(this.uViewportTransform, false, transform.toData());
-  }
-
-  setSceneTransform(transform: Transform) {
-    this.gl.uniformMatrix3fv(this.uSceneTransform, false, transform.toData());
+  setTransforms(viewportTransform: Transform, sceneTransform: Transform) {
+    var transform = sceneTransform.merge(viewportTransform);
+    this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
   }
 }
 
