@@ -13,46 +13,39 @@ class FillShader extends Shader {
   uColor: WebGLUniformLocation;
   uHalfWidth: WebGLUniformLocation;
 
-  constructor(gl: WebGLRenderingContext) {
-
-    var vertexShader = `
+  get vertexShader() {
+    return `
       uniform mat3 uViewportTransform;
       uniform mat3 uSceneTransform;
       attribute vec2 aPosition;
       attribute vec2 aUVCoord;
-      varying vec2 p;
+      varying vec2 vUVCoord;
       void main(void) {
-        p = aUVCoord;
+        vUVCoord = aUVCoord;
         vec3 pos = uViewportTransform * uSceneTransform * vec3(aPosition, 1.0);
         gl_Position = vec4(pos.xy, 0.0, 1.0);
       }
     `;
-    var fragmentShader = `
-      #extension GL_OES_standard_derivatives : enable
-      precision highp float;
-      uniform vec4 uColor;
-      uniform float uHalfWidth;
-      varying vec2 p;
-      void main(void) {
-        vec2 px = dFdx(p);
-        vec2 py = dFdy(p);
-        vec2 f = (2.0 * p.x) * vec2(px.x, py.x) - vec2(px.y, py.y);
-        float sd = (p.x * p.x - p.y) * inversesqrt(f.x * f.x + f.y * f.y);
-        float dist = abs(sd);
+  }
 
-        float a = uColor.a * clamp(uHalfWidth - dist, 0.0, 1.0);
-        gl_FragColor = uColor * a;
+  get fragmentShader() {
+    return `
+      uniform lowp vec4 uColor;
+      void main(void) {
+        gl_FragColor = uColor;
       }
     `;
+  }
 
-    super(gl, vertexShader, fragmentShader);
+  constructor(gl: WebGLRenderingContext) {
+
+    super(gl);
 
     this.aPosition = gl.getAttribLocation(this.program, 'aPosition');
     this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord');
     this.uViewportTransform = gl.getUniformLocation(this.program, 'uViewportTransform');
     this.uSceneTransform = gl.getUniformLocation(this.program, 'uSceneTransform');
     this.uColor = gl.getUniformLocation(this.program, 'uColor');
-    this.uHalfWidth = gl.getUniformLocation(this.program, 'uHalfWidth');
 
     gl.enableVertexAttribArray(this.aPosition);
     gl.enableVertexAttribArray(this.aUVCoord);
