@@ -1,5 +1,8 @@
 'use strict';
 
+import Transform from "./Transform";
+
+export default
 class Point {
   x: number;
   y: number;
@@ -63,7 +66,3 @@ class Point {
     return this.x === other.x && this.y === other.y;
   }
 }
-
-export = Point;
-
-import Transform = require('./Transform');

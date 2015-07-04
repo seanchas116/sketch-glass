@@ -1,7 +1,9 @@
 'use strict';
 
-import Point = require('./Point');
+import Point from './Point';
+import Transform from "./Transform";
 
+export default
 class Rect {
   min: Point;
   max: Point;
@@ -93,7 +95,3 @@ class Rect {
     return new Rect(new Point(0,0), new Point(-1,-1));
   }
 }
-
-export = Rect;
-
-import Transform = require('./Transform');

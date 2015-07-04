@@ -1,5 +1,6 @@
 'use strict';
 
+export default
 class Color {
   r: number;
   g: number;
@@ -21,5 +22,3 @@ class Color {
     return new Float32Array([this.r, this.g, this.b, this.a]);
   }
 }
-
-export = Color;

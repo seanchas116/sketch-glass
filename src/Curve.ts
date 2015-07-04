@@ -1,9 +1,10 @@
 'use strict';
 
-import Point = require('./Point');
-import Rect = require('./Rect');
+import Point from './Point';
+import Rect from './Rect';
 var Bezier = require('bezier');
 
+export default
 class Curve {
   start: Point;
   control1: Point;
@@ -43,5 +44,3 @@ class Curve {
     );
   }
 }
-
-export = Curve;

@@ -1,6 +1,6 @@
-/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
+export default
 class Shader {
 
   gl: WebGLRenderingContext;
@@ -44,5 +44,3 @@ class Shader {
     gl.useProgram(program);
   }
 }
-
-export = Shader;

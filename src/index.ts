@@ -1,8 +1,7 @@
-/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
 require("setimmediate");
-import CanvasController = require('./CanvasController');
+import CanvasController from './CanvasController';
 
 document.addEventListener('DOMContentLoaded', () => {
   var controller = new CanvasController();

@@ -11,7 +11,6 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var sourcemaps = require('gulp-sourcemaps');
 var xtend = require('xtend');
-var tslint = require('gulp-tslint');
 var deploy = require('gulp-gh-pages');
 var webserver = require('gulp-webserver');
 
@@ -25,11 +24,8 @@ gulp.task('watch-bundle', function() {
   var args = xtend(watchify.args, {
     debug: true
   });
-  var bundler = watchify(browserify('./src/index.ts', args))
-    .plugin('tsify', {
-      noImplicitAny: true,
-      target: 'ES5'
-    })
+  var bundler = watchify(browserify('./build/index.js', args))
+    .transform("babelify")
     .transform('debowerify');
 
   function bundle () {
@@ -46,11 +42,8 @@ gulp.task('watch-bundle', function() {
 });
 
 gulp.task('release-bundle', function() {
-  return browserify('./src/index.ts')
-    .plugin('tsify', {
-      noImplicitAny: true,
-      target: 'ES5'
-    })
+  return browserify('./build/index.js')
+    .transform("bebelify")
     .transform('debowerify')
     .bundle()
     .pipe(source('bundle.js'))

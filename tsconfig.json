@@ -1,0 +1,38 @@
+{
+    "version": "1.5.0-beta",
+    "compilerOptions": {
+        "target": "es6",
+        "declaration": false,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "sourceMap": true,
+        "outDir": "./build"
+    },
+    "filesGlob": [
+        "./src/**/*.ts",
+        "./typings/**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "files": [
+        "./src/Background.ts",
+        "./src/CanvasController.ts",
+        "./src/Color.ts",
+        "./src/Curve.ts",
+        "./src/FillShader.ts",
+        "./src/Point.ts",
+        "./src/Rect.ts",
+        "./src/Renderer.ts",
+        "./src/Shader.ts",
+        "./src/Stroke.ts",
+        "./src/Transform.ts",
+        "./src/index.ts",
+        "./typings/bundle.d.ts",
+        "./typings/lodash/lodash.d.ts",
+        "./typings/node/node.d.ts",
+        "./typings/rx/rx-lite.d.ts",
+        "./typings/rx/rx.d.ts"
+    ]
+}

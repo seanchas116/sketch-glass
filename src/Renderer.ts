@@ -1,13 +1,12 @@
-/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
-import _ = require('lodash');
-import Point = require('./Point');
-import Rect = require('./Rect');
-import Transform = require('./Transform');
-import Stroke = require('./Stroke');
-import Background = require("./Background");
-import FillShader = require("./FillShader");
+import _ from 'lodash';
+import Point from './Point';
+import Rect from './Rect';
+import Transform from './Transform';
+import Stroke from './Stroke';
+import Background from "./Background";
+import FillShader from "./FillShader";
 
 var TILE_SIZE = 128;
 
@@ -15,6 +14,7 @@ interface RendererOptions {
   background: Background;
 }
 
+export default
 class Renderer {
 
   element = document.createElement('canvas');
@@ -30,12 +30,13 @@ class Renderer {
   shader: FillShader;
 
   constructor(opts: RendererOptions) {
-    var gl = this.gl = this.element.getContext("webgl", {
+    // TODO: check why explicit cast is required
+    var gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {
       alpha: false,
       antialias: false,
       depth: false,
       premultipliedAlpha: true
-    });
+    }));
     this.shader = new FillShader(gl);
 
     this.background = opts.background;
@@ -105,5 +106,3 @@ class Renderer {
     this.update();
   }
 }
-
-export = Renderer;

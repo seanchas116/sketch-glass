@@ -29,12 +29,12 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
 bower_components
-typings
 
 # Debug log from npm
 npm-debug.log
 
 ### build results ###
 
-dist/bundle.js
-dist/bundle.js.map
+/build
+/dist/bundle.js
+/dist/bundle.js.map
