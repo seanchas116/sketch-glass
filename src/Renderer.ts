@@ -30,6 +30,7 @@ class Renderer {
   shader: FillShader;
 
   constructor(opts: RendererOptions) {
+    // TODO: check why explicit cast is required
     var gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {
       alpha: false,
       antialias: false,
