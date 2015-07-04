@@ -13,6 +13,7 @@
     },
     "filesGlob": [
         "./src/**/*.ts",
+        "./typings/**/*.ts",
         "!./node_modules/**/*.ts"
     ],
     "files": [
@@ -27,6 +28,12 @@
         "./src/Shader.ts",
         "./src/Stroke.ts",
         "./src/Transform.ts",
-        "./src/index.ts"
+        "./src/index.ts",
+        "./typings/bundle.d.ts",
+        "./typings/lodash/lodash.d.ts",
+        "./typings/node/node.d.ts",
+        "./typings/rx/rx-lite.d.ts",
+        "./typings/rx/rx.d.ts",
+        "./typings/touch-events/touch-events.d.ts"
     ]
 }
