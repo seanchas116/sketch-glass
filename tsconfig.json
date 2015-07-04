@@ -33,7 +33,6 @@
         "./typings/lodash/lodash.d.ts",
         "./typings/node/node.d.ts",
         "./typings/rx/rx-lite.d.ts",
-        "./typings/rx/rx.d.ts",
-        "./typings/touch-events/touch-events.d.ts"
+        "./typings/rx/rx.d.ts"
     ]
 }
