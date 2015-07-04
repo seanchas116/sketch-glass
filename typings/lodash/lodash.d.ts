@@ -6674,5 +6674,5 @@ declare module _ {
 }
 
 declare module "lodash" {
-    export = _;
+    export default _;
 }
