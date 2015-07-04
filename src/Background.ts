@@ -1,11 +1,10 @@
-/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
 import Color = require("./color");
 
 class Background {
   color: Color;
-  
+
   constructor(color: Color) {
     this.color = color;
   }

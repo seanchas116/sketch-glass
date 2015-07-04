@@ -1,4 +1,3 @@
-/// <reference path="../typings/bundle.d.ts" />
 'use strict';
 
 import Renderer = require('./Renderer');
