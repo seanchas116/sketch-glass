@@ -1,7 +1,8 @@
 'use strict';
 
-import Point = require('./Point');
+import Point from './Point';
 
+export default
 class Transform {
   m11: number;
   m12: number;
@@ -73,5 +74,3 @@ class Transform {
     return new Transform(1, 0, 0, 1, translation.x, translation.y);
   }
 }
-
-export = Transform;

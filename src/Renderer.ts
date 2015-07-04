@@ -1,12 +1,12 @@
 'use strict';
 
-import _ = require('lodash');
-import Point = require('./Point');
-import Rect = require('./Rect');
-import Transform = require('./Transform');
-import Stroke = require('./Stroke');
-import Background = require("./Background");
-import FillShader = require("./FillShader");
+import _ from 'lodash';
+import Point from './Point';
+import Rect from './Rect';
+import Transform from './Transform';
+import Stroke from './Stroke';
+import Background from "./Background";
+import FillShader from "./FillShader";
 
 var TILE_SIZE = 128;
 
@@ -14,6 +14,7 @@ interface RendererOptions {
   background: Background;
 }
 
+export default
 class Renderer {
 
   element = document.createElement('canvas');
@@ -104,5 +105,3 @@ class Renderer {
     this.update();
   }
 }
-
-export = Renderer;

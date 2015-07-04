@@ -1,11 +1,12 @@
 'use strict';
 
-import Point = require('./Point');
-import Curve = require('./Curve');
-import Color = require('./Color');
-import Rect = require('./Rect');
-import _ = require('lodash');
+import Point from './Point';
+import Curve from './Curve';
+import Color from './Color';
+import Rect from './Rect';
+import _ from 'lodash';
 
+export default
 class Stroke {
   points: Point[] = [];
   color = new Color(0,0,0,1);
@@ -50,5 +51,3 @@ class Stroke {
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
   }
 }
-
-export = Stroke;

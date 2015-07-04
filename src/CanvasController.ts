@@ -1,12 +1,12 @@
 'use strict';
 
-import Renderer = require('./Renderer');
-import Stroke = require('./Stroke');
-import Point = require('./Point');
-import Color = require('./Color');
-import Transform = require('./Transform');
-import Background = require('./Background');
-import _ = require('lodash');
+import Renderer from './Renderer';
+import Stroke from './Stroke';
+import Point from './Point';
+import Color from './Color';
+import Transform from './Transform';
+import Background from './Background';
+import _ from 'lodash';
 
 function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
@@ -16,6 +16,7 @@ enum InteractionState {
   None, Pressed, Pinching
 }
 
+export default
 class CanvasController {
 
   element: HTMLElement;
@@ -158,5 +159,3 @@ class CanvasController {
     ev.preventDefault();
   }
 }
-
-export = CanvasController;

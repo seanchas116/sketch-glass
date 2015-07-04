@@ -1,9 +1,10 @@
 'use strict';
 
-import Shader = require('./shader');
-import Color = require("./Color");
-import Transform = require("./Transform");
+import Shader from './shader';
+import Color from "./Color";
+import Transform from "./Transform";
 
+export default
 class FillShader extends Shader {
 
   aPosition: number;
@@ -52,5 +53,3 @@ class FillShader extends Shader {
     this.gl.uniformMatrix3fv(this.uSceneTransform, false, transform.toData());
   }
 }
-
-export = FillShader;

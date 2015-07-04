@@ -1,7 +1,8 @@
 'use strict';
 
-import Color = require("./color");
+import Color from "./color";
 
+export default
 class Background {
   color: Color;
 
@@ -13,5 +14,3 @@ class Background {
     return this.color.a !== 0;
   }
 }
-
-export = Background;
