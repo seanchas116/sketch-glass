@@ -9,16 +9,21 @@
   "bundle": "typings/bundle.d.ts",
   "dependencies": {
     "node/node.d.ts": {
-      "ref": "42c8a3b74c05f6887ce21dd63c6234e424f9f8fe"
+      "ref": "066819c65ff561ca109955e0b725c253e243f0a2"
     },
     "rx/rx.d.ts": {
-      "ref": "42c8a3b74c05f6887ce21dd63c6234e424f9f8fe"
+      "ref": "066819c65ff561ca109955e0b725c253e243f0a2"
     },
     "lodash/lodash.d.ts": {
-      "ref": "42c8a3b74c05f6887ce21dd63c6234e424f9f8fe"
+      "ref": "066819c65ff561ca109955e0b725c253e243f0a2"
     },
     "touch-events/touch-events.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "066819c65ff561ca109955e0b725c253e243f0a2"
+    }
+  },
+  "link": {
+    "npm": {
+      "include": true
     }
   }
 }
