@@ -29,7 +29,7 @@ gulp.task("tsc", shell.task([
   "tsc"
 ]));
 
-gulp.task('watch-bundle', ["tsc-watch"], function() {
+gulp.task('watch-bundle', ["tsc"], function() {
   var args = xtend(watchify.args, {
     debug: true
   });
@@ -80,4 +80,4 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('default', ['watch-bundle', 'webserver']);
+gulp.task('default', ["tsc-watch", 'watch-bundle', 'webserver']);
