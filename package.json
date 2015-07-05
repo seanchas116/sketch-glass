@@ -31,6 +31,7 @@
   "private": true,
   "dependencies": {
     "bezier-js": "^1.0.5",
+    "earcut": "^2.0.1",
     "lodash": "^3.10.0",
     "rx": "^2.5.3",
     "setimmediate": "^1.0.2"
