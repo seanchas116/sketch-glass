@@ -1,5 +1,3 @@
-'use strict';
-
 import _ from 'lodash';
 import Point from './Point';
 import Rect from './Rect';

@@ -1,5 +1,3 @@
-'use strict';
-
 import Point from './Point';
 import Curve from './Curve';
 import Color from './Color';

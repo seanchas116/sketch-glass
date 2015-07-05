@@ -1,5 +1,3 @@
-'use strict';
-
 import Point from './Point';
 import Transform from "./Transform";
 

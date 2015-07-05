@@ -1,5 +1,3 @@
-'use strict';
-
 import Shader from './shader';
 import Color from "./Color";
 import Transform from "./Transform";

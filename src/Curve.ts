@@ -1,5 +1,3 @@
-'use strict';
-
 import Point from './Point';
 import Rect from './Rect';
 var Bezier = require('bezier-js');

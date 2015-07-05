@@ -1,5 +1,3 @@
-'use strict';
-
 require("setimmediate");
 import CanvasController from './CanvasController';
 

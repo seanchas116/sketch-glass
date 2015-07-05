@@ -1,5 +1,3 @@
-'use strict';
-
 import Renderer from './Renderer';
 import Stroke from './Stroke';
 import Point from './Point';
