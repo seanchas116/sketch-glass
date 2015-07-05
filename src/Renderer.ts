@@ -81,8 +81,7 @@ class Renderer {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     shader.use();
-    shader.setViewportTransform(this.viewportTransform);
-    shader.setSceneTransform(this.transform);
+    shader.setTransforms(this.viewportTransform, this.transform);
 
     this.strokes.forEach((stroke) => {
       shader.setColor(stroke.color);

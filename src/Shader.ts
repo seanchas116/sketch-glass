@@ -4,9 +4,17 @@ class Shader {
   gl: WebGLRenderingContext;
   program: WebGLProgram;
 
-  constructor(gl: WebGLRenderingContext, vertexShader: string, fragmentShader: string) {
+  get vertexShader(): string {
+    throw new Error("vertex shader not specified");
+  }
+
+  get fragmentShader(): string {
+    throw new Error("fragment shader not specified");
+  }
+
+  constructor(gl: WebGLRenderingContext) {
     this.gl = gl;
-    this._setup(vertexShader, fragmentShader);
+    this._setup();
   }
 
   use() {
@@ -29,12 +37,12 @@ class Shader {
     return shader;
   }
 
-  _setup(vertexShaderScript: string, fragmentShaderScript: string) {
+  _setup() {
     var gl = this.gl;
 
     var program = this.program = gl.createProgram();
-    gl.attachShader(program, this._compile(vertexShaderScript, gl.VERTEX_SHADER));
-    gl.attachShader(program, this._compile(fragmentShaderScript, gl.FRAGMENT_SHADER));
+    gl.attachShader(program, this._compile(this.vertexShader, gl.VERTEX_SHADER));
+    gl.attachShader(program, this._compile(this.fragmentShader, gl.FRAGMENT_SHADER));
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       console.warn("Failed to link shader program");
