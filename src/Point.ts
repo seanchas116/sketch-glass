@@ -85,6 +85,10 @@ class Point {
     return Math.abs(this.x - other.x) < util.EPSILON
       && Math.abs(this.y - other.y) < util.EPSILON;
   }
+
+  static get zero() {
+    return new Point(0, 0);
+  }
 }
 
 export = Point;
