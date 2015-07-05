@@ -52,7 +52,7 @@ gulp.task('watch-bundle', ["tsc-watch"], function() {
 
 gulp.task('release-bundle', ["tsc"], function() {
   return browserify('./build/index.js')
-    .transform("bebelify")
+    .transform("babelify")
     .transform('debowerify')
     .bundle()
     .pipe(source('bundle.js'))
