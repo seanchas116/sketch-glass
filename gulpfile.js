@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var gutil = require('gutil');
 var plumber = require('gulp-plumber');
+var shell = require("gulp-shell");
 var notify = require('gulp-notify');
 var uglify = require('gulp-uglify');
 var source = require('vinyl-source-stream');
@@ -20,7 +21,15 @@ function notifyError () {
   });
 }
 
-gulp.task('watch-bundle', function() {
+gulp.task("tsc-watch", shell.task([
+  "tsc -w"
+]));
+
+gulp.task("tsc", shell.task([
+  "tsc"
+]));
+
+gulp.task('watch-bundle', ["tsc-watch"], function() {
   var args = xtend(watchify.args, {
     debug: true
   });
@@ -41,7 +50,7 @@ gulp.task('watch-bundle', function() {
   bundler.on('update', bundle);
 });
 
-gulp.task('release-bundle', function() {
+gulp.task('release-bundle', ["tsc"], function() {
   return browserify('./build/index.js')
     .transform("bebelify")
     .transform('debowerify')
