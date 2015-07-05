@@ -2,7 +2,7 @@
 
 import Point from './Point';
 import Rect from './Rect';
-var Bezier = require('bezier');
+var Bezier = require('bezier-js');
 
 export default
 class Curve {
@@ -10,20 +10,35 @@ class Curve {
   control1: Point;
   control2: Point;
   end: Point;
-  boundingRect: Rect;
 
   constructor(start: Point, control1: Point, control2: Point, end: Point) {
     this.start = start;
     this.control1 = control1;
     this.control2 = control2;
     this.end = end;
-    this.boundingRect = this.calcBoundingRect();
+  }
+
+  midpoint() {
+    var xy = this._bezier().get(0.5);
+    return new Point(xy.x, xy.y);
+  }
+
+  split(t: number) {
+    var beziers = this._bezier().split(t);
+    return [beziers.left, beziers.right].map(Curve._fromBezier);
   }
 
   calcBoundingRect() {
-    var bezier = new Bezier([this.start, this.control1, this.control2, this.end]);
-    var bbox = bezier.bbox();
+    var bbox = this._bezier().bbox();
     return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));
+  }
+
+  _bezier() {
+    return new Bezier([this.start, this.control1, this.control2, this.end]);
+  }
+
+  toString() {
+    return `Curve(${this.start},${this.control1},${this.control2},${this.end})`;
   }
 
   static catmullRom(prev: Point, start: Point, end: Point, next: Point) {
@@ -42,5 +57,10 @@ class Curve {
       c2.mul(2).add(c1).div(3),
       c3.add(c2.mul(4)).add(c1).div(6)
     );
+  }
+
+  static _fromBezier(bezier: any) {
+    var points: Point[] = bezier.points.map((p: any) => new Point(p.x, p.y));
+    return new Curve(points[0], points[1], points[2], points[3]);
   }
 }

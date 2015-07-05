@@ -1,6 +1,6 @@
 'use strict';
 
-import Transform from "./Transform";
+import util from "./util";
 
 export default
 class Point {
@@ -36,12 +36,28 @@ class Point {
     return new Point(-this.y, this.x);
   }
 
+  rotate270() {
+    return new Point(this.y, -this.x);
+  }
+
   normalize() {
     return this.div(this.length);
   }
 
+  midpoint(a: Point) {
+    return this.add(a).mul(0.5);
+  }
+
+  dot(a: Point) {
+    return this.x * a.x  + this.y * a.y;
+  }
+
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  lengthSquare() {
+    return this.length * this.length;
   }
 
   floor() {
@@ -64,5 +80,10 @@ class Point {
 
   equals(other: Point) {
     return this.x === other.x && this.y === other.y;
+  }
+
+  fuzzyEquals(other: Point) {
+    return Math.abs(this.x - other.x) < util.EPSILON
+      && Math.abs(this.y - other.y) < util.EPSILON;
   }
 }
