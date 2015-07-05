@@ -16,24 +16,15 @@ class Stroke {
   color = new Color(0,0,0,1);
   width = 1;
   type = "pen";
-  vertices: Point[] = [];
-  uvCoords: Point[] = [];
-  indices: number[] = [];
   gl: WebGLRenderingContext;
   vertexBuffer: WebGLBuffer;
-  indexBuffer: WebGLBuffer;
-  quadCurves: QuadraticCurve[] = [];
-  _lastQuadControl: Point;
-  _quadCount = 0;
-
-  _prevVertexCount = 0;
-  _prevIndexCount = 0;
-  _prevLastQuadControl: Point;
+  boundingIndexBuffer: WebGLBuffer;
+  _quadCurveLists: QuadraticCurve[][] = [];
 
   constructor(gl: WebGLRenderingContext) {
     this.gl = gl;
     this.vertexBuffer = gl.createBuffer();
-    this.indexBuffer = gl.createBuffer();
+    this.boundingIndexBuffer = gl.createBuffer();
   }
 
   addPoint(point: Point) {
@@ -79,6 +70,44 @@ class Stroke {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, mode);
   }
 
+  _generateVertices() {
+    const vertices: [Point, Point][] = [];
+    let curveCount = 0;
+    const boundingIndices: number[] = [];
+    const convexIndices: number[] = [];
+    const concaveIndices: number[] = [];
+
+    for (const curves of this._quadCurveLists) {
+      for (const curve of curves) {
+        const p1p2 = curve.end.sub(curve.start);
+        const p1c = curve.control.sub(curve.start);
+        const det = p1c.x * p1p2.y - p1p2.x * p1c.y;
+        const isConvex = det > 0;
+        const index = vertices.length;
+
+        if (isConvex) {
+          boundingIndices.push(index, index + 1, index + 2);
+          convexIndices.push(index, index + 1, index + 2);
+        } else {
+          boundingIndices.push(index, index + 2);
+          concaveIndices.push(index, index + 1, index + 2);
+        }
+
+        if (curveCount % 2) {
+          vertices.push([curve.start, new Point(0, 0)]);
+          vertices.push([curve.control, new Point(0.5, 0)]);
+          vertices.push([curve.end, new Point(1, 1)]);
+        } else {
+          vertices.push([curve.end, new Point(0, 0)]);
+          vertices.push([curve.control, new Point(0.5, 0)]);
+          vertices.push([curve.start, new Point(1, 1)]);
+        }
+      }
+    }
+
+    return {boundingIndices, convexIndices, concaveIndices};
+  }
+
   _curveAt(i: number) {
     var prev = this.points[i - 1];
     var start = this.points[i];
@@ -93,142 +122,11 @@ class Stroke {
       .map(toObtuseCurves)
       .reduce((a, x) => a.concat(x));
 
-    this._prevVertexCount = this.vertices.length;
-    this._prevIndexCount = this.indices.length;
-    this._prevLastQuadControl = this._lastQuadControl;
-
-    curves.forEach(this._pushQuadCurve.bind(this));
-  }
-
-  _pushQuadCurve(curve: QuadraticCurve) {
-    var hw = 0.5 * this.width;
-
-    var p1 = curve.start;
-    var p2 = curve.end;
-
-    if (p1.fuzzyEquals(p2)) {
-      return;
-    }
-
-    var c = curve.control;
-
-    var p1p2 = Line.fromTwoPoints(p1, p2);
-    var h = p1p2.signedDistance(c);
-
-    var p1c = Line.fromTwoPoints(p1, c);
-    var cp2 = Line.fromTwoPoints(c, p2);
-
-    var isStart = !this._lastQuadControl;
-
-    var border1 = Line.fromPointAndNormal(p1, p1c.normal.rotate90());
-
-    if (!isStart) {
-      var p1c0 = Line.fromTwoPoints(p1, this._lastQuadControl);
-      border1 = p1c0.bisector(p1c, border1);
-    }
-    var border2 = Line.fromPointAndNormal(p2, cp2.normal.rotate90());
-
-    if (Math.abs(h) < util.EPSILON) {
-      // all points are on single line
-
-      var right = p1p2.translate(-hw);
-      var left = p1p2.translate(hw);
-      var v11 = border1.intersection(right);
-      var v12 = border1.intersection(left);
-      var v21 = border2.intersection(right);
-      var v22 = border2.intersection(left);
-
-      if (!isStart) {
-        this.vertices.splice(-2, 2, v11, v12);
-      }
-
-      this._pushPolygon(
-        [v11, v12, v21, v22],
-        [new Point(10000, 0), new Point(-10000, 0), new Point(10000, 1), new Point(-10000, 1)],
-        [
-          0, 1, 3,
-          0, 3, 2
-        ]
-      );
-    } else {
-      var xy2uv = Transform.fromPoints(p1, c, p2, new Point(0, 0), new Point(0.5, 0), new Point(1, 1));
-
-      if (h > 0) {
-        // control points is in left
-
-        var right = p1p2.translate(-hw);
-        var left1 = p1c.translate(hw);
-        var left2 = cp2.translate(hw);
-
-        var v11 = border1.intersection(right);
-        var v12 = border1.intersection(left1);
-        var vc = left1.intersection(left2);
-        var v21 = border2.intersection(right);
-        var v22 = border2.intersection(left2);
-
-        if (!isStart) {
-          this.vertices.splice(-2, 2, v11, v12);
-        }
-
-        var vertices = [v11, v12, vc, v21, v22];
-
-        this._pushPolygon(
-          vertices,
-          vertices.map(v => v.transform(xy2uv)),
-          [
-            0, 1, 2,
-            0, 2, 4,
-            0, 4, 3
-          ]
-        );
-      } else {
-        // control points is in right
-
-        var left = p1p2.translate(hw);
-        var right1 = p1c.translate(-hw);
-        var right2 = cp2.translate(-hw);
-
-        var v11 = border1.intersection(right1);
-        var v12 = border1.intersection(left);
-        var vc = right1.intersection(right2);
-        var v21 = border2.intersection(right2);
-        var v22 = border2.intersection(left);
-
-        if (!isStart) {
-          this.vertices.splice(-2, 2, v11, v12);
-        }
-
-        var vertices = [v11, v12, vc, v21, v22];
-
-        this._pushPolygon(
-          vertices,
-          vertices.map(v => v.transform(xy2uv)),
-          [
-            0, 1, 4,
-            0, 4, 3,
-            0, 3, 2
-          ]
-        );
-      }
-    }
-
-    this._lastQuadControl = c;
-  }
-
-  _pushPolygon(vertices: Point[], uvCoords: Point[], indices: number[]) {
-    if (vertices.length !== uvCoords.length) {
-      throw new Error("wrong uv coords count");
-    }
-    arrayPush.apply(this.indices, indices.map(n => n + this.vertices.length));
-    arrayPush.apply(this.vertices, vertices);
-    arrayPush.apply(this.uvCoords, uvCoords);
+    this._quadCurveLists.push(curves);
   }
 
   _popCurve() {
-    this.vertices.splice(this._prevVertexCount);
-    this.uvCoords.splice(this._prevVertexCount);
-    this.indices.splice(this._prevIndexCount);
-    this._lastQuadControl = this._prevLastQuadControl;
+    this._quadCurveLists.pop();
   }
 }
 
