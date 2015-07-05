@@ -7,6 +7,7 @@ import Line from "./Line";
 import util from "./util";
 import Transform from "./Transform";
 import _ from 'lodash';
+const earcut = require("earcut");
 
 var arrayPush = Array.prototype.push;
 
@@ -73,7 +74,7 @@ class Stroke {
   _generateVertices() {
     const vertices: [Point, Point][] = [];
     let curveCount = 0;
-    const boundingIndices: number[] = [];
+    const boundingPolygonIndices: number[] = [];
     const convexIndices: number[] = [];
     const concaveIndices: number[] = [];
 
@@ -86,10 +87,10 @@ class Stroke {
         const index = vertices.length;
 
         if (isConvex) {
-          boundingIndices.push(index, index + 1, index + 2);
+          boundingPolygonIndices.push(index, index + 1);
           convexIndices.push(index, index + 1, index + 2);
         } else {
-          boundingIndices.push(index, index + 2);
+          boundingPolygonIndices.push(index);
           concaveIndices.push(index, index + 1, index + 2);
         }
 
@@ -105,7 +106,10 @@ class Stroke {
       }
     }
 
-    return {boundingIndices, convexIndices, concaveIndices};
+    const boundingVertices = boundingPolygonIndices.map(i => vertices[i][0]);
+    const boundingIndices: number[] = earcut(boundingVertices).map((i: number) => boundingPolygonIndices[i]);
+
+    return {vertices, boundingIndices, convexIndices, concaveIndices};
   }
 
   _curveAt(i: number) {
