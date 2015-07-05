@@ -1,5 +1,6 @@
 'use strict';
 
+import Transform from "./Transform";
 import util from "./util";
 
 export default

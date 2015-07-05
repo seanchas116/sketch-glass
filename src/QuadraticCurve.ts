@@ -1,12 +1,10 @@
-/// <reference path="../typings/bundle.d.ts" />
-"use strict";
-
-import Point = require("./Point");
-import Curve = require("./Curve");
-import Line = require("./Line");
-import _ = require("lodash");
+import Point from "./Point";
+import Curve from "./Curve";
+import Line from "./Line";
+import _ from "lodash";
 var Bezier = require("bezier-js");
 
+export default
 class QuadraticCurve {
   start: Point;
   control: Point;
@@ -68,5 +66,3 @@ function cubicToQuadratic(cubicCurve: Curve, torelanceSquare: number): Quadratic
     .map(c => cubicToQuadratic(c, torelanceSquare))
     .reduce((a, b) => a.concat(b));
 }
-
-export = QuadraticCurve;

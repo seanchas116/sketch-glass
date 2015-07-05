@@ -1,8 +1,8 @@
-/// <reference path="../typings/bundle.d.ts" />
 "use strict";
 
-import Point = require("./Point");
+import Point from "./Point";
 
+export default
 class Line {
   // ax + by = c
   a: number;
@@ -85,5 +85,3 @@ class Line {
     return this.fromPointAndNormal(p1, n);
   }
 }
-
-export = Line;
