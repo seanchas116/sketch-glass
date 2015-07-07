@@ -39,7 +39,7 @@ class Renderer {
       console.warn("OES_standard_derivatives not supported");
     }
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     this.shader = new FillShader(gl);
 
