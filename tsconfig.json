@@ -27,6 +27,7 @@
         "./src/common/util.ts",
         "./src/controller/CanvasController.ts",
         "./src/index.ts",
+        "./src/model/Stroke.ts",
         "./src/renderer/Background.ts",
         "./src/renderer/FillShader.ts",
         "./src/renderer/Model.ts",
