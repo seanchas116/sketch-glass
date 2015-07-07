@@ -8,21 +8,21 @@ class Curve {
   }
 
   midpoint() {
-    var xy = this._bezier().get(0.5);
+    var xy = this.bezier().get(0.5);
     return new Point(xy.x, xy.y);
   }
 
   split(t: number) {
-    var beziers = this._bezier().split(t);
+    var beziers = this.bezier().split(t);
     return [beziers.left, beziers.right].map(Curve._fromBezier);
   }
 
   calcBoundingRect() {
-    var bbox = this._bezier().bbox();
+    var bbox = this.bezier().bbox();
     return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));
   }
 
-  _bezier() {
+  private bezier() {
     return new Bezier([this.start, this.control1, this.control2, this.end]);
   }
 

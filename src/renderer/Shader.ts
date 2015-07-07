@@ -36,7 +36,7 @@ class Shader {
   }
 
   constructor(public gl: WebGLRenderingContext) {
-    this._setup();
+    this.setup();
 
     this.aPosition = gl.getAttribLocation(this.program, 'aPosition');
     this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord');
@@ -60,7 +60,7 @@ class Shader {
     this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
   }
 
-  _compile(script: string, type: number) {
+  private compile(script: string, type: number) {
     var gl = this.gl;
 
     var shader = gl.createShader(type);
@@ -76,12 +76,12 @@ class Shader {
     return shader;
   }
 
-  _setup() {
+  private setup() {
     var gl = this.gl;
 
     var program = this.program = gl.createProgram();
-    gl.attachShader(program, this._compile(this.vertexShader, gl.VERTEX_SHADER));
-    gl.attachShader(program, this._compile(this.fragmentShader, gl.FRAGMENT_SHADER));
+    gl.attachShader(program, this.compile(this.vertexShader, gl.VERTEX_SHADER));
+    gl.attachShader(program, this.compile(this.fragmentShader, gl.FRAGMENT_SHADER));
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       console.warn("Failed to link shader program");

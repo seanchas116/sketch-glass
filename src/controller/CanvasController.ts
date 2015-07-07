@@ -50,13 +50,13 @@ class CanvasController {
     elem.addEventListener('wheel', this.onWheel.bind(this));
   }
 
-  pinchStart(points: Point[]) {
+  private pinchStart(points: Point[]) {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.transform;
   }
 
-  pinchMove(points: Point[]) {
+  private pinchMove(points: Point[]) {
     if (this.interactionState !== InteractionState.Pinching) {
       this.pinchStart(points);
     }
@@ -75,11 +75,11 @@ class CanvasController {
     this.renderer.update();
   }
 
-  pinchEnd() {
+  private pinchEnd() {
     this.interactionState = InteractionState.None;
   }
 
-  pressStart(pos: Point) {
+  private pressStart(pos: Point) {
     this.interactionState = InteractionState.Pressed;
 
     pos = pos.transform(this.transform.invert());
@@ -92,7 +92,7 @@ class CanvasController {
     this.renderer.update(true);
   }
 
-  pressMove(pos: Point) {
+  private pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.transform.invert());
       this.currentStroke.addPoint(pos);
@@ -100,31 +100,31 @@ class CanvasController {
     }
   }
 
-  pressEnd() {
+  private pressEnd() {
     if (this.interactionState === InteractionState.Pressed) {
       this.interactionState = InteractionState.None;
     }
   }
 
-  updateTransform(transform: Transform) {
+  private updateTransform(transform: Transform) {
     this.transform = transform;
     this.renderer.transform = transform;
   }
 
-  onMouseMove(ev: MouseEvent) {
+  private onMouseMove(ev: MouseEvent) {
     //console.log(`mouse move at ${ev.clientX}, ${ev.clientY}`);
     this.pressMove(new Point(ev.clientX, ev.clientY));
   }
-  onMouseDown(ev: MouseEvent) {
+  private onMouseDown(ev: MouseEvent) {
     //console.log(`mouse down at ${ev.clientX}, ${ev.clientY}`);
     this.pressStart(new Point(ev.clientX, ev.clientY));
   }
-  onMouseUp(ev: MouseEvent) {
+  private onMouseUp(ev: MouseEvent) {
     //console.log(`mouse up at ${ev.clientX}, ${ev.clientY}`);
     this.pressEnd();
   }
 
-  onTouchMove(ev: TouchEvent) {
+  private onTouchMove(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       var touch = ev.touches[0];
       this.pressMove(touchPoint(touch));
@@ -134,7 +134,7 @@ class CanvasController {
     }
     ev.preventDefault();
   }
-  onTouchStart(ev: TouchEvent) {
+  private onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       var touch = ev.touches[0];
       this.pressStart(touchPoint(touch));
@@ -144,13 +144,13 @@ class CanvasController {
     }
     ev.preventDefault();
   }
-  onTouchEnd(ev: TouchEvent) {
+  private onTouchEnd(ev: TouchEvent) {
     this.pressEnd();
     this.pinchEnd();
     ev.preventDefault();
   }
 
-  onWheel(ev: WheelEvent) {
+  private onWheel(ev: WheelEvent) {
     var transform = this.transform.translate(new Point(-ev.deltaX, -ev.deltaY));
     this.updateTransform(transform);
     this.renderer.update();
