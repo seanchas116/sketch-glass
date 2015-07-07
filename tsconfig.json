@@ -29,6 +29,7 @@
         "./src/index.ts",
         "./src/renderer/Background.ts",
         "./src/renderer/FillShader.ts",
+        "./src/renderer/Model.ts",
         "./src/renderer/Renderer.ts",
         "./src/renderer/Shader.ts",
         "./src/renderer/Stroke.ts",
