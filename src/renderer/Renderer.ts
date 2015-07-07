@@ -3,7 +3,7 @@ import Point from '../common/Point';
 import Rect from '../common/Rect';
 import Transform from '../common/Transform';
 import Stroke from '../model/Stroke';
-import Background from "./Background";
+import Background from "../common/Background";
 import FillShader from "./FillShader";
 import StrokeWeaver from "./StrokeWeaver";
 

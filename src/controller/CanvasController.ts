@@ -3,7 +3,7 @@ import Stroke from '../model/Stroke';
 import Point from '../common/Point';
 import Color from '../common/Color';
 import Transform from '../common/Transform';
-import Background from '../renderer/Background';
+import Background from '../common/Background';
 import _ from 'lodash';
 
 function touchPoint(touch: Touch) {
