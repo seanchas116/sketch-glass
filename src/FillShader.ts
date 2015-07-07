@@ -9,7 +9,9 @@ class FillShader extends Shader {
   aUVCoord: number;
   uTransform: WebGLUniformLocation;
   uColor: WebGLUniformLocation;
-  uHalfWidth: WebGLUniformLocation;
+  uDisplayHalfWidth: WebGLUniformLocation;
+  private width = 0;
+  private transform = Transform.identity();
 
   get vertexShader() {
     return `
@@ -28,6 +30,7 @@ class FillShader extends Shader {
   get fragmentShader() {
     return `
       uniform lowp vec4 uColor;
+      uniform lowp float uDisplayHalfWidth;
       void main(void) {
         gl_FragColor = uColor;
       }
@@ -42,6 +45,7 @@ class FillShader extends Shader {
     this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord');
     this.uTransform = gl.getUniformLocation(this.program, 'uTransform');
     this.uColor = gl.getUniformLocation(this.program, 'uColor');
+    this.uDisplayHalfWidth = gl.getUniformLocation(this.program, 'uDisplayHalfWidth');
 
     gl.enableVertexAttribArray(this.aPosition);
     gl.enableVertexAttribArray(this.aUVCoord);
@@ -52,11 +56,17 @@ class FillShader extends Shader {
   }
 
   setWidth(width: number) {
-    this.gl.uniform1f(this.uHalfWidth, width * 0.5);
+    this.width = width;
+    this.updateWidth();
   }
 
   setTransforms(viewportTransform: Transform, sceneTransform: Transform) {
-    var transform = sceneTransform.merge(viewportTransform);
+    var transform = this.transform = sceneTransform.merge(viewportTransform);
     this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
+    this.updateWidth();
+  }
+
+  private updateWidth() {
+    this.gl.uniform1f(this.uDisplayHalfWidth, this.width * this.transform.m11 * 0.5);
   }
 }
