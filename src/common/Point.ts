@@ -1,5 +1,5 @@
 import Transform from "./Transform";
-import util from "./util";
+import {FLOAT_EPSILON} from "./util";
 
 export default
 class Point {
@@ -82,7 +82,7 @@ class Point {
   }
 
   fuzzyEquals(other: Point) {
-    return Math.abs(this.x - other.x) < util.EPSILON
-      && Math.abs(this.y - other.y) < util.EPSILON;
+    return Math.abs(this.x - other.x) < FLOAT_EPSILON
+      && Math.abs(this.y - other.y) < FLOAT_EPSILON;
   }
 }
