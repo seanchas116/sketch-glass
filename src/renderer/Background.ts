@@ -2,10 +2,8 @@ import Color from "../common/color";
 
 export default
 class Background {
-  color: Color;
 
-  constructor(color: Color) {
-    this.color = color;
+  constructor(public color: Color) {
   }
 
   get isOpaque() {

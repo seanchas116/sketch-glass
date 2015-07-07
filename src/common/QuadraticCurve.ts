@@ -6,14 +6,7 @@ var Bezier = require("bezier-js");
 
 export default
 class QuadraticCurve {
-  start: Point;
-  control: Point;
-  end: Point;
-
-  constructor(start: Point, control: Point, end: Point) {
-    this.start = start;
-    this.control = control;
-    this.end = end;
+  constructor(public start: Point, public control: Point, public end: Point) {
   }
 
   midpoint() {

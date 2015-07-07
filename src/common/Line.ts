@@ -2,10 +2,6 @@ import Point from "./Point";
 
 export default
 class Line {
-  // ax + by = c
-  a: number;
-  b: number;
-  c: number;
 
   // normal vector directs toward left
   get normal() {
@@ -15,10 +11,8 @@ class Line {
     return this.normal.rotate270();
   }
 
-  constructor(a: number, b: number, c: number) {
-    this.a = a;
-    this.b = b;
-    this.c = c;
+  // ax + by = c
+  constructor(public a: number, public b: number, public c: number) {
   }
 
   intersection(other: Line, fallback?: Point) {

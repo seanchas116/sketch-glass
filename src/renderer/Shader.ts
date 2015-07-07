@@ -1,7 +1,6 @@
 export default
 class Shader {
 
-  gl: WebGLRenderingContext;
   program: WebGLProgram;
 
   get vertexShader(): string {
@@ -12,8 +11,7 @@ class Shader {
     throw new Error("fragment shader not specified");
   }
 
-  constructor(gl: WebGLRenderingContext) {
-    this.gl = gl;
+  constructor(public gl: WebGLRenderingContext) {
     this._setup();
   }
 

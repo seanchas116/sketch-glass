@@ -4,16 +4,7 @@ var Bezier = require('bezier-js');
 
 export default
 class Curve {
-  start: Point;
-  control1: Point;
-  control2: Point;
-  end: Point;
-
-  constructor(start: Point, control1: Point, control2: Point, end: Point) {
-    this.start = start;
-    this.control1 = control1;
-    this.control2 = control2;
-    this.end = end;
+  constructor(public start: Point, public control1: Point, public control2: Point, public end: Point) {
   }
 
   midpoint() {

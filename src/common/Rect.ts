@@ -3,12 +3,8 @@ import Transform from "./Transform";
 
 export default
 class Rect {
-  min: Point;
-  max: Point;
 
-  constructor(min: Point, max: Point) {
-    this.min = min;
-    this.max = max;
+  constructor(public min: Point, public max: Point) {
   }
 
   get x() {
