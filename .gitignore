@@ -38,3 +38,4 @@ npm-debug.log
 /build
 /dist/bundle.js
 /dist/bundle.js.map
+/.publish
