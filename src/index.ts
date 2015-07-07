@@ -1,5 +1,5 @@
 require("setimmediate");
-import CanvasController from './CanvasController';
+import CanvasController from './controller/CanvasController';
 
 document.addEventListener('DOMContentLoaded', () => {
   var controller = new CanvasController();

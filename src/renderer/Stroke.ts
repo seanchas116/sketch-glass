@@ -1,7 +1,7 @@
-import Point from './Point';
-import Curve from './Curve';
-import Color from './Color';
-import Rect from './Rect';
+import Point from '../common/Point';
+import Curve from '../common/Curve';
+import Color from '../common/Color';
+import Rect from '../common/Rect';
 import _ from 'lodash';
 
 export default

@@ -1,6 +1,6 @@
 import Shader from './shader';
-import Color from "./Color";
-import Transform from "./Transform";
+import Color from "../common/Color";
+import Transform from "../common/Transform";
 
 export default
 class FillShader extends Shader {
