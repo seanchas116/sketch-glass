@@ -63,5 +63,5 @@ declare module Rx {
 }
 
 declare module "rx" {
-    export = Rx
+    export default Rx;
 }
