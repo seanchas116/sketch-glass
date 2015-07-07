@@ -17,4 +17,13 @@ class Model {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STREAM_DRAW);
   }
+
+  draw(shader: Shader) {
+    const gl = this.gl;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+    gl.vertexAttribPointer(shader.aPosition, 2, gl.FLOAT, false, 16, 0);
+    gl.vertexAttribPointer(shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertices.length);
+  }
 }

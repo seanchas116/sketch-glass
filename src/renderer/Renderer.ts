@@ -6,6 +6,8 @@ import Stroke from '../model/Stroke';
 import Background from "../common/Background";
 import FillShader from "./FillShader";
 import StrokeWeaver from "./StrokeWeaver";
+import Model from "./Model";
+import Shader from "./Shader";
 
 var TILE_SIZE = 128;
 
@@ -27,8 +29,12 @@ class Renderer {
   gl: WebGLRenderingContext;
   viewportTransform: Transform;
   shader: FillShader;
+  backgroundModel: Model;
+  backgroundShader: Shader;
 
   constructor(opts: RendererOptions) {
+    this.background = opts.background;
+
     // TODO: check why explicit cast is required
     var gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {
       alpha: false,
@@ -44,9 +50,18 @@ class Renderer {
 
     this.shader = new FillShader(gl);
 
-    this.background = opts.background;
-    var backColor = this.background.color;
-    gl.clearColor(backColor.r, backColor.g, backColor.b, backColor.a);
+    this.backgroundShader = new Shader(gl);
+    this.backgroundShader.setColor(this.background.color);
+
+    this.backgroundModel = new Model(gl, [
+      [new Point(-1, -1), new Point(0, 0)],
+      [new Point(-1, 1), new Point(0, 0)],
+      [new Point(1, -1), new Point(0, 0)],
+      [new Point(1, 1), new Point(0, 0)],
+    ]);
+    this.backgroundModel.updateBuffer();
+
+    gl.clearColor(0, 0, 0, 0);
 
     this.element.className = 'canvas-area__renderer';
     window.addEventListener('resize', this.onResize.bind(this));
@@ -72,10 +87,22 @@ class Renderer {
     }
   }
 
+  renderBackground() {
+    const gl = this.gl;
+    const shader = this.backgroundShader;
+    const model = this.backgroundModel;
+
+    shader.use();
+    shader.setTransforms(Transform.identity(), Transform.identity());
+    model.draw(shader);
+  }
+
   render() {
     var gl = this.gl;
     var shader = this.shader;
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    this.renderBackground();
 
     shader.use();
     shader.setTransforms(this.viewportTransform, this.transform);
@@ -85,10 +112,7 @@ class Renderer {
       const model = weaver.model;
       shader.setColor(stroke.color);
       shader.setDisplayWidth(stroke.width * this.transform.m11);
-      gl.bindBuffer(gl.ARRAY_BUFFER, model.buffer);
-      gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 16, 0);
-      gl.vertexAttribPointer(this.shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.vertices.length);
+      model.draw(shader);
     });
   }
 
