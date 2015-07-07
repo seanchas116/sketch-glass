@@ -9,9 +9,9 @@ class FillShader extends Shader {
   aUVCoord: number;
   uTransform: WebGLUniformLocation;
   uColor: WebGLUniformLocation;
-  uDisplayHalfWidth: WebGLUniformLocation;
+  uAntialiasEdge: WebGLUniformLocation;
   private width = 0;
-  private transform = Transform.identity();
+  private sceneTransform = Transform.identity();
 
   get vertexShader() {
     return `
@@ -29,10 +29,14 @@ class FillShader extends Shader {
 
   get fragmentShader() {
     return `
-      uniform lowp vec4 uColor;
-      uniform lowp float uDisplayHalfWidth;
+      precision mediump float;
+      uniform vec4 uColor;
+      uniform float uAntialiasEdge;
+      varying highp vec2 vUVCoord;
       void main(void) {
-        gl_FragColor = uColor;
+        float dist = length(vUVCoord);
+        float alpha = 1.0 - smoothstep(uAntialiasEdge, 1.0, dist);
+        gl_FragColor = uColor * alpha;
       }
     `;
   }
@@ -45,7 +49,7 @@ class FillShader extends Shader {
     this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord');
     this.uTransform = gl.getUniformLocation(this.program, 'uTransform');
     this.uColor = gl.getUniformLocation(this.program, 'uColor');
-    this.uDisplayHalfWidth = gl.getUniformLocation(this.program, 'uDisplayHalfWidth');
+    this.uAntialiasEdge = gl.getUniformLocation(this.program, 'uAntialiasEdge');
 
     gl.enableVertexAttribArray(this.aPosition);
     gl.enableVertexAttribArray(this.aUVCoord);
@@ -57,16 +61,21 @@ class FillShader extends Shader {
 
   setWidth(width: number) {
     this.width = width;
-    this.updateWidth();
+    this.updateRadius();
   }
 
   setTransforms(viewportTransform: Transform, sceneTransform: Transform) {
-    var transform = this.transform = sceneTransform.merge(viewportTransform);
+    this.sceneTransform = sceneTransform;
+    var transform = sceneTransform.merge(viewportTransform);
     this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
-    this.updateWidth();
+    this.updateRadius();
   }
 
-  private updateWidth() {
-    this.gl.uniform1f(this.uDisplayHalfWidth, this.width * this.transform.m11 * 0.5);
+  private updateRadius() {
+    const radius = this.width * this.sceneTransform.m11 * 0.5;
+    const edge = (radius - 1) / radius;
+    console.log(`radius: ${radius}`);
+    console.log(`edge: ${edge}`);
+    this.gl.uniform1f(this.uAntialiasEdge, edge);
   }
 }
