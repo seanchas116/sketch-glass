@@ -1,5 +1,5 @@
 import Renderer from '../renderer/Renderer';
-import Stroke from '../renderer/Stroke';
+import Stroke from '../model/Stroke';
 import Point from '../common/Point';
 import Color from '../common/Color';
 import Transform from '../common/Transform';
@@ -83,7 +83,7 @@ class CanvasController {
     this.interactionState = InteractionState.Pressed;
 
     pos = pos.transform(this.transform.invert());
-    var stroke = this.currentStroke = this.renderer.newStroke();
+    var stroke = this.currentStroke = new Stroke();
     stroke.width = this.strokeWidth;
     stroke.color = this.strokeColor;
     stroke.addPoint(pos);

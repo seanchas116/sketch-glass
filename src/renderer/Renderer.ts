@@ -2,9 +2,10 @@ import _ from 'lodash';
 import Point from '../common/Point';
 import Rect from '../common/Rect';
 import Transform from '../common/Transform';
-import Stroke from './Stroke';
+import Stroke from '../model/Stroke';
 import Background from "./Background";
 import FillShader from "./FillShader";
+import StrokeWeaver from "./StrokeWeaver";
 
 var TILE_SIZE = 128;
 
@@ -16,7 +17,7 @@ export default
 class Renderer {
 
   element = document.createElement('canvas');
-  strokes: Stroke[] = [];
+  strokeWeavers: StrokeWeaver[] = [];
   isUpdateQueued = false;
   devicePixelRatio = 1;
   width = 0;
@@ -53,11 +54,7 @@ class Renderer {
   }
 
   addStroke(stroke: Stroke) {
-    this.strokes.push(stroke);
-  }
-
-  newStroke() {
-    return new Stroke(this.gl);
+    this.strokeWeavers.push(new StrokeWeaver(this.gl, stroke));
   }
 
   update(immediate = false) {
@@ -83,13 +80,15 @@ class Renderer {
     shader.use();
     shader.setTransforms(this.viewportTransform, this.transform);
 
-    this.strokes.forEach((stroke) => {
+    this.strokeWeavers.forEach((weaver) => {
+      const stroke = weaver.stroke;
+      const model = weaver.model;
       shader.setColor(stroke.color);
       shader.setWidth(stroke.width * this.transform.m11);
-      gl.bindBuffer(gl.ARRAY_BUFFER, stroke.buffer);
+      gl.bindBuffer(gl.ARRAY_BUFFER, model.buffer);
       gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 16, 0);
       gl.vertexAttribPointer(this.shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, stroke.polygon.length);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.vertices.length);
     });
   }
 

@@ -33,7 +33,7 @@
         "./src/renderer/Model.ts",
         "./src/renderer/Renderer.ts",
         "./src/renderer/Shader.ts",
-        "./src/renderer/Stroke.ts",
+        "./src/renderer/StrokeWeaver.ts",
         "./typings/bundle.d.ts",
         "./typings/lodash/lodash.d.ts",
         "./typings/node/node.d.ts",

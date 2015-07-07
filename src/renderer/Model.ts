@@ -1,13 +1,11 @@
 import Shader from "./Shader";
 import Point from "../common/Point";
 
-export
+export default
 class Model {
-  gl: WebGLRenderingContext;
   buffer: WebGLBuffer;
 
-  constructor(public shader: Shader, public vertices: [Point, Point][]) {
-    const gl = this.gl = shader.gl;
+  constructor(public gl: WebGLRenderingContext, public vertices: [Point, Point][]) {
     this.buffer = gl.createBuffer();
   }
 
