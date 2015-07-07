@@ -10,7 +10,7 @@ class Stroke {
   color = new Color(0,0,0,1);
   width = 1;
   type = "pen";
-  polygon: Point[] = [];
+  polygon: [Point, Point][] = [];
   gl: WebGLRenderingContext;
   buffer: WebGLBuffer;
 
@@ -27,19 +27,18 @@ class Stroke {
       var normal = point.sub(last).normalize().rotate90();
       var toLeft = normal.mul(this.width / 2);
       var toRight = normal.mul(-this.width / 2);
-      this.polygon.push(last.add(toLeft));
-      this.polygon.push(last.add(toRight));
-      this.polygon.push(point.add(toLeft));
-      this.polygon.push(point.add(toRight));
+      this.polygon.push([last.add(toLeft), new Point(-1, 0)]);
+      this.polygon.push([last.add(toRight), new Point(1, 0)]);
+      this.polygon.push([point.add(toLeft), new Point(-1, 0)]);
+      this.polygon.push([point.add(toRight), new Point(1, 0)]);
     }
 
     this._updatePolygon();
   }
 
   _updatePolygon() {
-    const values = this.polygon.map(p => [p.x, p.y, 0, 0])
+    const values = this.polygon.map(([xy, uv]) => [xy.x, xy.y, uv.x, uv.y])
       .reduce((a, b) => a.concat(b), []);
-
     const data = new Float32Array(values);
 
     const gl = this.gl;
