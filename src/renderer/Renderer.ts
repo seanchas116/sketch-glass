@@ -9,7 +9,7 @@ import StrokeWeaver from "./StrokeWeaver";
 import Model from "./Model";
 import Shader from "./Shader";
 
-var TILE_SIZE = 128;
+const TILE_SIZE = 128;
 
 interface RendererOptions {
   background: Background;
@@ -36,7 +36,7 @@ class Renderer {
     this.background = opts.background;
 
     // TODO: check why explicit cast is required
-    var gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {
+    const gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {
       alpha: false,
       antialias: false,
       depth: false,
@@ -75,7 +75,7 @@ class Renderer {
   update(immediate = false) {
     if (!this.isUpdateQueued) {
       this.isUpdateQueued = true;
-      var callback = () => {
+      const callback = () => {
         this.render();
         this.isUpdateQueued = false;
       };
@@ -98,8 +98,8 @@ class Renderer {
   }
 
   render() {
-    var gl = this.gl;
-    var shader = this.shader;
+    const gl = this.gl;
+    const shader = this.shader;
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     this.renderBackground();
@@ -117,9 +117,9 @@ class Renderer {
   }
 
   onResize() {
-    var width = this.width = window.innerWidth;
-    var height = this.height = window.innerHeight;
-    var dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
+    const width = this.width = window.innerWidth;
+    const height = this.height = window.innerHeight;
+    const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
     this.viewportTransform = Transform.scale(2 / width, 2 / height)
       .translate(new Point(-1, -1))

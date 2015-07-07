@@ -1,6 +1,6 @@
 import Point from './Point';
 import Rect from './Rect';
-var Bezier = require('bezier-js');
+const Bezier = require('bezier-js');
 
 export default
 class Curve {
@@ -8,17 +8,17 @@ class Curve {
   }
 
   midpoint() {
-    var xy = this.bezier().get(0.5);
+    const xy = this.bezier().get(0.5);
     return new Point(xy.x, xy.y);
   }
 
   split(t: number) {
-    var beziers = this.bezier().split(t);
+    const beziers = this.bezier().split(t);
     return [beziers.left, beziers.right].map(Curve._fromBezier);
   }
 
   calcBoundingRect() {
-    var bbox = this.bezier().bbox();
+    const bbox = this.bezier().bbox();
     return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));
   }
 
@@ -49,7 +49,7 @@ class Curve {
   }
 
   static _fromBezier(bezier: any) {
-    var points: Point[] = bezier.points.map((p: any) => new Point(p.x, p.y));
+    const points: Point[] = bezier.points.map((p: any) => new Point(p.x, p.y));
     return new Curve(points[0], points[1], points[2], points[3]);
   }
 }

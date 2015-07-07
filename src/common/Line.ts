@@ -16,14 +16,14 @@ class Line {
   }
 
   intersection(other: Line, fallback?: Point) {
-    var a1 = this.a;
-    var b1 = this.b;
-    var c1 = this.c;
-    var a2 = other.a;
-    var b2 = other.b;
-    var c2 = other.c;
+    const a1 = this.a;
+    const b1 = this.b;
+    const c1 = this.c;
+    const a2 = other.a;
+    const b2 = other.b;
+    const c2 = other.c;
 
-    var det = a1 * b2 - b1 * a2;
+    const det = a1 * b2 - b1 * a2;
     if (det === 0) {
       if (fallback === undefined) {
         console.warn(`no intersection point for ${this} and ${other}`);
@@ -46,7 +46,7 @@ class Line {
   }
 
   bisector(other: Line, fallback?: Line) {
-    var i = this.intersection(other, null);
+    const i = this.intersection(other, null);
     if (!i) {
       if (fallback === undefined) {
         console.warn(`no bisector line for ${this} and ${other}`);
@@ -54,8 +54,8 @@ class Line {
       }
       return fallback;
     }
-    var n = this.normal.add(other.normal).normalize();
-    var d = n.dot(i);
+    const n = this.normal.add(other.normal).normalize();
+    const d = n.dot(i);
     return new Line(n.x, n.y, d);
   }
 
@@ -73,7 +73,7 @@ class Line {
   }
 
   static fromTwoPoints(p1: Point, p2: Point) {
-    var n = p2.sub(p1).normalize().rotate90();
+    const n = p2.sub(p1).normalize().rotate90();
     return this.fromPointAndNormal(p1, n);
   }
 }

@@ -56,14 +56,14 @@ class Shader {
   }
 
   setTransforms(viewportTransform: Transform, sceneTransform: Transform) {
-    var transform = sceneTransform.merge(viewportTransform);
+    const transform = sceneTransform.merge(viewportTransform);
     this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
   }
 
   private compile(script: string, type: number) {
-    var gl = this.gl;
+    const gl = this.gl;
 
-    var shader = gl.createShader(type);
+    const shader = gl.createShader(type);
     gl.shaderSource(shader, script);
     gl.compileShader(shader);
 
@@ -77,9 +77,9 @@ class Shader {
   }
 
   private setup() {
-    var gl = this.gl;
+    const gl = this.gl;
 
-    var program = this.program = gl.createProgram();
+    const program = this.program = gl.createProgram();
     gl.attachShader(program, this.compile(this.vertexShader, gl.VERTEX_SHADER));
     gl.attachShader(program, this.compile(this.fragmentShader, gl.FRAGMENT_SHADER));
     gl.linkProgram(program);

@@ -31,10 +31,10 @@ class StrokeWeaver {
     const vertices = this.model.vertices;
 
     if (points.length >= 2) {
-      var last = points[points.length - 2];
-      var normal = point.sub(last).normalize().rotate90();
-      var toLeft = normal.mul(width / 2);
-      var toRight = normal.mul(-width / 2);
+      const last = points[points.length - 2];
+      const normal = point.sub(last).normalize().rotate90();
+      const toLeft = normal.mul(width / 2);
+      const toRight = normal.mul(-width / 2);
       vertices.push([last.add(toLeft), new Point(-1, 0)]);
       vertices.push([last.add(toRight), new Point(1, 0)]);
       vertices.push([point.add(toLeft), new Point(-1, 0)]);

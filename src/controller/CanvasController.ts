@@ -35,7 +35,7 @@ class CanvasController {
   constructor() {
     this.renderer = new Renderer({background: new Background(new Color(255,255,255,1))});
 
-    var elem = this.element = document.createElement('div');
+    const elem = this.element = document.createElement('div');
     elem.className = 'canvas-area';
     elem.appendChild(this.renderer.element);
 
@@ -61,16 +61,16 @@ class CanvasController {
       this.pinchStart(points);
     }
 
-    var scale = points[0].sub(points[1]).length / this.pinchStartPoints[0].sub(this.pinchStartPoints[1]).length;
+    const scale = points[0].sub(points[1]).length / this.pinchStartPoints[0].sub(this.pinchStartPoints[1]).length;
 
-    var centerStart = this.pinchStartPoints[0].add(this.pinchStartPoints[1]).mul(0.5);
-    var center = points[0].add(points[1]).mul(0.5);
+    const centerStart = this.pinchStartPoints[0].add(this.pinchStartPoints[1]).mul(0.5);
+    const center = points[0].add(points[1]).mul(0.5);
 
-    var diff = center.sub(centerStart.mul(scale));
+    const diff = center.sub(centerStart.mul(scale));
 
-    var transform = Transform.scale(scale, scale).merge(Transform.translation(diff));
+    let transform = Transform.scale(scale, scale).merge(Transform.translation(diff));
 
-    var transform = this.initialTransform.merge(transform);
+    transform = this.initialTransform.merge(transform);
     this.updateTransform(transform);
     this.renderer.update();
   }
@@ -83,7 +83,7 @@ class CanvasController {
     this.interactionState = InteractionState.Pressed;
 
     pos = pos.transform(this.transform.invert());
-    var stroke = this.currentStroke = new Stroke();
+    const stroke = this.currentStroke = new Stroke();
     stroke.width = this.strokeWidth;
     stroke.color = this.strokeColor;
     stroke.addPoint(pos);
@@ -126,7 +126,7 @@ class CanvasController {
 
   private onTouchMove(ev: TouchEvent) {
     if (ev.touches.length === 1) {
-      var touch = ev.touches[0];
+      const touch = ev.touches[0];
       this.pressMove(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
@@ -136,7 +136,7 @@ class CanvasController {
   }
   private onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
-      var touch = ev.touches[0];
+      const touch = ev.touches[0];
       this.pressStart(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
@@ -151,7 +151,7 @@ class CanvasController {
   }
 
   private onWheel(ev: WheelEvent) {
-    var transform = this.transform.translate(new Point(-ev.deltaX, -ev.deltaY));
+    const transform = this.transform.translate(new Point(-ev.deltaX, -ev.deltaY));
     this.updateTransform(transform);
     this.renderer.update();
     ev.preventDefault();

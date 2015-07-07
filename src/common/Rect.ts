@@ -33,8 +33,8 @@ class Rect {
       return this;
     }
 
-    var min = new Point(Math.min(this.min.x, other.min.x), Math.min(this.min.y, other.min.y));
-    var max = new Point(Math.max(this.max.x, other.max.x), Math.max(this.max.y, other.max.y));
+    const min = new Point(Math.min(this.min.x, other.min.x), Math.min(this.min.y, other.min.y));
+    const max = new Point(Math.max(this.max.x, other.max.x), Math.max(this.max.y, other.max.y));
     return new Rect(min, max);
   }
 
@@ -42,13 +42,13 @@ class Rect {
     if (this.isEmpty || other.isEmpty) {
       return Rect.empty;
     }
-    var min = new Point(Math.max(this.min.x, other.min.x), Math.max(this.min.y, other.min.y));
-    var max = new Point(Math.min(this.max.x, other.max.x), Math.min(this.max.y, other.max.y));
+    const min = new Point(Math.max(this.min.x, other.min.x), Math.max(this.min.y, other.min.y));
+    const max = new Point(Math.min(this.max.x, other.max.x), Math.min(this.max.y, other.max.y));
     return new Rect(min, max);
   }
 
   outset(offset: number) {
-    var diff = new Point(offset, offset);
+    const diff = new Point(offset, offset);
     return new Rect(this.min.sub(diff), this.max.add(diff));
   }
 
@@ -57,8 +57,8 @@ class Rect {
   }
 
   transform(transform: Transform) {
-    var p1 = this.min.transform(transform);
-    var p2 = this.max.transform(transform);
+    const p1 = this.min.transform(transform);
+    const p2 = this.max.transform(transform);
 
     return Rect.fromPoints(p1, p2);
   }
@@ -76,8 +76,8 @@ class Rect {
   }
 
   static fromPoints(p1: Point, p2: Point) {
-    var min = new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
-    var max = new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+    const min = new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+    const max = new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
     return new Rect(min, max);
   }
 

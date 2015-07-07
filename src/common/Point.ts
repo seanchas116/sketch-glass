@@ -64,8 +64,8 @@ class Point {
   }
 
   transform(t: Transform) {
-    var x = t.m11 * this.x + t.m21 * this.y + t.dx;
-    var y = t.m12 * this.x + t.m22 * this.y + t.dy;
+    const x = t.m11 * this.x + t.m21 * this.y + t.dx;
+    const y = t.m12 * this.x + t.m22 * this.y + t.dy;
     return new Point(x, y);
   }
 
