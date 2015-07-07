@@ -84,7 +84,7 @@ class Renderer {
       const stroke = weaver.stroke;
       const model = weaver.model;
       shader.setColor(stroke.color);
-      shader.setWidth(stroke.width * this.transform.m11);
+      shader.setDisplayWidth(stroke.width * this.transform.m11);
       gl.bindBuffer(gl.ARRAY_BUFFER, model.buffer);
       gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 16, 0);
       gl.vertexAttribPointer(this.shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
