@@ -1,7 +1,11 @@
 require("setimmediate");
+require("babelify/polyfill");
 import CanvasController from './controller/CanvasController';
+import LoginViewControler from "./controller/LoginViewController";
 
 document.addEventListener('DOMContentLoaded', () => {
-  const controller = new CanvasController();
-  document.body.appendChild(controller.element);
+  const canvas = new CanvasController();
+  const login = new LoginViewControler();
+  document.body.appendChild(canvas.element);
+  document.body.appendChild(login.element);
 });
