@@ -1,6 +1,6 @@
 
 export default
-class LoginViewController {
+class LoginView {
   element: HTMLElement;
 
   constructor() {

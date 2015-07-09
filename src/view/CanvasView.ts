@@ -15,7 +15,7 @@ enum InteractionState {
 }
 
 export default
-class CanvasController {
+class CanvasView {
 
   element: HTMLElement;
 
