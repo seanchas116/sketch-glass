@@ -16,6 +16,9 @@
     },
     "lodash/lodash.d.ts": {
       "ref": "066819c65ff561ca109955e0b725c253e243f0a2"
+    },
+    "firebase/firebase.d.ts": {
+      "ref": "be03157bace6e6465e63f13073d7b68e8ea1303c"
     }
   },
   "link": {

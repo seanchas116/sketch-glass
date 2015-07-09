@@ -35,6 +35,7 @@
         "./src/renderer/Shader.ts",
         "./src/renderer/StrokeWeaver.ts",
         "./typings/bundle.d.ts",
+        "./typings/firebase/firebase.d.ts",
         "./typings/lodash/lodash.d.ts",
         "./typings/node/node.d.ts",
         "./typings/rx/rx-lite.d.ts",
