@@ -104,7 +104,7 @@ class LoginView {
 
     const authButtons = document.createElement("div");
     applyStyles(authButtons, {
-      paddingTop: "48px",
+      paddingTop: "36px",
     });
 
     const twitterAuthButton = new LoginButtonView("Sign In with Twitter", "#4A90E2");
