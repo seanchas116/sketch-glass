@@ -2,6 +2,27 @@ import * as styles from "./styles";
 import * as colors from "./colors";
 import {applyStyles} from "./util";
 
+class LoginButtonView {
+  element = document.createElement("a");
+
+  constructor(text: string, color: string) {
+    this.element.appendChild(document.createTextNode(text));
+    applyStyles(this.element, styles.boldFont, {
+      width: "300px",
+      height: "36px",
+      lineHeight: "36px",
+      margin: "12px auto",
+      borderRadius: "12px",
+      color: colors.white,
+      backgroundColor: color,
+      display: "block",
+      textAlign: "center",
+      textDecoration: "none",
+    });
+    this.element.href = "#";
+  }
+}
+
 export default
 class LoginView {
   element: HTMLElement;
@@ -80,6 +101,16 @@ class LoginView {
     });
 
     content.appendChild(getStarted);
+
+    const authButtons = document.createElement("div");
+    applyStyles(authButtons, {
+      paddingTop: "48px",
+    });
+
+    const twitterAuthButton = new LoginButtonView("Sign In with Twitter", "#4A90E2");
+    authButtons.appendChild(twitterAuthButton.element);
+
+    content.appendChild(authButtons);
 
     frame.appendChild(header);
     frame.appendChild(content);
