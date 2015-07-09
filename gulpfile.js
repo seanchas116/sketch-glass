@@ -34,8 +34,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
     debug: true
   });
   var bundler = watchify(browserify('./build/index.js', args))
-    .transform("babelify")
-    .transform('debowerify');
+    .transform("babelify");
 
   function bundle () {
     return bundler
@@ -53,7 +52,6 @@ gulp.task('watch-bundle', ["tsc"], function() {
 gulp.task('release-bundle', ["tsc"], function() {
   return browserify('./build/index.js')
     .transform("babelify")
-    .transform('debowerify')
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
