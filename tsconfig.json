@@ -27,6 +27,7 @@
         "./src/common/Transform.ts",
         "./src/common/util.ts",
         "./src/controller/CanvasController.ts",
+        "./src/controller/LoginViewController.ts",
         "./src/index.ts",
         "./src/model/Stroke.ts",
         "./src/renderer/FillShader.ts",
