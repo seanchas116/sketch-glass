@@ -1,7 +1,7 @@
-import Point from '../common/Point';
-import Curve from '../common/Curve';
-import Color from '../common/Color';
-import Rect from '../common/Rect';
+import Point from '../lib/geometry/Point';
+import Curve from '../lib/geometry/Curve';
+import Color from '../lib/geometry/Color';
+import Rect from '../lib/geometry/Rect';
 import _ from 'lodash';
 import Rx from "rx";
 

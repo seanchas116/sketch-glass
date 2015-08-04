@@ -1,9 +1,9 @@
 import Renderer from '../renderer/Renderer';
 import Stroke from '../model/Stroke';
-import Point from '../common/Point';
-import Color from '../common/Color';
-import Transform from '../common/Transform';
-import Background from '../common/Background';
+import Point from '../lib/geometry/Point';
+import Color from '../lib/geometry/Color';
+import Transform from '../lib/geometry/Transform';
+import Background from '../lib/geometry/Background';
 import _ from 'lodash';
 
 function touchPoint(touch: Touch) {

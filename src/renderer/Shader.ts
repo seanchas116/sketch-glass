@@ -1,5 +1,5 @@
-import Color from "../common/Color";
-import Transform from "../common/Transform";
+import Color from "../lib/geometry/Color";
+import Transform from "../lib/geometry/Transform";
 
 export default
 class Shader {

@@ -1,5 +1,5 @@
 import Shader from "./Shader";
-import Point from "../common/Point";
+import Point from "../lib/geometry/Point";
 
 export default
 class Model {
