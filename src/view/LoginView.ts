@@ -12,7 +12,6 @@ class LoginButtonView {
       height: "36px",
       lineHeight: "36px",
       margin: "12px auto",
-      borderRadius: "12px",
       color: colors.white,
       backgroundColor: color,
       display: "block",
@@ -47,7 +46,6 @@ class LoginView {
       top: 0,
       bottom: 0,
       backgroundColor: colors.white,
-      borderRadius: "12px",
     });
 
     root.appendChild(frame);
@@ -55,8 +53,6 @@ class LoginView {
     const header = document.createElement("div");
     applyStyles(header, {
       height: "180px",
-      borderTopLeftRadius: "12px",
-      borderTopRightRadius: "12px",
       backgroundColor: colors.green,
     });
 
