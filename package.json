@@ -21,7 +21,7 @@
     "gulp-uglify": "^1.2.0",
     "gulp-webserver": "^0.9.1",
     "gutil": "^1.6.4",
-    "typescript": "git://github.com/Microsoft/TypeScript.git#4c7b214a69c97eb1746b94712ff9a4c2202e2dca",
+    "typescript": "^1.8.0-dev.20151215",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.3.1",
