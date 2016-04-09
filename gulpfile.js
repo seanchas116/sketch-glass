@@ -34,7 +34,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
     debug: true
   });
   var bundler = watchify(browserify('./build/index.js', args))
-    .transform("babelify");
+    .transform("babelify", {presets: ["es2015"]});
 
   function bundle () {
     return bundler
