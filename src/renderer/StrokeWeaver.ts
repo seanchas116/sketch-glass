@@ -3,8 +3,8 @@ import Point from '../lib/geometry/Point';
 import Curve from '../lib/geometry/Curve';
 import Color from '../lib/geometry/Color';
 import Stroke from "../model/Stroke";
-import _ from 'lodash';
-import Rx from "rx";
+import * as _ from 'lodash';
+import * as Rx from "rx";
 
 export default
 class StrokeWeaver {

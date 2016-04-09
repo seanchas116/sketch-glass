@@ -13,7 +13,7 @@
     },
     "filesGlob": [
         "./src/**/*.ts",
-        "./typings/**/*.ts",
+        "./typings/browser/**/*.ts",
         "!./node_modules/**/*.ts"
     ],
     "files": [
@@ -34,15 +34,15 @@
         "./src/renderer/Shader.ts",
         "./src/renderer/StrokeWeaver.ts",
         "./src/view/CanvasView.ts",
-        "./src/view/LoginView.ts",
         "./src/view/colors.ts",
+        "./src/view/LoginView.ts",
         "./src/view/styles.ts",
         "./src/view/util.ts",
-        "./typings/bundle.d.ts",
-        "./typings/firebase/firebase.d.ts",
-        "./typings/lodash/lodash.d.ts",
-        "./typings/node/node.d.ts",
-        "./typings/rx/rx-lite.d.ts",
-        "./typings/rx/rx.d.ts"
-    ]
+        "./typings/browser/ambient/lodash/index.d.ts",
+        "./typings/browser/ambient/node/index.d.ts",
+        "./typings/browser/ambient/rx/index.d.ts"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }
 }

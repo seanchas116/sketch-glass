@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import Point from '../lib/geometry/Point';
 import Rect from '../lib/geometry/Rect';
 import Transform from '../lib/geometry/Transform';

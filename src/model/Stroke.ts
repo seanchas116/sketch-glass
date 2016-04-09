@@ -2,8 +2,8 @@ import Point from '../lib/geometry/Point';
 import Curve from '../lib/geometry/Curve';
 import Color from '../lib/geometry/Color';
 import Rect from '../lib/geometry/Rect';
-import _ from 'lodash';
-import Rx from "rx";
+import * as _ from 'lodash';
+import * as Rx from "rx";
 
 export default
 class Stroke {

@@ -1,7 +1,7 @@
 import Point from "./Point";
 import Curve from "./Curve";
 import Line from "./Line";
-import _ from "lodash";
+import * as  _ from "lodash";
 const Bezier = require("bezier-js");
 
 export default

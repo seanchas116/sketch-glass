@@ -4,7 +4,7 @@ import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
