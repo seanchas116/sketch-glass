@@ -51,7 +51,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
 
 gulp.task('release-bundle', ["tsc"], function() {
   return browserify('./build/index.js')
-    .transform("babelify")
+    .transform("babelify", {presets: ["es2015"]})
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
