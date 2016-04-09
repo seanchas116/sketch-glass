@@ -29,7 +29,7 @@ class CanvasView {
 
   currentStroke: Stroke;
   isStroking = false;
-  strokeWidth = 10;
+  strokeWidth = 3;
   strokeColor = new Color(0,0,0,1);
 
   constructor() {
