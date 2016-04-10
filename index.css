@@ -56,6 +56,227 @@
   font-size: 14px;
   font-weight: lighter;
 }
+@font-face {
+  font-family: 'sg-icon';
+  src: url('fonts/sg-icon.eot');
+  src: url('fonts/sg-icon.eot') format('embedded-opentype'), url('fonts/sg-icon.ttf') format('truetype'), url('fonts/sg-icon.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+.sg-button-sidebar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #7F7F7F;
+  border-radius: 16px;
+  background-color: white;
+  color: #7F7F7F;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 15px;
+  left: 215px;
+}
+.sg-button-sidebar::before {
+  content: '\EA03';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 32px;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+.sg-button-sidebar:hover {
+  border-color: #5F5F5F;
+  color: #5F5F5F;
+}
+.sg-icon-array {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.sg-icon-array > * {
+  margin: 0 5px !important;
+}
+.sg-center-icon-array {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 15px;
+}
+.sg-center-icon-array > * {
+  margin: 0 5px !important;
+}
+.sg-button-pen {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #7F7F7F;
+  border-radius: 16px;
+  background-color: white;
+  color: #7F7F7F;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.sg-button-pen::before {
+  content: '\EA04';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 32px;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+.sg-button-pen:hover {
+  border-color: #5F5F5F;
+  color: #5F5F5F;
+}
+.sg-button-eraser {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #7F7F7F;
+  border-radius: 16px;
+  background-color: white;
+  color: #7F7F7F;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.sg-button-eraser::before {
+  content: '\EA01';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 32px;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+.sg-button-eraser:hover {
+  border-color: #5F5F5F;
+  color: #5F5F5F;
+}
+.sg-right-icon-array {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+.sg-right-icon-array > * {
+  margin: 0 5px !important;
+}
+.sg-button-info {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #7F7F7F;
+  border-radius: 16px;
+  background-color: white;
+  color: #7F7F7F;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.sg-button-info::before {
+  content: '\EA02';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 32px;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+.sg-button-info:hover {
+  border-color: #5F5F5F;
+  color: #5F5F5F;
+}
+.sg-button-user {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #7F7F7F;
+  border-radius: 16px;
+  background-color: white;
+  color: #7F7F7F;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.sg-button-user::before {
+  content: '\EA05';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 32px;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+}
+.sg-button-user:hover {
+  border-color: #5F5F5F;
+  color: #5F5F5F;
+}
 html,
 body {
   margin: 0px;
