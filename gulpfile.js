@@ -64,7 +64,9 @@ gulp.task("iconfont", () => {
     .pipe(gulp.dest("./dist/fonts"));
 });
 
-gulp.task("watch", ["jade", "less"], () => {
+gulp.task("build-assets", ["jade", "less", "copy-vendor", "iconfont"]);
+
+gulp.task("watch", () => {
   gulp.watch("index.jade", ["jade"]);
   gulp.watch("index.less", ["less"]);
 });
@@ -89,7 +91,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
   bundler.on('update', bundle);
 });
 
-gulp.task('release-bundle', ["jade", "less", "copy-vendor", "tsc"], function() {
+gulp.task('release-bundle', ["build-assets"], function() {
   return browserify('./build/index.js')
     .transform("babelify", {presets: ["es2015"]})
     .bundle()
@@ -118,4 +120,4 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('default', ["copy-vendor", "watch", "tsc-watch", 'watch-bundle', 'webserver']);
+gulp.task('default', ["build-assets", "watch", "tsc-watch", 'watch-bundle', 'webserver']);
