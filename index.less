@@ -79,6 +79,8 @@
 .sg-button(@codepoint) {
   @icon-size: 32px;
   @border-width: 2px;
+  @color: #7F7F7F;
+  @hover-color: #5F5F5F;
 
   &::before {
     content: @codepoint;
@@ -103,13 +105,18 @@
   position: relative;
   width: @icon-size;
   height: @icon-size;
-  border: @border-width solid #7F7F7F;
+  border: @border-width solid @color;
   border-radius: @icon-size * 0.5;
   background-color: white;
-  color: #7F7F7F;
+  color: @color;
   outline: none;
   margin: 0;
   padding: 0;
+
+  &:hover {
+    border-color: @hover-color;
+    color: @hover-color;
+  }
 }
 
 .sg-button-sidebar {
