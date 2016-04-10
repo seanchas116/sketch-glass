@@ -126,18 +126,23 @@
   left: 215px;
 }
 
-.sg-center-icon-array {
+.sg-icon-array {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 15px;
 
   > * {
     margin: 0 5px !important;
   }
+}
+
+.sg-center-icon-array {
+  .sg-icon-array();
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 15px;
 }
 
 .sg-button-pen {
@@ -147,6 +152,23 @@
 .sg-button-eraser {
   .sg-button('\EA01');
 }
+
+.sg-right-icon-array {
+  .sg-icon-array();
+
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.sg-button-info {
+  .sg-button('\EA02');
+}
+
+.sg-button-user {
+  .sg-button('\EA05');
+}
+
 
 html, body {
   margin: 0px;
