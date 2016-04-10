@@ -43,6 +43,11 @@ gulp.task("less", () => {
     .pipe(gulp.dest("./dist"));
 });
 
+gulp.task("copy-assets", () => {
+  return gulp.src("node_modules/normalize.css/normalize.css")
+    .pipe(gulp.dest("./dist/assets"));
+});
+
 gulp.task("watch", ["jade", "less"], () => {
   gulp.watch("index.jade", ["jade"]);
   gulp.watch("index.less", ["less"]);
@@ -68,7 +73,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
   bundler.on('update', bundle);
 });
 
-gulp.task('release-bundle', ["jade", "less", "tsc"], function() {
+gulp.task('release-bundle', ["jade", "less", "copy-assets", "tsc"], function() {
   return browserify('./build/index.js')
     .transform("babelify", {presets: ["es2015"]})
     .bundle()
@@ -97,4 +102,4 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('default', ["watch", "tsc-watch", 'watch-bundle', 'webserver']);
+gulp.task('default', ["copy-assets", "watch", "tsc-watch", 'watch-bundle', 'webserver']);
