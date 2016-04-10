@@ -63,7 +63,7 @@ class Renderer {
 
     gl.clearColor(0, 0, 0, 0);
 
-    this.element.className = 'canvas-area__renderer';
+    this.element.className = 'renderer';
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
   }

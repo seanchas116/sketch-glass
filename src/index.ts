@@ -1,7 +1,6 @@
 require("setimmediate");
-import CanvasView from './view/CanvasView';
+import CanvasViewController from './viewcontroller/CanvasViewController';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const canvas = new CanvasView();
-  document.body.appendChild(canvas.element);
+  new CanvasViewController(document.querySelector(".sg-canvas") as HTMLElement);
 });

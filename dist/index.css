@@ -1,4 +1,4 @@
-.canvas-area {
+.sg-canvas {
   margin: 0px;
   padding: 0px;
   cursor: crosshair;
@@ -6,7 +6,7 @@
   height: 100vh;
   position: absolute;
 }
-.canvas-area__renderer {
+.sg-canvas .renderer {
   margin: 0px;
   padding: 0px;
   width: 100%;

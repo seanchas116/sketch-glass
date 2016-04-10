@@ -15,9 +15,7 @@ enum InteractionState {
 }
 
 export default
-class CanvasView {
-
-  element: HTMLElement;
+class CanvasViewController {
 
   renderer: Renderer;
 
@@ -32,22 +30,20 @@ class CanvasView {
   strokeWidth = 3;
   strokeColor = new Color(0,0,0,1);
 
-  constructor() {
+  constructor(public element: HTMLElement) {
     this.renderer = new Renderer({background: new Background(new Color(255,255,255,1))});
 
-    const elem = this.element = document.createElement('div');
-    elem.className = 'canvas-area';
-    elem.appendChild(this.renderer.element);
+    element.appendChild(this.renderer.element);
 
-    elem.addEventListener('mousemove', this.onMouseMove.bind(this));
-    elem.addEventListener('mousedown', this.onMouseDown.bind(this));
-    elem.addEventListener('mouseup', this.onMouseUp.bind(this));
+    element.addEventListener('mousemove', this.onMouseMove.bind(this));
+    element.addEventListener('mousedown', this.onMouseDown.bind(this));
+    element.addEventListener('mouseup', this.onMouseUp.bind(this));
 
-    elem.addEventListener('touchmove', this.onTouchMove.bind(this));
-    elem.addEventListener('touchstart', this.onTouchStart.bind(this));
-    elem.addEventListener('touchend', this.onTouchEnd.bind(this));
+    element.addEventListener('touchmove', this.onTouchMove.bind(this));
+    element.addEventListener('touchstart', this.onTouchStart.bind(this));
+    element.addEventListener('touchend', this.onTouchEnd.bind(this));
 
-    elem.addEventListener('wheel', this.onWheel.bind(this));
+    element.addEventListener('wheel', this.onWheel.bind(this));
   }
 
   private pinchStart(points: Point[]) {
