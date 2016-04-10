@@ -16,6 +16,9 @@ var deploy = require('gulp-gh-pages');
 var webserver = require('gulp-webserver');
 const jade = require("gulp-jade");
 const less = require("gulp-less")
+const iconfont = require("gulp-iconfont");
+
+const runTimestamp = Math.round(Date.now()/1000);
 
 function notifyError () {
   return plumber({
@@ -46,6 +49,19 @@ gulp.task("less", () => {
 gulp.task("copy-vendor", () => {
   return gulp.src("node_modules/normalize.css/normalize.css")
     .pipe(gulp.dest("./dist/vendor"));
+});
+
+gulp.task("iconfont", () => {
+  return gulp.src("icons/*.svg")
+    .pipe(iconfont({
+      fontName: "sg-icon",
+      prependUnicode: true,
+      timestamp: runTimestamp
+    }))
+    .on("glyphs", (glyphs, options) => {
+      console.log(glyphs, options);
+    })
+    .pipe(gulp.dest("./dist/fonts"));
 });
 
 gulp.task("watch", ["jade", "less"], () => {
