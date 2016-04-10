@@ -70,7 +70,6 @@ class Shader {
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       console.warn("An error occurred compiling the shaders");
       console.warn(gl.getShaderInfoLog(shader));
-      return null;
     }
 
     return shader;

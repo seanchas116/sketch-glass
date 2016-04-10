@@ -15,7 +15,7 @@ class Line {
   constructor(public a: number, public b: number, public c: number) {
   }
 
-  intersection(other: Line, fallback?: Point) {
+  intersection(other: Line, fallback?: Point | null) {
     const a1 = this.a;
     const b1 = this.b;
     const c1 = this.c;
@@ -25,11 +25,12 @@ class Line {
 
     const det = a1 * b2 - b1 * a2;
     if (det === 0) {
-      if (fallback === undefined) {
+      if (fallback != null) {
+        return fallback;
+      } else {
         console.warn(`no intersection point for ${this} and ${other}`);
         return new Point(0, 0);
       }
-      return fallback;
     }
 
     return new Point(
@@ -45,14 +46,15 @@ class Line {
     return this.normal.dot(p) - this.c;
   }
 
-  bisector(other: Line, fallback?: Line) {
+  bisector(other: Line, fallback?: Line | null) {
     const i = this.intersection(other, null);
     if (!i) {
-      if (fallback === undefined) {
+      if (fallback != null) {
+        return fallback;
+      } else {
         console.warn(`no bisector line for ${this} and ${other}`);
         return new Line(1, 0, 0);
       }
-      return fallback;
     }
     const n = this.normal.add(other.normal).normalize();
     const d = n.dot(i);
