@@ -36,6 +36,5 @@ npm-debug.log
 ### build results ###
 
 /build
-/dist/bundle.js
-/dist/bundle.js.map
+/dist
 /.publish

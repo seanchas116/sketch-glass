@@ -14,6 +14,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var xtend = require('xtend');
 var deploy = require('gulp-gh-pages');
 var webserver = require('gulp-webserver');
+const jade = require("gulp-jade");
+const less = require("gulp-less")
 
 function notifyError () {
   return plumber({
@@ -28,6 +30,23 @@ gulp.task("tsc-watch", shell.task([
 gulp.task("tsc", shell.task([
   "tsc"
 ]));
+
+gulp.task("jade", () => {
+  return gulp.src("index.jade")
+    .pipe(jade())
+    .pipe(gulp.dest("./dist"));
+});
+
+gulp.task("less", () => {
+  return gulp.src("index.less")
+    .pipe(less())
+    .pipe(gulp.dest("./dist"));
+});
+
+gulp.task("watch", ["jade", "less"], () => {
+  gulp.watch("index.jade", ["jade"]);
+  gulp.watch("index.less", ["less"]);
+});
 
 gulp.task('watch-bundle', ["tsc"], function() {
   var args = xtend(watchify.args, {
@@ -49,7 +68,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
   bundler.on('update', bundle);
 });
 
-gulp.task('release-bundle', ["tsc"], function() {
+gulp.task('release-bundle', ["jade", "less", "tsc"], function() {
   return browserify('./build/index.js')
     .transform("babelify", {presets: ["es2015"]})
     .bundle()
@@ -64,7 +83,7 @@ gulp.task('release-bundle', ["tsc"], function() {
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('deploy', ['release-bundle'], function() {
+gulp.task('release', ['release-bundle'], function() {
   return gulp.src('./dist/**/*')
     .pipe(deploy());
 });
@@ -78,4 +97,4 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('default', ["tsc-watch", 'watch-bundle', 'webserver']);
+gulp.task('default', ["watch", "tsc-watch", 'watch-bundle', 'webserver']);
