@@ -4,6 +4,8 @@ import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
+import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import DisposableBag from "../lib/rx/DisposableBag";
 import * as _ from 'lodash';
 
 function touchPoint(touch: Touch) {
@@ -15,23 +17,22 @@ enum InteractionState {
 }
 
 export default
-class CanvasViewController {
-
+class CanvasViewController extends DisposableBag {
   renderer: Renderer;
 
   interactionState = InteractionState.None;
   pinchStartPoints: Point[];
 
-  transform = Transform.identity();
   initialTransform = Transform.identity();
 
   currentStroke: Stroke;
   isStroking = false;
-  strokeWidth = 3;
-  strokeColor = new Color(0,0,0,1);
 
-  constructor(public element: HTMLElement) {
-    this.renderer = new Renderer({background: new Background(new Color(255,255,255,1))});
+  constructor(public element: HTMLElement, public viewModel: CanvasViewModel) {
+    super();
+
+    this.renderer = new Renderer(viewModel);
+    this.addDisposable(this.renderer);
 
     element.appendChild(this.renderer.element);
 
@@ -49,7 +50,7 @@ class CanvasViewController {
   private pinchStart(points: Point[]) {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
-    this.initialTransform = this.transform;
+    this.initialTransform = this.viewModel.transform.value;
   }
 
   private pinchMove(points: Point[]) {
@@ -66,9 +67,8 @@ class CanvasViewController {
 
     let transform = Transform.scale(scale, scale).merge(Transform.translation(diff));
 
-    transform = this.initialTransform.merge(transform);
-    this.updateTransform(transform);
-    this.renderer.update();
+    this.viewModel.transform.value = this.initialTransform.merge(transform);
+    this.viewModel.requestUpdate();
   }
 
   private pinchEnd() {
@@ -78,10 +78,10 @@ class CanvasViewController {
   private pressStart(pos: Point) {
     this.interactionState = InteractionState.Pressed;
 
-    pos = pos.transform(this.transform.invert());
+    pos = pos.transform(this.viewModel.transform.value.invert());
     const stroke = this.currentStroke = new Stroke();
-    stroke.width = this.strokeWidth;
-    stroke.color = this.strokeColor;
+    stroke.width = this.viewModel.strokeWidth.value;
+    stroke.color = this.viewModel.strokeColor.value;
     stroke.addPoint(pos);
 
     this.renderer.addStroke(stroke);
@@ -90,7 +90,7 @@ class CanvasViewController {
 
   private pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
-      pos = pos.transform(this.transform.invert());
+      pos = pos.transform(this.viewModel.transform.value.invert());
       this.currentStroke.addPoint(pos);
       this.renderer.update(true);
     }
@@ -100,11 +100,6 @@ class CanvasViewController {
     if (this.interactionState === InteractionState.Pressed) {
       this.interactionState = InteractionState.None;
     }
-  }
-
-  private updateTransform(transform: Transform) {
-    this.transform = transform;
-    this.renderer.transform = transform;
   }
 
   private onMouseMove(ev: MouseEvent) {
@@ -147,8 +142,8 @@ class CanvasViewController {
   }
 
   private onWheel(ev: WheelEvent) {
-    const transform = this.transform.translate(new Point(-ev.deltaX, -ev.deltaY));
-    this.updateTransform(transform);
+    const transform = this.viewModel.transform.value.translate(new Point(-ev.deltaX, -ev.deltaY));
+    this.viewModel.transform.value = transform;
     this.renderer.update();
     ev.preventDefault();
   }

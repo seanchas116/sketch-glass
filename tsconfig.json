@@ -27,6 +27,7 @@
         "./src/lib/geometry/Rect.ts",
         "./src/lib/geometry/Transform.ts",
         "./src/lib/geometry/util.ts",
+        "./src/lib/rx/DisposableBag.ts",
         "./src/lib/rx/Variable.ts",
         "./src/model/Stroke.ts",
         "./src/renderer/FillShader.ts",
@@ -35,6 +36,8 @@
         "./src/renderer/Shader.ts",
         "./src/renderer/StrokeWeaver.ts",
         "./src/viewcontroller/CanvasViewController.ts",
+        "./src/viewmodel/AppViewModel.ts",
+        "./src/viewmodel/CanvasViewModel.ts",
         "./typings/browser/ambient/lodash/index.d.ts",
         "./typings/browser/ambient/node/index.d.ts",
         "./typings/browser/ambient/rx/index.d.ts"

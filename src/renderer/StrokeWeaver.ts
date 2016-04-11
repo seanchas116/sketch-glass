@@ -5,25 +5,22 @@ import Color from '../lib/geometry/Color';
 import Stroke from "../model/Stroke";
 import * as _ from 'lodash';
 import * as Rx from "rx";
+import DisposableBag from "../lib/rx/DisposableBag";
 
 export default
-class StrokeWeaver {
+class StrokeWeaver extends DisposableBag {
   polygon: [Point, Point][] = [];
   buffer: WebGLBuffer;
-  subscriptions: Rx.IDisposable[] = [];
   model: Model;
   lastSegmentCount = 0;
 
   constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
+    super();
     this.buffer = gl.createBuffer();
-    this.subscriptions.push(stroke.whenPointAdded.forEach(point => {
+    this.addDisposable(stroke.whenPointAdded.forEach(point => {
       this.addPoint(point);
     }));
     this.model = new Model(gl, []);
-  }
-
-  dispose() {
-    this.subscriptions.forEach(d => d.dispose());
   }
 
   addPoint(point: Point) {

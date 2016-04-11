@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import Color from '../lib/geometry/Color';
 import Point from '../lib/geometry/Point';
 import Rect from '../lib/geometry/Rect';
 import Transform from '../lib/geometry/Transform';
@@ -8,15 +9,13 @@ import FillShader from "./FillShader";
 import StrokeWeaver from "./StrokeWeaver";
 import Model from "./Model";
 import Shader from "./Shader";
+import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import DisposableBag from "../lib/rx/DisposableBag";
 
 const TILE_SIZE = 128;
 
-interface RendererOptions {
-  background: Background;
-}
-
 export default
-class Renderer {
+class Renderer extends DisposableBag {
 
   element = document.createElement('canvas');
   strokeWeavers: StrokeWeaver[] = [];
@@ -32,8 +31,16 @@ class Renderer {
   backgroundModel: Model;
   backgroundShader: Shader;
 
-  constructor(opts: RendererOptions) {
-    this.background = opts.background;
+  constructor(viewModel: CanvasViewModel) {
+    super();
+
+    this.addDisposable(
+      viewModel.strokeAdded.forEach(stroke => this.addStroke(stroke)),
+      viewModel.updateNeeded.forEach(() => this.update()),
+      viewModel.transform.changed.forEach(t => this.transform = t)
+    );
+
+    this.background = new Background(new Color(255,255,255,1));
 
     // TODO: check why explicit cast is required
     const gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {

@@ -15,7 +15,7 @@ class Variable<T> {
     }
   }
 
-  get observable() {
+  get changed() {
     return this._subject;
   }
 
