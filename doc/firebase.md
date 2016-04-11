@@ -20,7 +20,6 @@ strokes:
       brush:
         color: string
         width: number
-strokePoints:
-  $strokeId:
-    $id: "$x:$y"
+      fragments:
+        $id: "${base64 encoded list of float32 x1, y1, x2, y2, ...}"
 ```
