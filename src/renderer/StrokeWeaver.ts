@@ -48,10 +48,11 @@ class StrokeWeaver {
 
   addInterpolatedSegments(p1: Point, p2: Point, p3: Point, p4: Point) {
     const points = Curve.bSpline(p1, p2, p3, p4).subdivide();
-    for (let i = 0; i < points.length - 1; ++i) {
+    const nSegment = points.length - 1
+    for (let i = 0; i < nSegment; ++i) {
       this.addSegment(points[i], points[i + 1]);
     }
-    return points.length;
+    return nSegment;
   }
 
   addSegment(last: Point, point: Point) {
