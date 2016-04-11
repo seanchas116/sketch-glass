@@ -1,6 +1,7 @@
 import Point from './Point';
 import Rect from './Rect';
 const Bezier = require('bezier-js');
+const subdivide = require("bezier-subdivide");
 
 export default
 class Curve {
@@ -20,6 +21,11 @@ class Curve {
   calcBoundingRect() {
     const bbox = this.bezier().bbox();
     return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));
+  }
+
+  subdivide() {
+    const controls = [this.start, this.control1, this.control2, this.end].map(p => [p.x, p.y]);
+    return (subdivide(controls) as [number, number][]).map(([x, y]) => new Point(x, y))
   }
 
   private bezier() {
