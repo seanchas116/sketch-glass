@@ -27,6 +27,7 @@
         "./src/lib/geometry/Rect.ts",
         "./src/lib/geometry/Transform.ts",
         "./src/lib/geometry/util.ts",
+        "./src/lib/rx/Variable.ts",
         "./src/model/Stroke.ts",
         "./src/renderer/FillShader.ts",
         "./src/renderer/Model.ts",
