@@ -34,7 +34,6 @@
         "./src/renderer/Renderer.ts",
         "./src/renderer/Shader.ts",
         "./src/renderer/StrokeWeaver.ts",
-        "./src/view/CanvasViewController.ts",
         "./src/viewcontroller/CanvasViewController.ts",
         "./typings/browser/ambient/lodash/index.d.ts",
         "./typings/browser/ambient/node/index.d.ts",
