@@ -28,7 +28,6 @@ class StrokeWeaver extends DisposableBag {
 
     const points = this.stroke.points;
     const nPoints = points.length;
-    console.log(nPoints);
 
     if (nPoints === 2) {
       this.addSegment(points[0], points[1]);

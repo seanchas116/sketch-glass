@@ -28,8 +28,6 @@ class FillShader extends Shader {
   setDisplayWidth(width: number) {
     const radius = width * 0.5;
     const edge = (radius - 1) / radius;
-    console.log(`radius: ${radius}`);
-    console.log(`edge: ${edge}`);
     this.gl.uniform1f(this.uAntialiasEdge, edge);
   }
 }
