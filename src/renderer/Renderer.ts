@@ -41,12 +41,15 @@ class Renderer extends DisposableBag {
     this.background = new Background(new Color(255,255,255,1));
 
     // TODO: check why explicit cast is required
-    const gl = this.gl = <WebGLRenderingContext>(this.element.getContext("webgl", {
+    const glOpts = {
       alpha: false,
       antialias: false,
       depth: false,
       premultipliedAlpha: true
-    }));
+    };
+    const gl = this.gl = <WebGLRenderingContext>(
+      this.element.getContext("webgl", glOpts) || this.element.getContext("experimental-webgl", glOpts)
+    );
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
