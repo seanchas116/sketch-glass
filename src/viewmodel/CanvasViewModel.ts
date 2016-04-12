@@ -3,10 +3,11 @@ import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";
+import DisposableBag from "../lib/DisposableBag";
 import * as Rx from "rx";
 
 export default
-class CanvasViewModel {
+class CanvasViewModel extends DisposableBag {
   transform = new Variable(Transform.identity());
   strokeWidth = new Variable(3);
   strokeColor = new Variable(new Color(0,0,0,1));
@@ -18,7 +19,7 @@ class CanvasViewModel {
     this.strokes.push(stroke);
     this.strokeAdded.onNext(stroke);
   }
-  
+
   requestUpdate() {
     this.updateNeeded.onNext(undefined);
   }
