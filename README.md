@@ -1,7 +1,7 @@
-sketch-field
+sketch-glass
 ========
 
-Realtime online whiteboard
+Realtime online whiteboard (work in progress)
 
 ## What
 
