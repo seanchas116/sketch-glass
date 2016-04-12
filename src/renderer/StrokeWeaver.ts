@@ -17,7 +17,7 @@ class StrokeWeaver extends DisposableBag {
   constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
     super();
     this.buffer = gl.createBuffer();
-    this.addDisposable(stroke.whenPointAdded.forEach(point => {
+    this.addDisposable(stroke.pointAdded.forEach(point => {
       this.addPoint(point);
     }));
     this.model = new Model(gl, []);

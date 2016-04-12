@@ -12,8 +12,6 @@ import Shader from "./Shader";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
 import DisposableBag from "../lib/DisposableBag";
 
-const TILE_SIZE = 128;
-
 export default
 class Renderer extends DisposableBag {
 
@@ -49,9 +47,6 @@ class Renderer extends DisposableBag {
       depth: false,
       premultipliedAlpha: true
     }));
-    if (!gl.getExtension("OES_standard_derivatives")) {
-      console.warn("OES_standard_derivatives not supported");
-    }
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 

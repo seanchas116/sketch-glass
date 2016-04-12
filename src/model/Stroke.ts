@@ -11,13 +11,13 @@ class Stroke {
   color = new Color(0,0,0,1);
   width = 1;
   type = "pen";
-  whenPointAdded = new Rx.Subject<Point>();
+  pointAdded = new Rx.Subject<Point>();
 
   constructor() {
   }
 
   addPoint(point: Point) {
     this.points.push(point);
-    this.whenPointAdded.onNext(point);
+    this.pointAdded.onNext(point);
   }
 }
