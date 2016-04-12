@@ -18,6 +18,8 @@
     ],
     "files": [
         "./src/index.ts",
+        "./src/lib/Disposable.ts",
+        "./src/lib/DisposableBag.ts",
         "./src/lib/geometry/Background.ts",
         "./src/lib/geometry/Color.ts",
         "./src/lib/geometry/Curve.ts",
@@ -27,7 +29,6 @@
         "./src/lib/geometry/Rect.ts",
         "./src/lib/geometry/Transform.ts",
         "./src/lib/geometry/util.ts",
-        "./src/lib/rx/DisposableBag.ts",
         "./src/lib/rx/Variable.ts",
         "./src/model/Stroke.ts",
         "./src/renderer/FillShader.ts",

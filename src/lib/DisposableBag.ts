@@ -1,10 +1,10 @@
-import * as Rx from "rx";
+import Disposable from "./Disposable";
 
 export default
-class DisposableBag implements Rx.IDisposable {
-  disposables: Rx.IDisposable[] = [];
+class DisposableBag implements Disposable {
+  disposables: Disposable[] = [];
 
-  addDisposable(...disposables: Rx.IDisposable[]) {
+  addDisposable(...disposables: Disposable[]) {
     // FIXME: strictNullChecks fails here
     //this.disposables.push(...disposables);
     this.disposables = this.disposables.concat(disposables);

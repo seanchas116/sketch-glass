@@ -5,7 +5,7 @@ import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
-import DisposableBag from "../lib/rx/DisposableBag";
+import DisposableBag from "../lib/DisposableBag";
 import * as _ from 'lodash';
 
 function touchPoint(touch: Touch) {

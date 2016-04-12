@@ -10,7 +10,7 @@ import StrokeWeaver from "./StrokeWeaver";
 import Model from "./Model";
 import Shader from "./Shader";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
-import DisposableBag from "../lib/rx/DisposableBag";
+import DisposableBag from "../lib/DisposableBag";
 
 const TILE_SIZE = 128;
 

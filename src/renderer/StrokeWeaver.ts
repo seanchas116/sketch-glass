@@ -5,7 +5,7 @@ import Color from '../lib/geometry/Color';
 import Stroke from "../model/Stroke";
 import * as _ from 'lodash';
 import * as Rx from "rx";
-import DisposableBag from "../lib/rx/DisposableBag";
+import DisposableBag from "../lib/DisposableBag";
 
 export default
 class StrokeWeaver extends DisposableBag {
