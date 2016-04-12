@@ -85,14 +85,14 @@ class CanvasViewController extends DisposableBag {
     stroke.addPoint(pos);
 
     this.renderer.addStroke(stroke);
-    this.renderer.update(true);
+    this.renderer.render();
   }
 
   private pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.viewModel.transform.value.invert());
       this.currentStroke.addPoint(pos);
-      this.renderer.update(true);
+      this.renderer.render();
     }
   }
 
