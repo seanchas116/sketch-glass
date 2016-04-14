@@ -3,6 +3,7 @@ import CanvasView from "./CanvasView";
 import SideBarView from "./SideBarView";
 import ButtonView from "./ButtonView";
 import PaletteView from "./PaletteView";
+import InfoButtonsView from "./InfoButtonsView";
 import Canvas from "../model/Canvas";
 
 export default
@@ -15,10 +16,7 @@ class MainView extends React.Component<void, void> {
         <CanvasView canvas={this.canvas} />
         <SideBarView />
         <PaletteView />
-        <div className="sg-right-icon-array">
-          <ButtonView kind="info" />
-          <ButtonView kind="user" />
-        </div>
+        <InfoButtonsView />
       </div>
     );
   }
