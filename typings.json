@@ -4,6 +4,7 @@
   },
   "ambientDependencies": {
     "node": "registry:dt/node#4.0.0+20160330064709",
+    "react": "registry:dt/react#0.14.0+20160412154040",
     "rx": "npm:rx/ts/rx.all.d.ts"
   }
 }
