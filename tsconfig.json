@@ -40,6 +40,7 @@
         "./src/renderer/Shader.ts",
         "./src/renderer/StrokeWeaver.ts",
         "./src/index.tsx",
+        "./src/view/ButtonView.tsx",
         "./src/view/CanvasView.tsx",
         "./src/view/MainView.tsx",
         "./src/view/SideBarView.tsx",

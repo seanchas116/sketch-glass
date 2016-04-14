@@ -1,4 +1,5 @@
 import * as React from "react";
+import ButtonView from "./ButtonView";
 
 export default
 class SideBarView extends React.Component<void, void> {
@@ -11,7 +12,7 @@ class SideBarView extends React.Component<void, void> {
           <p className="title">Design sketch</p>
           <p className="updated-at">2 days ago</p>
         </div>
-        <button className="sg-button-sidebar checked"></button>
+        <ButtonView kind="sidebar" />
       </aside>
     );
   }

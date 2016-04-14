@@ -1,6 +1,7 @@
 import * as React from "react";
-import CanvasView from "./CanvasView"
-import SideBarView from "./SideBarView"
+import CanvasView from "./CanvasView";
+import SideBarView from "./SideBarView";
+import ButtonView from "./ButtonView";
 import Canvas from "../model/Canvas";
 
 export default
@@ -13,12 +14,12 @@ class MainView extends React.Component<void, void> {
         <CanvasView canvas={this.canvas} />
         <SideBarView />
         <div className="sg-center-icon-array">
-          <button className="sg-button-pen"></button>
-          <button className="sg-button-eraser"></button>
+          <ButtonView kind="pen" />
+          <ButtonView kind="eraser" />
         </div>
         <div className="sg-right-icon-array">
-          <button className="sg-button-info"></button>
-          <button className="sg-button-user"></button>
+          <ButtonView kind="info" />
+          <ButtonView kind="user" />
         </div>
       </div>
     );

@@ -76,12 +76,7 @@
 	font-style: normal;
 }
 
-.sg-button(@codepoint) {
-  @icon-size: 32px;
-  @border-width: 2px;
-  @color: #7F7F7F;
-  @hover-color: #5F5F5F;
-
+.iconfont(@codepoint) {
   &::before {
     content: @codepoint;
     font-family: 'sg-icon';
@@ -92,6 +87,16 @@
     text-transform: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.sg-button {
+  @icon-size: 32px;
+  @border-width: 2px;
+  @color: #7F7F7F;
+  @hover-color: #5F5F5F;
+
+  &::before {
     line-height: @icon-size;
     font-size: @icon-size;
     text-align: center;
@@ -127,7 +132,7 @@
 }
 
 .sg-button-sidebar {
-  .sg-button('\EA03');
+  .iconfont('\EA03');
   position: absolute;
   top: 15px;
   left: 215px;
@@ -154,11 +159,11 @@
 }
 
 .sg-button-pen {
-  .sg-button('\EA04');
+  .iconfont('\EA04');
 }
 
 .sg-button-eraser {
-  .sg-button('\EA01');
+  .iconfont('\EA01');
 }
 
 .sg-right-icon-array {
@@ -170,11 +175,11 @@
 }
 
 .sg-button-info {
-  .sg-button('\EA02');
+  .iconfont('\EA02');
 }
 
 .sg-button-user {
-  .sg-button('\EA05');
+  .iconfont('\EA05');
 }
 
 
