@@ -9,7 +9,7 @@ interface ButtonViewProps {
 
 const ButtonView = (props: ButtonViewProps) => {
   const {checked, onClick, kind} = props;
-  const className = classNames("sg-button", `sg-button-${kind}`, {checked: checked});
+  const className = classNames("sg-button", kind, {checked: checked});
   return (
     <button className={className} onClick={onClick}></button>
   );

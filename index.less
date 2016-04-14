@@ -29,13 +29,13 @@
 
   &.open {
     width: @sidebar-width;
-    .sg-button-sidebar {
+    .sg-button.sidebar {
       position: absolute;
       top: 15px;
       left: @sidebar-width + 15px;
     }
   }
-  .sg-button-sidebar {
+  .sg-button.sidebar {
     position: absolute;
     top: 15px;
     left: 15px;
@@ -160,10 +160,26 @@
   &.checked:hover {
     background-color: @hover-color;
   }
-}
 
-.sg-button-sidebar {
-  .iconfont('\EA03');
+  &.pen {
+    .iconfont('\EA04');
+  }
+
+  &.eraser {
+    .iconfont('\EA01');
+  }
+
+  &.info {
+    .iconfont('\EA02');
+  }
+
+  &.user {
+    .iconfont('\EA05');
+  }
+
+  &.sidebar {
+    .iconfont('\EA03');
+  }
 }
 
 .sg-icon-array {
@@ -186,14 +202,6 @@
   top: 15px;
 }
 
-.sg-button-pen {
-  .iconfont('\EA04');
-}
-
-.sg-button-eraser {
-  .iconfont('\EA01');
-}
-
 .sg-info-buttons {
   .sg-icon-array();
 
@@ -201,15 +209,6 @@
   right: 15px;
   top: 15px;
 }
-
-.sg-button-info {
-  .iconfont('\EA02');
-}
-
-.sg-button-user {
-  .iconfont('\EA05');
-}
-
 
 html, body {
   margin: 0px;
