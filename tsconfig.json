@@ -18,6 +18,8 @@
         "!./node_modules/**/*.ts"
     ],
     "files": [
+        "./src/Actions.ts",
+        "./src/Dispatcher.ts",
         "./src/lib/Disposable.ts",
         "./src/lib/DisposableBag.ts",
         "./src/lib/geometry/Background.ts",
