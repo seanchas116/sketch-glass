@@ -20,12 +20,7 @@ enum InteractionState {
   None, Pressed, Pinching
 }
 
-export default
-class CanvasView extends React.Component<CanvasViewProps, void> {
-  canvas: Canvas;
-  element: HTMLElement;
-  renderer: Renderer;
-
+class StrokeHandler {
   interactionState = InteractionState.None;
   pinchStartPoints: Point[];
 
@@ -34,13 +29,20 @@ class CanvasView extends React.Component<CanvasViewProps, void> {
   currentStroke: Stroke;
   isStroking = false;
 
-  private pinchStart(points: Point[]) {
+  constructor(public canvas: Canvas, public renderer: Renderer) {
+  }
+
+  dispose() {
+    this.renderer.dispose();
+  }
+
+  pinchStart(points: Point[]) {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.canvas.transform.value;
   }
 
-  private pinchMove(points: Point[]) {
+  pinchMove(points: Point[]) {
     if (this.interactionState !== InteractionState.Pinching) {
       this.pinchStart(points);
     }
@@ -58,11 +60,11 @@ class CanvasView extends React.Component<CanvasViewProps, void> {
     this.canvas.requestUpdate();
   }
 
-  private pinchEnd() {
+  pinchEnd() {
     this.interactionState = InteractionState.None;
   }
 
-  private pressStart(pos: Point) {
+  pressStart(pos: Point) {
     this.interactionState = InteractionState.Pressed;
 
     pos = pos.transform(this.canvas.transform.value.invert());
@@ -75,7 +77,7 @@ class CanvasView extends React.Component<CanvasViewProps, void> {
     this.renderer.render();
   }
 
-  private pressMove(pos: Point) {
+  pressMove(pos: Point) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.canvas.transform.value.invert());
       this.currentStroke.addPoint(pos);
@@ -83,68 +85,79 @@ class CanvasView extends React.Component<CanvasViewProps, void> {
     }
   }
 
-  private pressEnd() {
+  pressEnd() {
     if (this.interactionState === InteractionState.Pressed) {
       this.interactionState = InteractionState.None;
     }
   }
 
+  translate(offset: Point) {
+    const transform = this.canvas.transform.value.translate(offset);
+    this.canvas.transform.value = transform;
+    this.renderer.update();
+  }
+}
+
+export default
+class CanvasView extends React.Component<CanvasViewProps, void> {
+  element: HTMLElement;
+  strokeHandler: StrokeHandler;
+
+  get canvas() {
+    return this.strokeHandler.canvas;
+  }
+
   private onMouseMove(ev: MouseEvent) {
     //console.log(`mouse move at ${ev.clientX}, ${ev.clientY}`);
-    this.pressMove(new Point(ev.clientX, ev.clientY));
+    this.strokeHandler.pressMove(new Point(ev.clientX, ev.clientY));
   }
   private onMouseDown(ev: MouseEvent) {
     //console.log(`mouse down at ${ev.clientX}, ${ev.clientY}`);
-    this.pressStart(new Point(ev.clientX, ev.clientY));
+    this.strokeHandler.pressStart(new Point(ev.clientX, ev.clientY));
   }
   private onMouseUp(ev: MouseEvent) {
     //console.log(`mouse up at ${ev.clientX}, ${ev.clientY}`);
-    this.pressEnd();
+    this.strokeHandler.pressEnd();
   }
 
   private onTouchMove(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       const touch = ev.touches[0];
-      this.pressMove(touchPoint(touch));
+      this.strokeHandler.pressMove(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
-      this.pinchMove([0,1].map(i => touchPoint(ev.touches[i])));
+      this.strokeHandler.pinchMove([0,1].map(i => touchPoint(ev.touches[i])));
     }
     ev.preventDefault();
   }
   private onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       const touch = ev.touches[0];
-      this.pressStart(touchPoint(touch));
+      this.strokeHandler.pressStart(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
-      this.pinchStart([0,1].map(i => touchPoint(ev.touches[i])));
+      this.strokeHandler.pinchStart([0,1].map(i => touchPoint(ev.touches[i])));
     }
     ev.preventDefault();
   }
   private onTouchEnd(ev: TouchEvent) {
-    this.pressEnd();
-    this.pinchEnd();
+    this.strokeHandler.pressEnd();
+    this.strokeHandler.pinchEnd();
     ev.preventDefault();
   }
 
   private onWheel(ev: WheelEvent) {
-    const transform = this.canvas.transform.value.translate(new Point(-ev.deltaX, -ev.deltaY));
-    this.canvas.transform.value = transform;
-    this.renderer.update();
+    this.strokeHandler.translate(new Point(-ev.deltaX, -ev.deltaY));
     ev.preventDefault();
   }
 
   private setNewCanvas(canvas: Canvas) {
-    this.canvas = canvas;
-    const oldRenderer = this.renderer;
-    if (oldRenderer) {
-      this.element.removeChild(oldRenderer.element);
-      oldRenderer.dispose();
+    if (this.strokeHandler) {
+      this.strokeHandler.dispose();
     }
     const renderer = new Renderer(canvas);
+    this.strokeHandler = new StrokeHandler(canvas, renderer)
     this.element.appendChild(renderer.element);
-    this.renderer = renderer;
   }
 
   componentDidMount() {
