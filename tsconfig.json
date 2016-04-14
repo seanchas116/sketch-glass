@@ -3,7 +3,6 @@
         "target": "es6",
         "jsx": "react",
         "declaration": false,
-        "strictNullChecks": true,
         "noImplicitAny": true,
         "removeComments": true,
         "noLib": false,
