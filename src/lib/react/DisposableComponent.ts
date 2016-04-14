@@ -6,6 +6,10 @@ export default
 class DisposableComponent<TProps, TState> extends React.Component<TProps, TState> {
   disposableBag = new DisposableBag();
 
+  get disposables() {
+    return this.disposableBag.disposables;
+  }
+
   addDisposable(...disposables: Disposable[]) {
     this.disposableBag.addDisposable(...disposables);
   }

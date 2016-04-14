@@ -7,6 +7,7 @@ import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
 import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
+import DisposableComponent from "../lib/react/DisposableComponent";
 
 interface CanvasViewProps {
   canvas: Canvas;
@@ -99,7 +100,7 @@ class StrokeHandler {
 }
 
 export default
-class CanvasView extends React.Component<CanvasViewProps, void> {
+class CanvasView extends DisposableComponent<CanvasViewProps, void> {
   element: HTMLElement;
   strokeHandler: StrokeHandler;
 
@@ -154,10 +155,12 @@ class CanvasView extends React.Component<CanvasViewProps, void> {
   private setNewCanvas(canvas: Canvas) {
     if (this.strokeHandler) {
       this.strokeHandler.dispose();
+      this.disposables.delete(this.strokeHandler);
     }
     const renderer = new Renderer(canvas);
     this.strokeHandler = new StrokeHandler(canvas, renderer)
     this.element.appendChild(renderer.element);
+    this.disposables.add(this.strokeHandler);
   }
 
   componentDidMount() {

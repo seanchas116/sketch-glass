@@ -2,15 +2,17 @@ import Disposable from "./Disposable";
 
 export default
 class DisposableBag implements Disposable {
-  disposables: Disposable[] = [];
+  disposables = new Set<Disposable>();
 
   addDisposable(...disposables: Disposable[]) {
-    // FIXME: strictNullChecks fails here
-    //this.disposables.push(...disposables);
-    this.disposables = this.disposables.concat(disposables);
+    for (const d of disposables) {
+      this.disposables.add(d);
+    }
   }
 
   dispose() {
-    this.disposables.forEach(d => d.dispose());
+    for (const d of this.disposables) {
+      d.dispose();
+    }
   }
 }
