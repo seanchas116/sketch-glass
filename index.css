@@ -1,3 +1,6 @@
+.force-layer {
+  transform: translateZ(0);
+}
 .sg-canvas {
   cursor: crosshair;
   flex: 1;
@@ -15,13 +18,44 @@
   top: 0px;
 }
 .sg-sidebar {
-  width: 200px;
+  width: 0;
   height: 100vh;
   top: 0;
   left: 0;
-  position: absolute;
+  position: relative;
   background-color: #34383D;
   box-shadow: inset -8px 0px 10px -10px rgba(0, 0, 0, 0.5);
+  transition: width 0.2s ease;
+}
+.sg-sidebar.open {
+  width: 200px;
+}
+.sg-sidebar.open .sg-button.sidebar {
+  position: absolute;
+  top: 15px;
+  left: 215px;
+}
+.sg-sidebar .sg-button.sidebar {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  transition: left 0.2s ease;
+}
+.sg-sidebar .sg-sidebar-clip {
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.sg-sidebar .sg-sidebar-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 200px;
+  transform: translateZ(0);
 }
 .sg-sidebar .sg-search {
   width: 128px;
@@ -63,7 +97,7 @@
   font-weight: normal;
   font-style: normal;
 }
-.sg-button-sidebar {
+.sg-button {
   position: relative;
   width: 32px;
   height: 32px;
@@ -74,20 +108,9 @@
   outline: none;
   margin: 0;
   padding: 0;
-  position: absolute;
-  top: 15px;
-  left: 215px;
+  transform: translateZ(0);
 }
-.sg-button-sidebar::before {
-  content: '\EA03';
-  font-family: 'sg-icon';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.sg-button::before {
   line-height: 32px;
   font-size: 32px;
   text-align: center;
@@ -98,16 +121,71 @@
   top: -2px;
   left: -2px;
 }
-.sg-button-sidebar:hover {
+.sg-button:hover {
   border-color: #5F5F5F;
   color: #5F5F5F;
 }
-.sg-button-sidebar.checked {
+.sg-button.checked {
   background-color: #7F7F7F;
   color: white;
 }
-.sg-button-sidebar.checked:hover {
+.sg-button.checked:hover {
   background-color: #5F5F5F;
+}
+.sg-button.pen::before {
+  content: '\EA04';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.sg-button.eraser::before {
+  content: '\EA01';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.sg-button.info::before {
+  content: '\EA02';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.sg-button.user::before {
+  content: '\EA05';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.sg-button.sidebar::before {
+  content: '\EA03';
+  font-family: 'sg-icon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .sg-icon-array {
   display: flex;
@@ -119,7 +197,7 @@
   pointer-events: auto;
   margin: 0 5px !important;
 }
-.sg-center-icon-array {
+.sg-palette {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -129,97 +207,11 @@
   right: 0;
   top: 15px;
 }
-.sg-center-icon-array > * {
+.sg-palette > * {
   pointer-events: auto;
   margin: 0 5px !important;
 }
-.sg-button-pen {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border: 2px solid #7F7F7F;
-  border-radius: 16px;
-  background-color: white;
-  color: #7F7F7F;
-  outline: none;
-  margin: 0;
-  padding: 0;
-}
-.sg-button-pen::before {
-  content: '\EA04';
-  font-family: 'sg-icon';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 32px;
-  font-size: 32px;
-  text-align: center;
-  vertical-align: middle;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-}
-.sg-button-pen:hover {
-  border-color: #5F5F5F;
-  color: #5F5F5F;
-}
-.sg-button-pen.checked {
-  background-color: #7F7F7F;
-  color: white;
-}
-.sg-button-pen.checked:hover {
-  background-color: #5F5F5F;
-}
-.sg-button-eraser {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border: 2px solid #7F7F7F;
-  border-radius: 16px;
-  background-color: white;
-  color: #7F7F7F;
-  outline: none;
-  margin: 0;
-  padding: 0;
-}
-.sg-button-eraser::before {
-  content: '\EA01';
-  font-family: 'sg-icon';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 32px;
-  font-size: 32px;
-  text-align: center;
-  vertical-align: middle;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-}
-.sg-button-eraser:hover {
-  border-color: #5F5F5F;
-  color: #5F5F5F;
-}
-.sg-button-eraser.checked {
-  background-color: #7F7F7F;
-  color: white;
-}
-.sg-button-eraser.checked:hover {
-  background-color: #5F5F5F;
-}
-.sg-right-icon-array {
+.sg-info-buttons {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -228,95 +220,9 @@
   right: 15px;
   top: 15px;
 }
-.sg-right-icon-array > * {
+.sg-info-buttons > * {
   pointer-events: auto;
   margin: 0 5px !important;
-}
-.sg-button-info {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border: 2px solid #7F7F7F;
-  border-radius: 16px;
-  background-color: white;
-  color: #7F7F7F;
-  outline: none;
-  margin: 0;
-  padding: 0;
-}
-.sg-button-info::before {
-  content: '\EA02';
-  font-family: 'sg-icon';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 32px;
-  font-size: 32px;
-  text-align: center;
-  vertical-align: middle;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-}
-.sg-button-info:hover {
-  border-color: #5F5F5F;
-  color: #5F5F5F;
-}
-.sg-button-info.checked {
-  background-color: #7F7F7F;
-  color: white;
-}
-.sg-button-info.checked:hover {
-  background-color: #5F5F5F;
-}
-.sg-button-user {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border: 2px solid #7F7F7F;
-  border-radius: 16px;
-  background-color: white;
-  color: #7F7F7F;
-  outline: none;
-  margin: 0;
-  padding: 0;
-}
-.sg-button-user::before {
-  content: '\EA05';
-  font-family: 'sg-icon';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 32px;
-  font-size: 32px;
-  text-align: center;
-  vertical-align: middle;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: -2px;
-  left: -2px;
-}
-.sg-button-user:hover {
-  border-color: #5F5F5F;
-  color: #5F5F5F;
-}
-.sg-button-user.checked {
-  background-color: #7F7F7F;
-  color: white;
-}
-.sg-button-user.checked:hover {
-  background-color: #5F5F5F;
 }
 html,
 body {
