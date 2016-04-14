@@ -9,7 +9,7 @@ import FillShader from "./FillShader";
 import StrokeWeaver from "./StrokeWeaver";
 import Model from "./Model";
 import Shader from "./Shader";
-import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
 
 export default
@@ -29,7 +29,7 @@ class Renderer extends DisposableBag {
   backgroundModel: Model;
   backgroundShader: Shader;
 
-  constructor(viewModel: CanvasViewModel) {
+  constructor(viewModel: Canvas) {
     super();
 
     this.addDisposable(

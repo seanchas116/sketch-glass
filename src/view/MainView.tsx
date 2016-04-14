@@ -1,11 +1,11 @@
 import * as React from "react";
 import CanvasView from "./CanvasView"
 import SideBarView from "./SideBarView"
-import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import Canvas from "../model/Canvas";
 
 export default
 class MainView extends React.Component<void, void> {
-  canvas = new CanvasViewModel();
+  canvas = new Canvas();
 
   render() {
     return (

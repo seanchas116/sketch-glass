@@ -5,11 +5,11 @@ import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
-import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
 
 interface CanvasViewProps {
-  canvas: CanvasViewModel;
+  canvas: Canvas;
 }
 
 function touchPoint(touch: Touch) {
@@ -22,7 +22,7 @@ enum InteractionState {
 
 export default
 class CanvasView extends React.Component<CanvasViewProps, void> {
-  canvas: CanvasViewModel;
+  canvas: Canvas;
   element: HTMLElement;
   renderer: Renderer;
 
@@ -135,7 +135,7 @@ class CanvasView extends React.Component<CanvasViewProps, void> {
     ev.preventDefault();
   }
 
-  private setNewCanvas(canvas: CanvasViewModel) {
+  private setNewCanvas(canvas: Canvas) {
     this.canvas = canvas;
     const oldRenderer = this.renderer;
     if (oldRenderer) {

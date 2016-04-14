@@ -1,4 +1,4 @@
-import Stroke from '../model/Stroke';
+import Stroke from './Stroke';
 import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
@@ -7,7 +7,7 @@ import DisposableBag from "../lib/DisposableBag";
 import * as Rx from "rx";
 
 export default
-class CanvasViewModel extends DisposableBag {
+class Canvas extends DisposableBag {
   transform = new Variable(Transform.identity());
   strokeWidth = new Variable(3);
   strokeColor = new Variable(new Color(0,0,0,1));
