@@ -43,6 +43,7 @@
         "./src/view/ButtonView.tsx",
         "./src/view/CanvasView.tsx",
         "./src/view/MainView.tsx",
+        "./src/view/PaletteView.tsx",
         "./src/view/SideBarView.tsx",
         "./typings/browser/ambient/lodash/index.d.ts",
         "./typings/browser/ambient/node/index.d.ts",
