@@ -1,9 +1,6 @@
 import * as React from "react";
 import ButtonView from "./ButtonView";
-
-enum Tool {
-  Pen, Eraser
-}
+import Tool from "../model/Tool";
 
 interface PaletteState {
   tool: Tool;
