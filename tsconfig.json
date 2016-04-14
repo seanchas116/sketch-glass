@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "target": "es6",
+        "jsx": "react",
         "declaration": false,
         "strictNullChecks": true,
         "noImplicitAny": true,
@@ -13,11 +14,11 @@
     },
     "filesGlob": [
         "./src/**/*.ts",
+        "./src/**/*.tsx",
         "./typings/browser/**/*.ts",
         "!./node_modules/**/*.ts"
     ],
     "files": [
-        "./src/index.ts",
         "./src/lib/Disposable.ts",
         "./src/lib/DisposableBag.ts",
         "./src/lib/geometry/Background.ts",
@@ -36,11 +37,16 @@
         "./src/renderer/Renderer.ts",
         "./src/renderer/Shader.ts",
         "./src/renderer/StrokeWeaver.ts",
-        "./src/viewcontroller/CanvasViewController.ts",
         "./src/viewmodel/AppViewModel.ts",
         "./src/viewmodel/CanvasViewModel.ts",
+        "./src/index.tsx",
+        "./src/view/CanvasView.tsx",
+        "./src/view/MainView.tsx",
+        "./src/view/SideBarView.tsx",
         "./typings/browser/ambient/lodash/index.d.ts",
         "./typings/browser/ambient/node/index.d.ts",
+        "./typings/browser/ambient/react-dom/index.d.ts",
+        "./typings/browser/ambient/react/index.d.ts",
         "./typings/browser/ambient/rx/index.d.ts"
     ],
     "atom": {

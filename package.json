@@ -38,6 +38,7 @@
     "lodash": "^4.9.0",
     "normalize.css": "^4.0.0",
     "react": "^15.0.1",
+    "react-dom": "^15.0.1",
     "rx": "^4.1.0",
     "setimmediate": "^1.0.2"
   }

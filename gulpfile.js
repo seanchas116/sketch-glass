@@ -34,12 +34,6 @@ gulp.task("tsc", shell.task([
   "tsc"
 ]));
 
-gulp.task("jade", () => {
-  return gulp.src("index.jade")
-    .pipe(jade())
-    .pipe(gulp.dest("./dist"));
-});
-
 gulp.task("less", () => {
   return gulp.src("index.less")
     .pipe(less())
@@ -64,10 +58,9 @@ gulp.task("iconfont", () => {
     .pipe(gulp.dest("./dist/fonts"));
 });
 
-gulp.task("build-assets", ["jade", "less", "copy-vendor", "iconfont"]);
+gulp.task("build-assets", ["less", "copy-vendor", "iconfont"]);
 
 gulp.task("watch", () => {
-  gulp.watch("index.jade", ["jade"]);
   gulp.watch("index.less", ["less"]);
 });
 

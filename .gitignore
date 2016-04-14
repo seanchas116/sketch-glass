@@ -36,5 +36,6 @@ npm-debug.log
 ### build results ###
 
 /build
-/dist
+/dist/*
+!/dist/index.html
 /.publish
