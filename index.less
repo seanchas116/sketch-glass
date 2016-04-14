@@ -1,3 +1,7 @@
+.force-layer {
+  transform: translateZ(0);
+}
+
 .sg-canvas {
   cursor: crosshair;
   flex: 1;
@@ -52,6 +56,7 @@
     position: absolute;
     top: 0; left: 0;
     height: 100vh; width: @sidebar-width;
+    .force-layer();
   }
 
   .sg-search {
@@ -147,7 +152,7 @@
   outline: none;
   margin: 0;
   padding: 0;
-  transform: translateZ(0);
+  .force-layer();
 
   &:hover {
     border-color: @hover-color;
