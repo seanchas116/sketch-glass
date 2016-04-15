@@ -36,7 +36,9 @@ gulp.task("tsc", shell.task([
 
 gulp.task("less", () => {
   return gulp.src("index.less")
+    .pipe(sourcemaps.init())
     .pipe(less())
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest("./dist"));
 });
 
