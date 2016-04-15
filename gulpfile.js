@@ -1,19 +1,19 @@
 'use strict';
 
-var gulp = require('gulp');
-var gutil = require('gutil');
-var plumber = require('gulp-plumber');
-var shell = require("gulp-shell");
-var notify = require('gulp-notify');
-var uglify = require('gulp-uglify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var browserify = require('browserify');
-var watchify = require('watchify');
-var sourcemaps = require('gulp-sourcemaps');
-var xtend = require('xtend');
-var deploy = require('gulp-gh-pages');
-var webserver = require('gulp-webserver');
+const gulp = require('gulp');
+const gutil = require('gutil');
+const plumber = require('gulp-plumber');
+const shell = require("gulp-shell");
+const notify = require('gulp-notify');
+const uglify = require('gulp-uglify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const browserify = require('browserify');
+const watchify = require('watchify');
+const sourcemaps = require('gulp-sourcemaps');
+const xtend = require('xtend');
+const deploy = require('gulp-gh-pages');
+const webserver = require('gulp-webserver');
 const jade = require("gulp-jade");
 const less = require("gulp-less")
 const iconfont = require("gulp-iconfont");
@@ -66,14 +66,14 @@ gulp.task("watch", () => {
   gulp.watch("index.less", ["less"]);
 });
 
-gulp.task('watch-bundle', ["tsc"], function() {
-  var args = xtend(watchify.args, {
+gulp.task('watch-bundle', ["tsc"], () => {
+  const args = xtend(watchify.args, {
     debug: true
   });
-  var bundler = watchify(browserify('./build/index.js', args))
+  const bundler = watchify(browserify('./build/index.js', args))
     .transform("babelify", {presets: ["es2015"]});
 
-  function bundle () {
+  const bundle = () => {
     return bundler
       .bundle()
       .on('error', notify.onError('Error: <%= error.message %>'))
@@ -86,7 +86,7 @@ gulp.task('watch-bundle', ["tsc"], function() {
   bundler.on('update', bundle);
 });
 
-gulp.task('release-bundle', ["build-assets"], function() {
+gulp.task('release-bundle', ["build-assets"], () => {
   return browserify('./build/index.js')
     .transform("babelify", {presets: ["es2015"]})
     .bundle()
@@ -101,12 +101,12 @@ gulp.task('release-bundle', ["build-assets"], function() {
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('release', ['release-bundle'], function() {
+gulp.task('release', ['release-bundle'], () => {
   return gulp.src('./dist/**/*')
     .pipe(deploy());
 });
 
-gulp.task('webserver', function() {
+gulp.task('webserver', () => {
   gulp.src('dist')
     .pipe(webserver({
       host: '0.0.0.0',
