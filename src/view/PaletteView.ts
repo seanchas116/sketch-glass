@@ -30,5 +30,11 @@ class PaletteView extends Component {
     this.eraserButton.clicked.subscribe(() => {
       this.tool.value = Tool.Eraser;
     });
+    this.tool.changed
+      .map(tool => tool == Tool.Pen)
+      .subscribe(this.penButton.isChecked);
+    this.tool.changed
+      .map(tool => tool == Tool.Eraser)
+      .subscribe(this.eraserButton.isChecked);
   }
 }
