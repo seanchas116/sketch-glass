@@ -4,9 +4,15 @@ export default
 class DisposableBag implements Disposable {
   disposables = new Set<Disposable>();
 
-  addDisposable(...disposables: Disposable[]) {
+  add(...disposables: Disposable[]) {
     for (const d of disposables) {
       this.disposables.add(d);
+    }
+  }
+
+  delete(...disposables: Disposable[]) {
+    for (const d of disposables) {
+      this.disposables.delete(d);
     }
   }
 

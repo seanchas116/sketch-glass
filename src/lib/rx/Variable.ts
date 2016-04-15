@@ -1,7 +1,7 @@
 import * as Rx from "rx";
 
 export default
-class Variable<T> {
+class Variable<T> implements Rx.IObserver<T> {
   private _value: T;
   private _subject: Rx.BehaviorSubject<T>;
 
@@ -22,5 +22,16 @@ class Variable<T> {
   constructor(value: T) {
     this._value = value;
     this._subject = new Rx.BehaviorSubject(value);
+  }
+
+  onNext(value: T) {
+    this.value = value;
+  }
+
+  onError(exception: any) {
+    console.error(exception);
+  }
+
+  onCompleted() {
   }
 }

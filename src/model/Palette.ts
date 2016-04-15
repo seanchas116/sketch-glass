@@ -8,7 +8,7 @@ import DisposableBag from "../lib/DisposableBag";
 import * as Rx from "rx";
 
 export default
-class Palette extends DisposableBag {
+class Palette {
   tool = Tool.Pen;
   width = 3;
   color = new Color(0,0,0,1);

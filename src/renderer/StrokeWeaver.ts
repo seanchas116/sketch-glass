@@ -8,16 +8,16 @@ import * as Rx from "rx";
 import DisposableBag from "../lib/DisposableBag";
 
 export default
-class StrokeWeaver extends DisposableBag {
+class StrokeWeaver {
   polygon: [Point, Point][] = [];
   buffer: WebGLBuffer;
   model: Model;
   lastSegmentCount = 0;
+  disposables = new DisposableBag();
 
   constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
-    super();
     this.buffer = gl.createBuffer();
-    this.addDisposable(stroke.pointAdded.forEach(point => {
+    this.disposables.add(stroke.pointAdded.forEach(point => {
       this.addPoint(point);
     }));
     this.model = new Model(gl, []);

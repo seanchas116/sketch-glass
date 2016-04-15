@@ -7,7 +7,7 @@ import DisposableBag from "../lib/DisposableBag";
 import * as Rx from "rx";
 
 export default
-class Canvas extends DisposableBag {
+class Canvas {
   transform = new Variable(Transform.identity());
   strokeWidth = new Variable(3);
   strokeColor = new Variable(new Color(0,0,0,1));

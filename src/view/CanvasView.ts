@@ -1,4 +1,4 @@
-import * as React from "react";
+import Component from "../lib/ui/Component";
 import Renderer from '../renderer/Renderer';
 import Stroke from '../model/Stroke';
 import Point from '../lib/geometry/Point';
@@ -7,11 +7,6 @@ import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
 import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
-import DisposableComponent from "../lib/react/DisposableComponent";
-
-interface CanvasViewProps {
-  canvas: Canvas;
-}
 
 function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
@@ -100,8 +95,7 @@ class StrokeHandler {
 }
 
 export default
-class CanvasView extends DisposableComponent<CanvasViewProps, void> {
-  element: HTMLElement;
+class CanvasView extends Component {
   strokeHandler: StrokeHandler;
 
   get canvas() {
@@ -163,31 +157,22 @@ class CanvasView extends DisposableComponent<CanvasViewProps, void> {
     this.disposables.add(this.strokeHandler);
   }
 
-  componentDidMount() {
-    const element = this.element = this.refs["canvas"] as HTMLElement;
+  static template = `
+    <main ref="canvas" class="sg-canvas"></main>
+  `;
 
-    element.addEventListener('mousemove', this.onMouseMove.bind(this));
-    element.addEventListener('mousedown', this.onMouseDown.bind(this));
-    element.addEventListener('mouseup', this.onMouseUp.bind(this));
+  constructor(canvas: Canvas) {
+    super();
+    this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.element.addEventListener('mouseup', this.onMouseUp.bind(this));
 
-    element.addEventListener('touchmove', this.onTouchMove.bind(this));
-    element.addEventListener('touchstart', this.onTouchStart.bind(this));
-    element.addEventListener('touchend', this.onTouchEnd.bind(this));
+    this.element.addEventListener('touchmove', this.onTouchMove.bind(this));
+    this.element.addEventListener('touchstart', this.onTouchStart.bind(this));
+    this.element.addEventListener('touchend', this.onTouchEnd.bind(this));
 
-    element.addEventListener('wheel', this.onWheel.bind(this));
+    this.element.addEventListener('wheel', this.onWheel.bind(this));
 
-    this.setNewCanvas(this.props.canvas)
-  }
-
-  componentWillReceiveProps(newProps: CanvasViewProps) {
-    if (this.props.canvas != newProps.canvas) {
-      this.setNewCanvas(newProps.canvas)
-    }
-  }
-
-  render() {
-    return (
-      <main ref="canvas" className="sg-canvas" />
-    );
+    this.setNewCanvas(canvas);
   }
 }

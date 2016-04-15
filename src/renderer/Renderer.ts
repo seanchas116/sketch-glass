@@ -13,7 +13,7 @@ import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
 
 export default
-class Renderer extends DisposableBag {
+class Renderer {
 
   element = document.createElement('canvas');
   strokeWeavers: StrokeWeaver[] = [];
@@ -28,11 +28,10 @@ class Renderer extends DisposableBag {
   shader: FillShader;
   backgroundModel: Model;
   backgroundShader: Shader;
+  disposables = new DisposableBag();
 
   constructor(viewModel: Canvas) {
-    super();
-
-    this.addDisposable(
+    this.disposables.add(
       viewModel.strokeAdded.forEach(stroke => this.addStroke(stroke)),
       viewModel.updateNeeded.forEach(() => this.update()),
       viewModel.transform.changed.forEach(t => this.transform = t)
@@ -71,6 +70,10 @@ class Renderer extends DisposableBag {
     this.element.className = 'renderer';
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
+  }
+
+  dispose() {
+    this.disposables.dispose();
   }
 
   addStroke(stroke: Stroke) {
