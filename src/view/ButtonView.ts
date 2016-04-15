@@ -13,6 +13,7 @@ class ButtonView extends Component {
 
   constructor(kind: string) {
     super();
+    this.isChecked.changed.subscribe(this.slot.toggleClass("checked"));
     this.element.className += ` ${kind}`;
   }
 }
