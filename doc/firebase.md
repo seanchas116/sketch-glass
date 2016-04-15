@@ -5,13 +5,12 @@ users:
   $id:
     name: string
     email: string
-    twitterId: string
 canvases:
   $id:
     name: string
     description: string
     ownerId: string
-canvasUsers:
+canvasCollaborators:
   $canvasId:
     $userId:
 strokes:
