@@ -19,8 +19,7 @@ class Renderer {
   strokeWeavers: StrokeWeaver[] = [];
   isUpdateQueued = false;
   devicePixelRatio = 1;
-  width = 0;
-  height = 0;
+  size = new Vec2(0, 0);
   background: Background;
   transform = Transform.identity();
   gl: WebGLRenderingContext;
@@ -125,13 +124,12 @@ class Renderer {
   }
 
   onResize() {
-    const width = this.width = window.innerWidth;
-    const height = this.height = window.innerHeight;
+    const {width, height} = this.size = new Vec2(window.innerWidth, window.innerHeight);
     const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
-    this.viewportTransform = Transform.scale(2 / width, 2 / height)
+    this.viewportTransform = Transform.scale(new Vec2(2 / width, 2 / height))
       .translate(new Vec2(-1, -1))
-      .scale(1, -1);
+      .scale(new Vec2(1, -1));
     this.element.width = width * dpr;
     this.element.height = height * dpr;
 

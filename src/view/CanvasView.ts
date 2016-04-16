@@ -51,7 +51,7 @@ class StrokeHandler {
 
     const diff = center.sub(centerStart.mul(scale));
 
-    let transform = Transform.scale(scale, scale).merge(Transform.translation(diff));
+    let transform = Transform.scale(new Vec2(scale, scale)).merge(Transform.translation(diff));
 
     this.canvas.transform.value = this.initialTransform.merge(transform);
     this.canvas.requestUpdate();

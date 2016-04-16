@@ -9,11 +9,15 @@ class Vec2 {
   get width() {
     return this.x;
   }
-
+  set width(w: number) {
+    this.x = w;
+  }
   get height() {
     return this.y;
   }
-
+  set height(h: number) {
+    this.y = h;
+  }
 
   add(a: Vec2) {
     return new Vec2(this.x + a.x, this.y + a.y);

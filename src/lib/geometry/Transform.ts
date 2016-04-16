@@ -38,10 +38,10 @@ class Transform {
       this.dx + delta.x, this.dy + delta.y);
   }
 
-  scale(scaleX: number, scaleY: number) {
+  scale(scale: Vec2) {
     return new Transform(
-      this.m11 * scaleX, this.m12 * scaleX, this.m21 * scaleY, this.m22 * scaleY,
-      this.dx * scaleX, this.dy * scaleY);
+      this.m11 * scale.x, this.m12 * scale.x, this.m21 * scale.y, this.m22 * scale.y,
+      this.dx * scale.x, this.dy * scale.y);
   }
 
   toData() {
@@ -56,8 +56,8 @@ class Transform {
     return new Transform(1, 0, 0, 1, 0, 0);
   }
 
-  static scale(scaleX: number, scaleY: number) {
-    return new Transform(scaleX, 0, 0, scaleY, 0, 0);
+  static scale(scale: Vec2) {
+    return new Transform(scale.x, 0, 0, scale.y, 0, 0);
   }
 
   static translation(translation: Vec2) {
