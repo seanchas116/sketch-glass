@@ -13,13 +13,11 @@ class ToolBoxView extends Component {
     </div>
   `;
 
-  penButton = new ButtonView("pen");
-  eraserButton = new ButtonView("eraser");
+  penButton = new ButtonView(this.elementFor(".pen-button"), "pen");
+  eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
 
-  constructor(public toolBox: ToolBox) {
-    super();
-    this.penButton.mount(this.elementFor(".pen-button"));
-    this.eraserButton.mount(this.elementFor(".eraser-button"));
+  constructor(mountPoint: Element, public toolBox: ToolBox) {
+    super(mountPoint);
 
     this.disposables.add(
       this.penButton.clicked.subscribe(() => {

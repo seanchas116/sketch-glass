@@ -25,12 +25,11 @@ class SideBarView extends Component {
   `;
 
   open = new Variable(false);
-  sidebarButton = new ButtonView("sidebar");
+  sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
 
-  constructor() {
-    super();
+  constructor(mountPoint: Element) {
+    super(mountPoint);
 
-    this.sidebarButton.mount(this.elementFor(".sidebar-button"));
     this.open.changed.subscribe(this.slot.toggleClass("open"));
     this.open.changed.subscribe(this.sidebarButton.isChecked);
     this.sidebarButton.clicked.subscribe(() => {

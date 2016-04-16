@@ -19,9 +19,15 @@ class Component {
   slot = new Slot(this.element);
   disposables = new DisposableBag();
 
-  mount(placeholder: Element) {
-    placeholder.parentElement.insertBefore(this.element, placeholder);
-    placeholder.parentElement.removeChild(placeholder);
+  constructor(mountPoint: Element | null) {
+    if (mountPoint != null) {
+      this.mount(mountPoint);
+    }
+  }
+
+  mount(mountPoint: Element) {
+    mountPoint.parentElement.insertBefore(this.element, mountPoint);
+    mountPoint.parentElement.removeChild(mountPoint);
   }
 
   elementFor(selector: string) {

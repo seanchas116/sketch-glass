@@ -156,8 +156,8 @@ class CanvasView extends Component {
     <main ref="canvas" class="sg-canvas"></main>
   `;
 
-  constructor(canvas: Canvas) {
-    super();
+  constructor(mountPoint: Element, canvas: Canvas) {
+    super(mountPoint);
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
     this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
     this.element.addEventListener('mouseup', this.onMouseUp.bind(this));

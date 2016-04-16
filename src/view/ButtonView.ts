@@ -11,8 +11,8 @@ class ButtonView extends Component {
   isChecked = new Variable(false);
   clicked = Rx.Observable.fromEvent(this.element, 'click');
 
-  constructor(kind: string) {
-    super();
+  constructor(mountPoint: Element, kind: string) {
+    super(mountPoint);
     this.isChecked.changed.subscribe(this.slot.toggleClass("checked"));
     this.element.className += ` ${kind}`;
   }

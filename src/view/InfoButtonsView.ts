@@ -9,12 +9,10 @@ class InfoButtonsView extends Component {
       <div class="user-button"></div>
     </div>
   `;
-  infoButton = new ButtonView("info");
-  userButton = new ButtonView("user");
+  infoButton = new ButtonView(this.elementFor(".info-button"), "info");
+  userButton = new ButtonView(this.elementFor(".user-button"),"user");
 
-  constructor() {
-    super();
-    this.infoButton.mount(this.elementFor(".info-button"));
-    this.userButton.mount(this.elementFor(".user-button"));
+  constructor(mountPoint: Element) {
+    super(mountPoint);
   }
 }

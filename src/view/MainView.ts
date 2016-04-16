@@ -17,16 +17,12 @@ class MainView extends Component {
     </div>
   `;
   canvas = new Canvas();
-  canvasView = new CanvasView(this.canvas);
-  sideBarView = new SideBarView();
-  toolBoxView = new ToolBoxView(this.canvas.toolBox);
-  infoButtonsView = new InfoButtonsView();
+  canvasView = new CanvasView(this.elementFor(".canvas-view"), this.canvas);
+  sideBarView = new SideBarView(this.elementFor(".sidebar-view"));
+  toolBoxView = new ToolBoxView(this.elementFor(".palette-view"), this.canvas.toolBox);
+  infoButtonsView = new InfoButtonsView(this.elementFor(".info-buttons-view"));
 
-  constructor() {
-    super();
-    this.canvasView.mount(this.elementFor(".canvas-view"));
-    this.sideBarView.mount(this.elementFor(".sidebar-view"));
-    this.toolBoxView.mount(this.elementFor(".palette-view"));
-    this.infoButtonsView.mount(this.elementFor(".info-buttons-view"));
+  constructor(mountPoint: Element) {
+    super(mountPoint);
   }
 }
