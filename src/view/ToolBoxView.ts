@@ -4,7 +4,7 @@ import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 
 export default
-class PaletteView extends Component {
+class ToolBoxView extends Component {
   static template = `
     <div class="sg-palette">
       <div class="pen-button"></div>

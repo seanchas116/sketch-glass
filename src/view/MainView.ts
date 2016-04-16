@@ -2,7 +2,7 @@ import Component from "../lib/ui/Component";
 import CanvasView from "./CanvasView";
 import SideBarView from "./SideBarView";
 import ButtonView from "./ButtonView";
-import PaletteView from "./PaletteView";
+import ToolBoxView from "./ToolBoxView";
 import InfoButtonsView from "./InfoButtonsView";
 import Canvas from "../model/Canvas";
 
@@ -19,14 +19,14 @@ class MainView extends Component {
   canvas = new Canvas();
   canvasView = new CanvasView(this.canvas);
   sideBarView = new SideBarView();
-  paletteView = new PaletteView();
+  toolBoxView = new ToolBoxView();
   infoButtonsView = new InfoButtonsView();
 
   constructor() {
     super();
     this.canvasView.mount(this.elementFor(".canvas-view"));
     this.sideBarView.mount(this.elementFor(".sidebar-view"));
-    this.paletteView.mount(this.elementFor(".palette-view"));
+    this.toolBoxView.mount(this.elementFor(".palette-view"));
     this.infoButtonsView.mount(this.elementFor(".info-buttons-view"));
   }
 }
