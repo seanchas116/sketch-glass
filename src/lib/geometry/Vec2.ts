@@ -3,9 +3,17 @@ import {FLOAT_EPSILON} from "./util";
 
 export default
 class Vec2 {
-
   constructor(public x: number, public y: number) {
   }
+
+  get width() {
+    return this.x;
+  }
+
+  get height() {
+    return this.y;
+  }
+
 
   add(a: Vec2) {
     return new Vec2(this.x + a.x, this.y + a.y);
