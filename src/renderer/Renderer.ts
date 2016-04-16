@@ -36,8 +36,6 @@ function addSegment(model: Model, width: number, last: Vec2, point: Vec2) {
 
 export default
 class Renderer {
-
-  element = document.createElement('canvas');
   strokeModelMap = new Map<Stroke, Model>();
   strokeFinalizedModel: Model;
   strokePrecedingModel: Model;
@@ -54,7 +52,7 @@ class Renderer {
   backgroundShader: Shader;
   disposables = new DisposableBag();
 
-  constructor(public canvas: Canvas) {
+  constructor(public element: HTMLCanvasElement, public canvas: Canvas) {
     this.background = new Background(new Color(255,255,255,1));
 
     // TODO: check why explicit cast is required
@@ -85,7 +83,6 @@ class Renderer {
 
     gl.clearColor(0, 0, 0, 0);
 
-    this.element.className = 'renderer';
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
 
@@ -204,7 +201,7 @@ class Renderer {
   }
 
   onResize() {
-    const {width, height} = this.size = new Vec2(window.innerWidth, window.innerHeight);
+    const {width, height} = this.size = new Vec2(this.element.clientWidth, this.element.clientHeight);
     const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
     this.viewportTransform = Transform.scale(new Vec2(2 / width, 2 / height))

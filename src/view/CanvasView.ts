@@ -146,14 +146,13 @@ class CanvasView extends Component {
       this.strokeHandler.dispose();
       this.disposables.delete(this.strokeHandler);
     }
-    const renderer = new Renderer(canvas);
+    const renderer = new Renderer(this.element as HTMLCanvasElement, canvas);
     this.strokeHandler = new StrokeHandler(canvas, renderer)
-    this.element.appendChild(renderer.element);
     this.disposables.add(this.strokeHandler);
   }
 
   static template = `
-    <main ref="canvas" class="sg-canvas"></main>
+    <canvas class="sg-canvas"></canvas>
   `;
 
   constructor(mountPoint: Element, canvas: Canvas) {
