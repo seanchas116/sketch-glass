@@ -7,6 +7,7 @@ import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
 import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
+import Tool from "../model/Tool";
 
 function touchPoint(touch: Touch) {
   return new Point(touch.clientX, touch.clientY);
@@ -65,8 +66,13 @@ class StrokeHandler {
 
     pos = pos.transform(this.canvas.transform.value.invert());
     const stroke = this.currentStroke = new Stroke();
-    stroke.width = this.canvas.strokeWidth.value;
-    stroke.color = this.canvas.strokeColor.value;
+    if (this.canvas.toolBox.tool.value == Tool.Pen) {
+      stroke.width = this.canvas.toolBox.penWidth.value;
+      stroke.color = this.canvas.toolBox.color.value;
+    } else {
+      stroke.width = this.canvas.toolBox.eraserWidth.value;
+      stroke.color = new Color(255,255,255,1);
+    }
     stroke.addPoint(pos);
 
     this.renderer.addStroke(stroke);

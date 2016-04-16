@@ -2,6 +2,7 @@ import Component from "../lib/ui/Component";
 import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
+import ToolBox from "../model/ToolBox";
 
 export default
 class ToolBoxView extends Component {
@@ -12,29 +13,27 @@ class ToolBoxView extends Component {
     </div>
   `;
 
-  tool = new Variable(Tool.Pen);
-  penSize = new Variable(3);
-  eraserSize = new Variable(10);
-
   penButton = new ButtonView("pen");
   eraserButton = new ButtonView("eraser");
 
-  constructor() {
+  constructor(public toolBox: ToolBox) {
     super();
     this.penButton.mount(this.elementFor(".pen-button"));
     this.eraserButton.mount(this.elementFor(".eraser-button"));
 
-    this.penButton.clicked.subscribe(() => {
-      this.tool.value = Tool.Pen;
-    });
-    this.eraserButton.clicked.subscribe(() => {
-      this.tool.value = Tool.Eraser;
-    });
-    this.tool.changed
-      .map(tool => tool == Tool.Pen)
-      .subscribe(this.penButton.isChecked);
-    this.tool.changed
-      .map(tool => tool == Tool.Eraser)
-      .subscribe(this.eraserButton.isChecked);
+    this.disposables.add(
+      this.penButton.clicked.subscribe(() => {
+        toolBox.tool.value = Tool.Pen;
+      }),
+      this.eraserButton.clicked.subscribe(() => {
+        toolBox.tool.value = Tool.Eraser;
+      }),
+      toolBox.tool.changed
+        .map(tool => tool == Tool.Pen)
+        .subscribe(this.penButton.isChecked),
+      toolBox.tool.changed
+        .map(tool => tool == Tool.Eraser)
+        .subscribe(this.eraserButton.isChecked)
+    );
   }
 }

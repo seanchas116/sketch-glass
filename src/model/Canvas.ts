@@ -3,14 +3,14 @@ import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";
+import ToolBox from "./ToolBox";
 import DisposableBag from "../lib/DisposableBag";
 import * as Rx from "rx";
 
 export default
 class Canvas {
   transform = new Variable(Transform.identity());
-  strokeWidth = new Variable(3);
-  strokeColor = new Variable(new Color(0,0,0,1));
+  toolBox = new ToolBox();
   strokes: Stroke[] = [];
   strokeAdded = new Rx.Subject<Stroke>();
   updateNeeded = new Rx.Subject<void>();

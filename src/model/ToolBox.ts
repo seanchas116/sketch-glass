@@ -8,9 +8,9 @@ import DisposableBag from "../lib/DisposableBag";
 import * as Rx from "rx";
 
 export default
-class Palette {
-  tool = Tool.Pen;
-  width = 3;
-  color = new Color(0,0,0,1);
-  changed = new Rx.Subject<void>();
+class ToolBox {
+  tool = new Variable(Tool.Pen);
+  penWidth = new Variable(3);
+  eraserWidth = new Variable(20);
+  color = new Variable(new Color(0,0,0,1));
 }

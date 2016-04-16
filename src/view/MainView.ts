@@ -19,7 +19,7 @@ class MainView extends Component {
   canvas = new Canvas();
   canvasView = new CanvasView(this.canvas);
   sideBarView = new SideBarView();
-  toolBoxView = new ToolBoxView();
+  toolBoxView = new ToolBoxView(this.canvas.toolBox);
   infoButtonsView = new InfoButtonsView();
 
   constructor() {
