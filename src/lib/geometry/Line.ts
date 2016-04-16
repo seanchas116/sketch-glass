@@ -1,11 +1,11 @@
-import Point from "./Point";
+import Vec2 from "./Vec2";
 
 export default
 class Line {
 
   // normal vector directs toward left
   get normal() {
-    return new Point(this.a, this.b);
+    return new Vec2(this.a, this.b);
   }
   get direction() {
     return this.normal.rotate270();
@@ -15,7 +15,7 @@ class Line {
   constructor(public a: number, public b: number, public c: number) {
   }
 
-  intersection(other: Line, fallback?: Point | null) {
+  intersection(other: Line, fallback?: Vec2 | null) {
     const a1 = this.a;
     const b1 = this.b;
     const c1 = this.c;
@@ -29,11 +29,11 @@ class Line {
         return fallback;
       } else {
         console.warn(`no intersection point for ${this} and ${other}`);
-        return new Point(0, 0);
+        return new Vec2(0, 0);
       }
     }
 
-    return new Point(
+    return new Vec2(
       b2 * c1 - b1 * c2,
       a1 * c2 - a2 * c1
     ).div(det);
@@ -42,7 +42,7 @@ class Line {
   // left: > 0
   // on line: = 0
   // right: < 0
-  signedDistance(p: Point) {
+  signedDistance(p: Vec2) {
     return this.normal.dot(p) - this.c;
   }
 
@@ -70,11 +70,11 @@ class Line {
     return `Line(${this.a}x + ${this.b}y = ${this.c})`;
   }
 
-  static fromPointAndNormal(p: Point, n: Point) {
+  static fromPointAndNormal(p: Vec2, n: Vec2) {
     return new Line(n.x, n.y, n.dot(p));
   }
 
-  static fromTwoPoints(p1: Point, p2: Point) {
+  static fromTwoPoints(p1: Vec2, p2: Vec2) {
     const n = p2.sub(p1).normalize().rotate90();
     return this.fromPointAndNormal(p1, n);
   }

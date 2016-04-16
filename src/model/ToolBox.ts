@@ -1,6 +1,5 @@
 import Stroke from './Stroke';
 import Tool from "./Tool";
-import Point from '../lib/geometry/Point';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";

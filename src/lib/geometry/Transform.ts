@@ -1,4 +1,4 @@
-import Point from './Point';
+import Vec2 from './Vec2';
 
 export default
 class Transform {
@@ -32,7 +32,7 @@ class Transform {
     return new Transform(m11, m12, m21, m22, dx, dy);
   }
 
-  translate(delta: Point) {
+  translate(delta: Vec2) {
     return new Transform(
       this.m11, this.m12, this.m21, this.m22,
       this.dx + delta.x, this.dy + delta.y);
@@ -60,11 +60,11 @@ class Transform {
     return new Transform(scaleX, 0, 0, scaleY, 0, 0);
   }
 
-  static translation(translation: Point) {
+  static translation(translation: Vec2) {
     return new Transform(1, 0, 0, 1, translation.x, translation.y);
   }
 
-  static fromPoints(s1: Point, s2: Point, s3: Point, d1: Point, d2: Point, d3: Point) {
+  static fromPoints(s1: Vec2, s2: Vec2, s3: Vec2, d1: Vec2, d2: Vec2, d3: Vec2) {
     const s1s2 = s2.sub(s1);
     const s1s3 = s3.sub(s1);
     const d1d2 = d2.sub(d1);

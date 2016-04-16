@@ -1,16 +1,16 @@
-import Point from './Point';
+import Vec2 from './Vec2';
 import Rect from './Rect';
 const Bezier = require('bezier-js');
 const subdivide = require("bezier-subdivide");
 
 export default
 class Curve {
-  constructor(public start: Point, public control1: Point, public control2: Point, public end: Point) {
+  constructor(public start: Vec2, public control1: Vec2, public control2: Vec2, public end: Vec2) {
   }
 
   midpoint() {
     const xy = this.bezier().get(0.5);
-    return new Point(xy.x, xy.y);
+    return new Vec2(xy.x, xy.y);
   }
 
   split(t: number) {
@@ -20,12 +20,12 @@ class Curve {
 
   calcBoundingRect() {
     const bbox = this.bezier().bbox();
-    return new Rect(new Point(bbox.x.min, bbox.y.min), new Point(bbox.x.max, bbox.y.max));
+    return new Rect(new Vec2(bbox.x.min, bbox.y.min), new Vec2(bbox.x.max, bbox.y.max));
   }
 
   subdivide() {
     const controls = [this.start, this.control1, this.control2, this.end].map(p => [p.x, p.y]);
-    return (subdivide(controls) as [number, number][]).map(([x, y]) => new Point(x, y))
+    return (subdivide(controls) as [number, number][]).map(([x, y]) => new Vec2(x, y))
   }
 
   private bezier() {
@@ -36,7 +36,7 @@ class Curve {
     return `Curve(${this.start},${this.control1},${this.control2},${this.end})`;
   }
 
-  static catmullRom(prev: Point, start: Point, end: Point, next: Point) {
+  static catmullRom(prev: Vec2, start: Vec2, end: Vec2, next: Vec2) {
     return new Curve(
       start,
       start.add(end.sub(prev).div(6)),
@@ -45,7 +45,7 @@ class Curve {
     );
   }
 
-  static bSpline(c0: Point, c1: Point, c2: Point, c3: Point) {
+  static bSpline(c0: Vec2, c1: Vec2, c2: Vec2, c3: Vec2) {
     return new Curve(
       c0.add(c1.mul(4)).add(c2).div(6),
       c1.mul(2).add(c2).div(3),
@@ -55,7 +55,7 @@ class Curve {
   }
 
   static _fromBezier(bezier: any) {
-    const points: Point[] = bezier.points.map((p: any) => new Point(p.x, p.y));
+    const points: Vec2[] = bezier.points.map((p: any) => new Vec2(p.x, p.y));
     return new Curve(points[0], points[1], points[2], points[3]);
   }
 }

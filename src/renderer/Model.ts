@@ -1,11 +1,11 @@
 import Shader from "./Shader";
-import Point from "../lib/geometry/Point";
+import Vec2 from "../lib/geometry/Vec2";
 
 export default
 class Model {
   buffer: WebGLBuffer;
 
-  constructor(public gl: WebGLRenderingContext, public vertices: [Point, Point][]) {
+  constructor(public gl: WebGLRenderingContext, public vertices: [Vec2, Vec2][]) {
     this.buffer = gl.createBuffer();
   }
 

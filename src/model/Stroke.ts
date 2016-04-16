@@ -1,4 +1,4 @@
-import Point from '../lib/geometry/Point';
+import Vec2 from '../lib/geometry/Vec2';
 import Curve from '../lib/geometry/Curve';
 import Color from '../lib/geometry/Color';
 import Rect from '../lib/geometry/Rect';
@@ -7,16 +7,16 @@ import * as Rx from "rx";
 
 export default
 class Stroke {
-  points: Point[] = [];
+  points: Vec2[] = [];
   color = new Color(0,0,0,1);
   width = 1;
   type = "pen";
-  pointAdded = new Rx.Subject<Point>();
+  pointAdded = new Rx.Subject<Vec2>();
 
   constructor() {
   }
 
-  addPoint(point: Point) {
+  addPoint(point: Vec2) {
     this.points.push(point);
     this.pointAdded.onNext(point);
   }

@@ -1,5 +1,5 @@
 import Model from "./Model";
-import Point from '../lib/geometry/Point';
+import Vec2 from '../lib/geometry/Vec2';
 import Curve from '../lib/geometry/Curve';
 import Color from '../lib/geometry/Color';
 import Stroke from "../model/Stroke";
@@ -9,7 +9,7 @@ import DisposableBag from "../lib/DisposableBag";
 
 export default
 class StrokeWeaver {
-  polygon: [Point, Point][] = [];
+  polygon: [Vec2, Vec2][] = [];
   buffer: WebGLBuffer;
   model: Model;
   lastSegmentCount = 0;
@@ -23,7 +23,7 @@ class StrokeWeaver {
     this.model = new Model(gl, []);
   }
 
-  addPoint(point: Point) {
+  addPoint(point: Vec2) {
     this.rewindLastSegments();
 
     const points = this.stroke.points;
@@ -42,7 +42,7 @@ class StrokeWeaver {
     this.model.updateBuffer();
   }
 
-  addInterpolatedSegments(p1: Point, p2: Point, p3: Point, p4: Point) {
+  addInterpolatedSegments(p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2) {
     const points = Curve.bSpline(p1, p2, p3, p4).subdivide();
     const nSegment = points.length - 1
     for (let i = 0; i < nSegment; ++i) {
@@ -51,17 +51,17 @@ class StrokeWeaver {
     return nSegment;
   }
 
-  addSegment(last: Point, point: Point) {
+  addSegment(last: Vec2, point: Vec2) {
     const width = this.stroke.width;
     const vertices = this.model.vertices;
 
     const normal = point.sub(last).normalize().rotate90();
     const toLeft = normal.mul(width / 2);
     const toRight = normal.mul(-width / 2);
-    vertices.push([last.add(toLeft), new Point(-1, 0)]);
-    vertices.push([last.add(toRight), new Point(1, 0)]);
-    vertices.push([point.add(toLeft), new Point(-1, 0)]);
-    vertices.push([point.add(toRight), new Point(1, 0)]);
+    vertices.push([last.add(toLeft), new Vec2(-1, 0)]);
+    vertices.push([last.add(toRight), new Vec2(1, 0)]);
+    vertices.push([point.add(toLeft), new Vec2(-1, 0)]);
+    vertices.push([point.add(toRight), new Vec2(1, 0)]);
   }
 
   rewindLastSegments() {

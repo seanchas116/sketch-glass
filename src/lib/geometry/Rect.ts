@@ -1,10 +1,10 @@
-import Point from './Point';
+import Vec2 from './Vec2';
 import Transform from "./Transform";
 
 export default
 class Rect {
 
-  constructor(public min: Point, public max: Point) {
+  constructor(public min: Vec2, public max: Vec2) {
   }
 
   get x() {
@@ -33,8 +33,8 @@ class Rect {
       return this;
     }
 
-    const min = new Point(Math.min(this.min.x, other.min.x), Math.min(this.min.y, other.min.y));
-    const max = new Point(Math.max(this.max.x, other.max.x), Math.max(this.max.y, other.max.y));
+    const min = new Vec2(Math.min(this.min.x, other.min.x), Math.min(this.min.y, other.min.y));
+    const max = new Vec2(Math.max(this.max.x, other.max.x), Math.max(this.max.y, other.max.y));
     return new Rect(min, max);
   }
 
@@ -42,17 +42,17 @@ class Rect {
     if (this.isEmpty || other.isEmpty) {
       return Rect.empty;
     }
-    const min = new Point(Math.max(this.min.x, other.min.x), Math.max(this.min.y, other.min.y));
-    const max = new Point(Math.min(this.max.x, other.max.x), Math.min(this.max.y, other.max.y));
+    const min = new Vec2(Math.max(this.min.x, other.min.x), Math.max(this.min.y, other.min.y));
+    const max = new Vec2(Math.min(this.max.x, other.max.x), Math.min(this.max.y, other.max.y));
     return new Rect(min, max);
   }
 
   outset(offset: number) {
-    const diff = new Point(offset, offset);
+    const diff = new Vec2(offset, offset);
     return new Rect(this.min.sub(diff), this.max.add(diff));
   }
 
-  translate(offset: Point) {
+  translate(offset: Vec2) {
     return new Rect(this.min.add(offset), this.max.add(offset));
   }
 
@@ -75,17 +75,17 @@ class Rect {
     return this.min.equals(other.min) && this.max.equals(other.max);
   }
 
-  static fromPoints(p1: Point, p2: Point) {
-    const min = new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
-    const max = new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+  static fromPoints(p1: Vec2, p2: Vec2) {
+    const min = new Vec2(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+    const max = new Vec2(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
     return new Rect(min, max);
   }
 
   static fromMetrics(x: number, y: number, width: number, height: number) {
-    return new Rect(new Point(x, y), new Point(x + width, y + height));
+    return new Rect(new Vec2(x, y), new Vec2(x + width, y + height));
   }
 
   static get empty() {
-    return new Rect(new Point(0,0), new Point(-1,-1));
+    return new Rect(new Vec2(0,0), new Vec2(-1,-1));
   }
 }

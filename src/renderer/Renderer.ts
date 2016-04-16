@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import Color from '../lib/geometry/Color';
-import Point from '../lib/geometry/Point';
+import Vec2 from '../lib/geometry/Vec2';
 import Rect from '../lib/geometry/Rect';
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
@@ -58,10 +58,10 @@ class Renderer {
     this.backgroundShader.setColor(this.background.color);
 
     this.backgroundModel = new Model(gl, [
-      [new Point(-1, -1), new Point(0, 0)],
-      [new Point(-1, 1), new Point(0, 0)],
-      [new Point(1, -1), new Point(0, 0)],
-      [new Point(1, 1), new Point(0, 0)],
+      [new Vec2(-1, -1), new Vec2(0, 0)],
+      [new Vec2(-1, 1), new Vec2(0, 0)],
+      [new Vec2(1, -1), new Vec2(0, 0)],
+      [new Vec2(1, 1), new Vec2(0, 0)],
     ]);
     this.backgroundModel.updateBuffer();
 
@@ -130,7 +130,7 @@ class Renderer {
     const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
     this.viewportTransform = Transform.scale(2 / width, 2 / height)
-      .translate(new Point(-1, -1))
+      .translate(new Vec2(-1, -1))
       .scale(1, -1);
     this.element.width = width * dpr;
     this.element.height = height * dpr;

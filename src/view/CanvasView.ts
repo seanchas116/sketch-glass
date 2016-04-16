@@ -1,7 +1,7 @@
 import Component from "../lib/ui/Component";
 import Renderer from '../renderer/Renderer';
 import Stroke from '../model/Stroke';
-import Point from '../lib/geometry/Point';
+import Vec2 from '../lib/geometry/Vec2';
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
@@ -10,7 +10,7 @@ import DisposableBag from "../lib/DisposableBag";
 import Tool from "../model/Tool";
 
 function touchPoint(touch: Touch) {
-  return new Point(touch.clientX, touch.clientY);
+  return new Vec2(touch.clientX, touch.clientY);
 }
 
 enum InteractionState {
@@ -19,7 +19,7 @@ enum InteractionState {
 
 class StrokeHandler {
   interactionState = InteractionState.None;
-  pinchStartPoints: Point[];
+  pinchStartPoints: Vec2[];
 
   initialTransform = Transform.identity();
 
@@ -33,13 +33,13 @@ class StrokeHandler {
     this.renderer.dispose();
   }
 
-  pinchStart(points: Point[]) {
+  pinchStart(points: Vec2[]) {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.canvas.transform.value;
   }
 
-  pinchMove(points: Point[]) {
+  pinchMove(points: Vec2[]) {
     if (this.interactionState !== InteractionState.Pinching) {
       this.pinchStart(points);
     }
@@ -61,7 +61,7 @@ class StrokeHandler {
     this.interactionState = InteractionState.None;
   }
 
-  pressStart(pos: Point) {
+  pressStart(pos: Vec2) {
     this.interactionState = InteractionState.Pressed;
 
     pos = pos.transform(this.canvas.transform.value.invert());
@@ -79,7 +79,7 @@ class StrokeHandler {
     this.renderer.render();
   }
 
-  pressMove(pos: Point) {
+  pressMove(pos: Vec2) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.canvas.transform.value.invert());
       this.currentStroke.addPoint(pos);
@@ -93,7 +93,7 @@ class StrokeHandler {
     }
   }
 
-  translate(offset: Point) {
+  translate(offset: Vec2) {
     const transform = this.canvas.transform.value.translate(offset);
     this.canvas.transform.value = transform;
     this.renderer.update();
@@ -110,11 +110,11 @@ class CanvasView extends Component {
 
   private onMouseMove(ev: MouseEvent) {
     //console.log(`mouse move at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressMove(new Point(ev.clientX, ev.clientY));
+    this.strokeHandler.pressMove(new Vec2(ev.clientX, ev.clientY));
   }
   private onMouseDown(ev: MouseEvent) {
     //console.log(`mouse down at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressStart(new Point(ev.clientX, ev.clientY));
+    this.strokeHandler.pressStart(new Vec2(ev.clientX, ev.clientY));
   }
   private onMouseUp(ev: MouseEvent) {
     //console.log(`mouse up at ${ev.clientX}, ${ev.clientY}`);
@@ -148,7 +148,7 @@ class CanvasView extends Component {
   }
 
   private onWheel(ev: WheelEvent) {
-    this.strokeHandler.translate(new Point(-ev.deltaX, -ev.deltaY));
+    this.strokeHandler.translate(new Vec2(-ev.deltaX, -ev.deltaY));
     ev.preventDefault();
   }
 
