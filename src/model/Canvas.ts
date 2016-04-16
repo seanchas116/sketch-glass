@@ -11,15 +11,4 @@ class Canvas {
   transform = new Variable(Transform.identity());
   toolBox = new ToolBox();
   strokes: Stroke[] = [];
-  strokeAdded = new Rx.Subject<Stroke>();
-  updateNeeded = new Rx.Subject<void>();
-
-  addStroke(stroke: Stroke) {
-    this.strokes.push(stroke);
-    this.strokeAdded.onNext(stroke);
-  }
-
-  requestUpdate() {
-    this.updateNeeded.onNext(undefined);
-  }
 }

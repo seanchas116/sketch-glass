@@ -11,13 +11,4 @@ class Stroke {
   color = new Color(0,0,0,1);
   width = 1;
   type = "pen";
-  pointAdded = new Rx.Subject<Vec2>();
-
-  constructor() {
-  }
-
-  addPoint(point: Vec2) {
-    this.points.push(point);
-    this.pointAdded.onNext(point);
-  }
 }

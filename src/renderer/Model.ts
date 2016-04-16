@@ -26,4 +26,8 @@ class Model {
     gl.vertexAttribPointer(shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertices.length);
   }
+
+  dispose() {
+    this.gl.deleteBuffer(this.buffer);
+  }
 }

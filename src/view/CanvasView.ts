@@ -54,7 +54,7 @@ class StrokeHandler {
     let transform = Transform.scale(new Vec2(scale, scale)).merge(Transform.translation(diff));
 
     this.canvas.transform.value = this.initialTransform.merge(transform);
-    this.canvas.requestUpdate();
+    this.renderer.update();
   }
 
   pinchEnd() {
@@ -63,33 +63,22 @@ class StrokeHandler {
 
   pressStart(pos: Vec2) {
     this.interactionState = InteractionState.Pressed;
-
+    this.renderer.strokeBegin();
     pos = pos.transform(this.canvas.transform.value.invert());
-    const stroke = this.currentStroke = new Stroke();
-    if (this.canvas.toolBox.tool.value == Tool.Pen) {
-      stroke.width = this.canvas.toolBox.penWidth.value;
-      stroke.color = this.canvas.toolBox.color.value;
-    } else {
-      stroke.width = this.canvas.toolBox.eraserWidth.value;
-      stroke.color = new Color(255,255,255,1);
-    }
-    stroke.addPoint(pos);
-
-    this.renderer.addStroke(stroke);
-    this.renderer.render();
+    this.renderer.strokeNext(pos);
   }
 
   pressMove(pos: Vec2) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.canvas.transform.value.invert());
-      this.currentStroke.addPoint(pos);
-      this.renderer.render();
+      this.renderer.strokeNext(pos);
     }
   }
 
   pressEnd() {
     if (this.interactionState === InteractionState.Pressed) {
       this.interactionState = InteractionState.None;
+      this.renderer.strokeEnd();
     }
   }
 

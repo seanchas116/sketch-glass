@@ -2,21 +2,46 @@ import * as _ from 'lodash';
 import Color from '../lib/geometry/Color';
 import Vec2 from '../lib/geometry/Vec2';
 import Rect from '../lib/geometry/Rect';
+import Curve from "../lib/geometry/Curve";
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
 import Background from "../lib/geometry/Background";
 import FillShader from "./FillShader";
-import StrokeWeaver from "./StrokeWeaver";
 import Model from "./Model";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
+import Tool from "../model/Tool";
 import DisposableBag from "../lib/DisposableBag";
+
+function addInterpolatedSegments(model: Model, width: number, p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2) {
+  const points = Curve.bSpline(p1, p2, p3, p4).subdivide();
+  const nSegment = points.length - 1
+  for (let i = 0; i < nSegment; ++i) {
+    addSegment(model, width, points[i], points[i + 1]);
+  }
+  return nSegment;
+}
+
+function addSegment(model: Model, width: number, last: Vec2, point: Vec2) {
+  const vertices = model.vertices;
+
+  const normal = point.sub(last).normalize().rotate90();
+  const toLeft = normal.mul(width / 2);
+  const toRight = normal.mul(-width / 2);
+  vertices.push([last.add(toLeft), new Vec2(-1, 0)]);
+  vertices.push([last.add(toRight), new Vec2(1, 0)]);
+  vertices.push([point.add(toLeft), new Vec2(-1, 0)]);
+  vertices.push([point.add(toRight), new Vec2(1, 0)]);
+}
 
 export default
 class Renderer {
 
   element = document.createElement('canvas');
-  strokeWeavers: StrokeWeaver[] = [];
+  strokeModelMap = new Map<Stroke, Model>();
+  strokeFinalizedModel: Model;
+  strokePrecedingModel: Model;
+  stroke: Stroke | null;
   isUpdateQueued = false;
   devicePixelRatio = 1;
   size = new Vec2(0, 0);
@@ -29,13 +54,7 @@ class Renderer {
   backgroundShader: Shader;
   disposables = new DisposableBag();
 
-  constructor(viewModel: Canvas) {
-    this.disposables.add(
-      viewModel.strokeAdded.forEach(stroke => this.addStroke(stroke)),
-      viewModel.updateNeeded.forEach(() => this.update()),
-      viewModel.transform.changed.forEach(t => this.transform = t)
-    );
-
+  constructor(public canvas: Canvas) {
     this.background = new Background(new Color(255,255,255,1));
 
     // TODO: check why explicit cast is required
@@ -69,14 +88,69 @@ class Renderer {
     this.element.className = 'renderer';
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
+
+    this.strokeFinalizedModel = new Model(gl, []);
+    this.strokePrecedingModel = new Model(gl, []);
   }
 
   dispose() {
     this.disposables.dispose();
+    for (const model of this.strokeModelMap.values()) {
+      model.dispose();
+    }
+    if (this.strokePrecedingModel) {
+      this.strokePrecedingModel.dispose();
+    }
   }
 
-  addStroke(stroke: Stroke) {
-    this.strokeWeavers.push(new StrokeWeaver(this.gl, stroke));
+  strokeBegin() {
+    const stroke = this.stroke = new Stroke();
+    if (this.canvas.toolBox.tool.value == Tool.Pen) {
+      stroke.width = this.canvas.toolBox.penWidth.value;
+      stroke.color = this.canvas.toolBox.color.value;
+    } else {
+      stroke.width = this.canvas.toolBox.eraserWidth.value;
+      stroke.color = new Color(255,255,255,1);
+    }
+    this.strokeFinalizedModel = new Model(this.gl, []);
+    this.strokePrecedingModel = new Model(this.gl, []);
+  }
+
+  strokeNext(pos: Vec2) {
+    this.stroke.points.push(pos);
+    const {points, width} = this.stroke;
+    const nPoints = points.length;
+    const finalizedModel = this.strokeFinalizedModel;
+    const precedingModel = this.strokePrecedingModel;
+    precedingModel.vertices = [];
+
+    if (nPoints === 2) {
+      addSegment(precedingModel, width, points[0], points[1]);
+    } else if (nPoints === 3) {
+      addInterpolatedSegments(finalizedModel, width, points[0], points[0], points[1], points[2]);
+      addInterpolatedSegments(precedingModel, width, points[0], points[1], points[2], points[2]);
+    } else if (nPoints > 3) {
+      addInterpolatedSegments(finalizedModel, width, points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]);
+      addInterpolatedSegments(precedingModel, width, points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]);
+    }
+    finalizedModel.updateBuffer();
+    precedingModel.updateBuffer();
+    this.render();
+  }
+
+  strokeEnd() {
+    const model = new Model(this.gl, this.strokeFinalizedModel.vertices.concat(this.strokePrecedingModel.vertices));
+    this.strokeFinalizedModel.vertices = [];
+    this.strokePrecedingModel.vertices = [];
+
+    model.updateBuffer();
+    this.strokeFinalizedModel.updateBuffer();
+    this.strokePrecedingModel.updateBuffer();
+
+    this.strokeModelMap.set(this.stroke, model);
+    this.canvas.strokes.push(this.stroke);
+
+    this.stroke = null;
   }
 
   update(immediate = false) {
@@ -114,13 +188,19 @@ class Renderer {
     shader.use();
     shader.setTransforms(this.viewportTransform, this.transform);
 
-    this.strokeWeavers.forEach((weaver) => {
-      const stroke = weaver.stroke;
-      const model = weaver.model;
+    const draw = (stroke: Stroke, model: Model) => {
       shader.setColor(stroke.color);
       shader.setDisplayWidth(stroke.width * this.transform.m11);
       model.draw(shader);
-    });
+    };
+
+    for (const [stroke, model] of this.strokeModelMap) {
+      draw(stroke, model);
+    }
+    if (this.stroke) {
+      draw(this.stroke, this.strokeFinalizedModel);
+      draw(this.stroke, this.strokePrecedingModel);
+    }
   }
 
   onResize() {
