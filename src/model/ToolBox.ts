@@ -11,6 +11,6 @@ export default
 class ToolBox {
   tool = new Variable(Tool.Pen);
   penWidth = new Variable(3);
-  eraserWidth = new Variable(20);
+  eraserWidth = new Variable(30);
   color = new Variable(new Color(0,0,0,1));
 }
