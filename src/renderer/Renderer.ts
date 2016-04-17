@@ -44,7 +44,6 @@ class Renderer {
   devicePixelRatio = 1;
   size = new Vec2(0, 0);
   background: Background;
-  transform = Transform.identity();
   gl: WebGLRenderingContext;
   viewportTransform: Transform;
   shader: FillShader;
@@ -182,12 +181,14 @@ class Renderer {
 
     this.renderBackground();
 
+    const transform = this.canvas.transform.value;
+
     shader.use();
-    shader.setTransforms(this.viewportTransform, this.transform);
+    shader.setTransforms(this.viewportTransform, transform);
 
     const draw = (stroke: Stroke, model: Model) => {
       shader.setColor(stroke.color);
-      shader.setDisplayWidth(stroke.width * this.transform.m11);
+      shader.setDisplayWidth(stroke.width * transform.m11);
       model.draw(shader);
     };
 
