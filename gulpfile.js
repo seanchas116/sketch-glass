@@ -17,6 +17,7 @@ const webserver = require('gulp-webserver');
 const jade = require("gulp-jade");
 const less = require("gulp-less")
 const iconfont = require("gulp-iconfont");
+const manifest = require("gulp-manifest");
 
 const runTimestamp = Math.round(Date.now()/1000);
 
@@ -101,7 +102,18 @@ gulp.task('release-bundle', ["build-assets"], () => {
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('release', ['release-bundle'], () => {
+gulp.task('manifest', ["release-bundle"], () => {
+  gulp.src(['dist/**/*'], { base: './' })
+    .pipe(manifest({
+      hash: true,
+      network: ['*'],
+      filename: 'app.manifest',
+      exclude: 'app.manifest'
+     }))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('release', ['manifest'], () => {
   return gulp.src('./dist/**/*')
     .pipe(deploy());
 });
