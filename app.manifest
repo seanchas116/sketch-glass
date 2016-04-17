@@ -1,0 +1,17 @@
+CACHE MANIFEST
+
+CACHE:
+dist/app.manifest
+dist/bundle.js
+dist/bundle.js.map
+dist/index.css
+dist/index.html
+dist/fonts/sg-icon.eot
+dist/fonts/sg-icon.ttf
+dist/fonts/sg-icon.woff
+dist/vendor/normalize.css
+
+NETWORK:
+*
+
+# hash: cfb79314815680bf09f5411995f9c92e476bdeaca9c18a841389aef081e99760
