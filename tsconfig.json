@@ -1,63 +1,19 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "declaration": false,
-        "noImplicitAny": true,
-        "removeComments": true,
-        "noLib": false,
-        "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "inlineSourceMap": true,
-        "inlineSources": true,
-        "outDir": "./build"
-    },
-    "filesGlob": [
-        "./src/**/*.ts",
-        "./src/**/*.tsx",
-        "./typings/browser/**/*.ts",
-        "!./node_modules/**/*.ts"
-    ],
-    "files": [
-        "./src/Actions.ts",
-        "./src/Dispatcher.ts",
-        "./src/index.ts",
-        "./src/lib/Disposable.ts",
-        "./src/lib/DisposableBag.ts",
-        "./src/lib/geometry/Background.ts",
-        "./src/lib/geometry/Color.ts",
-        "./src/lib/geometry/Curve.ts",
-        "./src/lib/geometry/Line.ts",
-        "./src/lib/geometry/Rect.ts",
-        "./src/lib/geometry/Transform.ts",
-        "./src/lib/geometry/util.ts",
-        "./src/lib/geometry/Vec2.ts",
-        "./src/lib/rx/Variable.ts",
-        "./src/lib/ui/Component.ts",
-        "./src/lib/ui/Slot.ts",
-        "./src/model/Canvas.ts",
-        "./src/model/Stroke.ts",
-        "./src/model/Tool.ts",
-        "./src/model/ToolBox.ts",
-        "./src/renderer/FillShader.ts",
-        "./src/renderer/Framebuffer.ts",
-        "./src/renderer/Model.ts",
-        "./src/renderer/Renderer.ts",
-        "./src/renderer/Shader.ts",
-        "./src/renderer/Texture.ts",
-        "./src/view/ButtonView.ts",
-        "./src/view/CanvasView.ts",
-        "./src/view/InfoButtonsView.ts",
-        "./src/view/MainView.ts",
-        "./src/view/SideBarView.ts",
-        "./src/view/ToolBoxView.ts",
-        "./typings/browser/ambient/firebase/index.d.ts",
-        "./typings/browser/ambient/lodash/index.d.ts",
-        "./typings/browser/ambient/node/index.d.ts",
-        "./typings/browser/ambient/react-dom/index.d.ts",
-        "./typings/browser/ambient/react/index.d.ts",
-        "./typings/browser/ambient/rx/index.d.ts"
-    ],
-    "atom": {
-        "rewriteTsconfig": true
-    }
+  "compilerOptions": {
+    "target": "es6",
+    "declaration": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "noLib": false,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "outDir": "./build"
+  },
+  "exclude": [
+    "node_modules",
+    "typings/main.d.ts",
+    "typings/main"
+  ]
 }
