@@ -16,7 +16,9 @@ canvasCollaborators:
 strokes:
   $canvasId:
     $id:
+      user: $userId
       brush:
+        type: "pen" | "eraser"
         color: string
         width: number
       fragments:
