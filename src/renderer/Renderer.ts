@@ -202,7 +202,7 @@ class Renderer {
   }
 
   onResize() {
-    const {width, height} = this.size = new Vec2(this.element.clientWidth, this.element.clientHeight);
+    const {width, height} = this.size = new Vec2(window.innerWidth, window.innerHeight);
     const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
     this.viewportTransform = Transform.scale(new Vec2(2 / width, 2 / height))
@@ -210,10 +210,12 @@ class Renderer {
       .scale(new Vec2(1, -1));
     this.element.width = width * dpr;
     this.element.height = height * dpr;
+    this.element.style.transform = `scale(${1 / dpr})`;
 
     this.gl.viewport(0, 0, width * dpr, height * dpr);
 
     console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
+
 
     this.update();
   }
