@@ -50,6 +50,7 @@
         "./src/view/MainView.ts",
         "./src/view/SideBarView.ts",
         "./src/view/ToolBoxView.ts",
+        "./typings/browser/ambient/firebase/index.d.ts",
         "./typings/browser/ambient/lodash/index.d.ts",
         "./typings/browser/ambient/node/index.d.ts",
         "./typings/browser/ambient/react-dom/index.d.ts",

@@ -36,6 +36,7 @@
   "dependencies": {
     "bezier-js": "^2.0.0",
     "bezier-subdivide": "0.0.1",
+    "firebase": "^2.4.2",
     "lodash": "^4.9.0",
     "normalize.css": "^4.0.0",
     "rx": "^4.1.0",

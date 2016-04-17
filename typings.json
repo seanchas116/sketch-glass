@@ -3,6 +3,7 @@
     "lodash": "registry:npm/lodash#4.0.0+20160305082308"
   },
   "ambientDependencies": {
+    "firebase": "registry:dt/firebase#2.4.1+20160412125105",
     "node": "registry:dt/node#4.0.0+20160330064709",
     "react": "registry:dt/react#0.14.0+20160412154040",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
