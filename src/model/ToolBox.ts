@@ -8,7 +8,7 @@ import * as Rx from "rx";
 
 export default
 class ToolBox {
-  pen = new Brush(BrushType.Pen, 3, 0);
+  pen = new Brush(BrushType.Pen, 3, -0.1);
   eraser = new Brush(BrushType.Eraser, 3, 10);
   brush = new Variable(this.pen);
   color = new Variable(Color.black);

@@ -165,7 +165,7 @@ class Renderer {
     const duration = timeStamp - this.lastTimeStamp;
 
     const velocitiesToWidths = (velocities: number[]) => {
-      return velocities.map(v => width + v * widthGrowth);
+      return velocities.map(v => Math.max(width + v * widthGrowth, 0));
     };
 
     if (lastVertices.length > 0) {
