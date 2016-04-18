@@ -13,14 +13,21 @@ import Canvas from "../model/Canvas";
 import Tool from "../model/Tool";
 import DisposableBag from "../lib/DisposableBag";
 
+function calcAntialiasEdge(width: number) {
+  const radius = width * 0.5;
+  return (radius - 1) / radius;
+}
+
 function addSegment(model: Model, width1: number, width2: number, pos1: Vec2, pos2: Vec2) {
   const vertices = model.vertices;
 
   const normal = pos2.sub(pos1).normalize().rotate90();
-  vertices.push([pos1.add(normal.mul(width1 * 0.5)), new Vec2(-1, 0)]);
-  vertices.push([pos1.add(normal.mul(width1 * -0.5)), new Vec2(1, 0)]);
-  vertices.push([pos2.add(normal.mul(width2 * 0.5)), new Vec2(-1, 0)]);
-  vertices.push([pos2.add(normal.mul(width2 * -0.5)), new Vec2(1, 0)]);
+  const aaEdge1 = calcAntialiasEdge(width1);
+  const aaEdge2 = calcAntialiasEdge(width2);
+  vertices.push([pos1.add(normal.mul(width1 * 0.5)), new Vec2(-1, aaEdge1)]);
+  vertices.push([pos1.add(normal.mul(width1 * -0.5)), new Vec2(1, aaEdge1)]);
+  vertices.push([pos2.add(normal.mul(width2 * 0.5)), new Vec2(-1, aaEdge2)]);
+  vertices.push([pos2.add(normal.mul(width2 * -0.5)), new Vec2(1, aaEdge2)]);
 }
 
 function addSegments(model: Model, widths: number[], vertices: Vec2[]) {
@@ -29,6 +36,7 @@ function addSegments(model: Model, widths: number[], vertices: Vec2[]) {
   }
 }
 
+// calculate apploximate velocities (pixel / ms)
 function calcVelocities(lastVelocity: number, duration: number, vertices: Vec2[]) {
   const lengths: number[] = [];
   for (let i = 0; i < vertices.length - 1; ++i) {
@@ -233,7 +241,6 @@ class Renderer {
     const draw = (stroke: Stroke, model: Model) => {
       if (model.vertices.length > 0) {
         shader.setColor(stroke.color);
-        shader.setDisplayWidth(stroke.width * transform.m11);
         model.draw(shader);
       }
     };
