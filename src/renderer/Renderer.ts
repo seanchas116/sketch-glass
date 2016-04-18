@@ -13,22 +13,41 @@ import Canvas from "../model/Canvas";
 import Tool from "../model/Tool";
 import DisposableBag from "../lib/DisposableBag";
 
-function addSegment(model: Model, width: number, last: Vec2, point: Vec2) {
+function addSegment(model: Model, width1: number, width2: number, pos1: Vec2, pos2: Vec2) {
   const vertices = model.vertices;
 
-  const normal = point.sub(last).normalize().rotate90();
-  const toLeft = normal.mul(width / 2);
-  const toRight = normal.mul(-width / 2);
-  vertices.push([last.add(toLeft), new Vec2(-1, 0)]);
-  vertices.push([last.add(toRight), new Vec2(1, 0)]);
-  vertices.push([point.add(toLeft), new Vec2(-1, 0)]);
-  vertices.push([point.add(toRight), new Vec2(1, 0)]);
+  const normal = pos2.sub(pos1).normalize().rotate90();
+  vertices.push([pos1.add(normal.mul(width1 * 0.5)), new Vec2(-1, 0)]);
+  vertices.push([pos1.add(normal.mul(width1 * -0.5)), new Vec2(1, 0)]);
+  vertices.push([pos2.add(normal.mul(width2 * 0.5)), new Vec2(-1, 0)]);
+  vertices.push([pos2.add(normal.mul(width2 * -0.5)), new Vec2(1, 0)]);
 }
 
-function addSegments(model: Model, width: number, vertices: Vec2[]) {
+function addSegments(model: Model, widths: number[], vertices: Vec2[]) {
   for (let i = 0; i < vertices.length - 1; ++i) {
-    addSegment(model, width, vertices[i], vertices[i+1]);
+    addSegment(model, widths[i], widths[i+1], vertices[i], vertices[i+1]);
   }
+}
+
+function calcVelocities(lastVelocity: number, duration: number, vertices: Vec2[]) {
+  const lengths: number[] = [];
+  for (let i = 0; i < vertices.length - 1; ++i) {
+    const length = vertices[i+1].sub(vertices[i]).length;
+    lengths.push(length);
+  }
+  const totalLen = lengths.reduce((a, b) => a + b, 0);
+  const nextVelocity = totalLen / duration;
+  const slope = (nextVelocity - lastVelocity) / totalLen;
+
+  const velocities: number[] = [];
+  let velocity = lastVelocity;
+  for (let i = 0; i < vertices.length - 1; ++i) {
+    velocities.push(velocity);
+    velocity += slope * lengths[i];
+  }
+  velocities.push(nextVelocity);
+
+  return velocities;
 }
 
 export default
@@ -37,6 +56,8 @@ class Renderer {
   strokeFinalizedModel: Model;
   strokePrecedingModel: Model;
   stroke: Stroke | null;
+  lastTimeStamp = 0;
+  lastVelocity = 0;
   isUpdateQueued = false;
   devicePixelRatio = 1;
   size = new Vec2(0, 0);
@@ -115,6 +136,10 @@ class Renderer {
     this.stroke.points.push(pos);
     const {points, width} = this.stroke;
     const nPoints = points.length;
+    if (nPoints == 1) {
+      return;
+    }
+
     const finalizedModel = this.strokeFinalizedModel;
     const precedingModel = this.strokePrecedingModel;
     precedingModel.vertices = [];
@@ -133,8 +158,19 @@ class Renderer {
       currVertices = Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide();
     }
 
-    addSegments(finalizedModel, width, lastVertices);
-    addSegments(precedingModel, width, currVertices);
+    const duration = timeStamp - this.lastTimeStamp;
+
+    if (lastVertices.length > 0) {
+      const lastVelocities = calcVelocities(this.lastVelocity, duration, lastVertices);
+      console.log(lastVelocities);
+      this.lastVelocity = lastVelocities[lastVelocities.length - 1];
+
+      addSegments(finalizedModel, lastVelocities, lastVertices);
+
+      const currVelocities = calcVelocities(this.lastVelocity, duration, currVertices);
+      addSegments(precedingModel, currVelocities, currVertices);
+    }
+    this.lastTimeStamp = timeStamp;
 
     finalizedModel.updateBuffer();
     precedingModel.updateBuffer();
@@ -154,6 +190,7 @@ class Renderer {
     this.canvas.strokes.push(this.stroke);
 
     this.stroke = null;
+    this.lastVelocity = 0;
   }
 
   update(immediate = false) {
