@@ -19,8 +19,8 @@ class User {
 
   toData(): UserData {
     return {
-      name: this.name.value,
-      email: this.email.value
+      name: this.name.value || "",
+      email: this.email.value || ""
     }
   }
 
