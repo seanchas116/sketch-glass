@@ -112,7 +112,9 @@ class Renderer {
     this.strokePrecedingModel = new Model(this.gl, []);
   }
 
-  strokeNext(pos: Vec2) {
+  strokeNext(pos: Vec2, timeStamp: number) {
+    console.log(`timeStamp: ${timeStamp}`);
+
     this.stroke.points.push(pos);
     const {points, width} = this.stroke;
     const nPoints = points.length;
