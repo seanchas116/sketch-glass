@@ -11,5 +11,5 @@ class ToolBox {
   pen = new Brush(BrushType.Pen, 3, 0);
   eraser = new Brush(BrushType.Eraser, 3, 10);
   brush = new Variable(this.pen);
-  color = new Variable(new Color(0,0,0,1));
+  color = new Variable(Color.black);
 }

@@ -78,7 +78,7 @@ class Renderer {
   disposables = new DisposableBag();
 
   constructor(public element: HTMLCanvasElement, public canvas: Canvas) {
-    this.background = new Background(new Color(255,255,255,1));
+    this.background = new Background(Color.white);
 
     // TODO: check why explicit cast is required
     const glOpts = {
@@ -243,7 +243,7 @@ class Renderer {
         if (stroke.brush.type == BrushType.Pen) {
           shader.setColor(stroke.color);
         } else {
-          shader.setColor(new Color(255,255,255,1));
+          shader.setColor(Color.white);
         }
         model.draw(shader);
       }

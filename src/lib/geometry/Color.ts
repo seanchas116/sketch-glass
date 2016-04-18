@@ -11,4 +11,8 @@ class Color {
   toData() {
     return new Float32Array([this.r, this.g, this.b, this.a]);
   }
+
+  static black = new Color(0,0,0,1);
+  static white = new Color(255,255,255,1);
+  static transparent = new Color(0,0,0,0);
 }
