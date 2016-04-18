@@ -34,6 +34,7 @@
   },
   "private": true,
   "dependencies": {
+    "babel-polyfill": "^6.7.4",
     "bezier-js": "^2.0.0",
     "bezier-subdivide": "0.0.1",
     "firebase": "^2.4.2",
