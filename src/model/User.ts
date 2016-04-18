@@ -20,7 +20,7 @@ class User {
   toData(): UserData {
     return {
       name: this.name.value,
-      email: this.name.value
+      email: this.email.value
     }
   }
 
