@@ -187,9 +187,11 @@ class Renderer {
     shader.setTransforms(this.viewportTransform, transform);
 
     const draw = (stroke: Stroke, model: Model) => {
-      shader.setColor(stroke.color);
-      shader.setDisplayWidth(stroke.width * transform.m11);
-      model.draw(shader);
+      if (model.vertices.length > 0) {
+        shader.setColor(stroke.color);
+        shader.setDisplayWidth(stroke.width * transform.m11);
+        model.draw(shader);
+      }
     };
 
     for (const [stroke, model] of this.strokeModelMap) {
