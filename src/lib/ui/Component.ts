@@ -1,5 +1,6 @@
 import Slot from "./Slot";
 import DisposableBag from "../DisposableBag";
+import Variable from "../rx/Variable";
 
 export default
 class Component {
@@ -19,10 +20,13 @@ class Component {
   slot = new Slot(this.element);
   disposables = new DisposableBag();
 
+  isShown = new Variable(true);
+
   constructor(mountPoint: Element | null) {
     if (mountPoint != null) {
       this.mount(mountPoint);
     }
+    this.isShown.changed.map(x => !x).subscribe(this.slot.toggleClass("sg-hidden"));
   }
 
   mount(mountPoint: Element) {

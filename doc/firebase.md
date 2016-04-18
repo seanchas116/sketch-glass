@@ -2,7 +2,7 @@
 
 ```yaml
 users:
-  $id:
+  $uid:
     name: string
     email: string
 canvases:
