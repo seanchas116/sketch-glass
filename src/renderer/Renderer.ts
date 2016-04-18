@@ -13,15 +13,6 @@ import Canvas from "../model/Canvas";
 import Tool from "../model/Tool";
 import DisposableBag from "../lib/DisposableBag";
 
-function addInterpolatedSegments(model: Model, width: number, p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2) {
-  const points = Curve.bSpline(p1, p2, p3, p4).subdivide();
-  const nSegment = points.length - 1
-  for (let i = 0; i < nSegment; ++i) {
-    addSegment(model, width, points[i], points[i + 1]);
-  }
-  return nSegment;
-}
-
 function addSegment(model: Model, width: number, last: Vec2, point: Vec2) {
   const vertices = model.vertices;
 
@@ -32,6 +23,12 @@ function addSegment(model: Model, width: number, last: Vec2, point: Vec2) {
   vertices.push([last.add(toRight), new Vec2(1, 0)]);
   vertices.push([point.add(toLeft), new Vec2(-1, 0)]);
   vertices.push([point.add(toRight), new Vec2(1, 0)]);
+}
+
+function addSegments(model: Model, width: number, vertices: Vec2[]) {
+  for (let i = 0; i < vertices.length - 1; ++i) {
+    addSegment(model, width, vertices[i], vertices[i+1]);
+  }
 }
 
 export default
@@ -122,15 +119,23 @@ class Renderer {
     const precedingModel = this.strokePrecedingModel;
     precedingModel.vertices = [];
 
+    let lastVertices: Vec2[];
+    let currVertices: Vec2[];
+
     if (nPoints === 2) {
-      addSegment(precedingModel, width, points[0], points[1]);
+      lastVertices = [];
+      currVertices = points;
     } else if (nPoints === 3) {
-      addInterpolatedSegments(finalizedModel, width, points[0], points[0], points[1], points[2]);
-      addInterpolatedSegments(precedingModel, width, points[0], points[1], points[2], points[2]);
+      lastVertices = Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide();
+      currVertices = Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide();
     } else if (nPoints > 3) {
-      addInterpolatedSegments(finalizedModel, width, points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]);
-      addInterpolatedSegments(precedingModel, width, points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]);
+      lastVertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
+      currVertices = Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide();
     }
+
+    addSegments(finalizedModel, width, lastVertices);
+    addSegments(precedingModel, width, currVertices);
+
     finalizedModel.updateBuffer();
     precedingModel.updateBuffer();
     this.render();
