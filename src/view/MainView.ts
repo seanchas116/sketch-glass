@@ -4,6 +4,7 @@ import SideBarView from "./SideBarView";
 import ButtonView from "./ButtonView";
 import ToolBoxView from "./ToolBoxView";
 import InfoButtonsView from "./InfoButtonsView";
+import LoginDialog from "./LoginDialog";
 import Canvas from "../model/Canvas";
 
 export default
@@ -14,6 +15,7 @@ class MainView extends Component {
       <div class='sidebar-view'></div>
       <div class='palette-view'></div>
       <div class='info-buttons-view'></div>
+      <div class='login-dialog'></div>
     </div>
   `;
   canvas = new Canvas();
@@ -21,6 +23,7 @@ class MainView extends Component {
   sideBarView = new SideBarView(this.elementFor(".sidebar-view"));
   toolBoxView = new ToolBoxView(this.elementFor(".palette-view"), this.canvas.toolBox);
   infoButtonsView = new InfoButtonsView(this.elementFor(".info-buttons-view"));
+  loginDialog = new LoginDialog(this.elementFor(".login-dialog"));
 
   constructor(mountPoint: Element) {
     super(mountPoint);
