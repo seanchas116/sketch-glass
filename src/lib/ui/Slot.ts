@@ -33,4 +33,10 @@ class Slot {
       this.element.textContent = text;
     }
   }
+
+  attribute(name: string) {
+    return (value: string) => {
+      this.element.setAttribute(name, value);
+    };
+  }
 }

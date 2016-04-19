@@ -1,6 +1,15 @@
 import Component from "../../lib/ui/Component";
 import Variable from "../../lib/rx/Variable";
 import ButtonView from "../ButtonView";
+import DisposableBag from "../../lib/DisposableBag";
+import {app} from "../../model/App";
+import Slot from "../../lib/ui/Slot";
+const gravatar = require('gravatar');
+
+function gravatarURL(email: string) {
+  const dpr = window.devicePixelRatio || 1;
+  return gravatar.url(email, {protocol: 'https', s: 32 * dpr});
+}
 
 export default
 class UserSideBarView extends Component {
@@ -9,8 +18,8 @@ class UserSideBarView extends Component {
       <div class="sg-sidebar-clip">
         <aside class="sg-sidebar-content">
           <div class="user-header">
-            <img class="avatar" src="https://gravatar.com/avatar/b215d7166d6db49b398150345dbdbb8f?s=64">
-            <h1 class="userName">Foo Bar</h1>
+            <img class="avatar">
+            <h1 class="userName"></h1>
           </div>
           <div class="canvases-header">
             <h2>Canvases</h2>
@@ -34,6 +43,8 @@ class UserSideBarView extends Component {
 
   open = new Variable(false);
   sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
+  avatarSlot = this.slotFor(".avatar")
+  userNameSlot = this.slotFor(".userName");
 
   constructor(mountPoint: Element) {
     super(mountPoint);
@@ -42,6 +53,23 @@ class UserSideBarView extends Component {
     this.open.changed.subscribe(this.sidebarButton.isChecked);
     this.sidebarButton.clicked.subscribe(() => {
       this.open.value = !this.open.value;
+    });
+
+    const userDisposables = new DisposableBag();
+    this.disposables.add(userDisposables);
+
+    app.user.changed.subscribe(user => {
+      userDisposables.clear();
+      console.log("updating sidebar");
+      console.log(user);
+      if (user != null) {
+        userDisposables.add(
+          user.name.changed.subscribe(this.userNameSlot.text()),
+          user.email.changed
+            .map(gravatarURL)
+            .subscribe(this.avatarSlot.attribute("src"))
+        );
+      }
     });
   }
 }

@@ -4,6 +4,13 @@ export default
 class DisposableBag implements Disposable {
   disposables = new Set<Disposable>();
 
+  clear() {
+    for (const d of this.disposables) {
+      d.dispose();
+    }
+    this.disposables.clear();
+  }
+
   add(...disposables: Disposable[]) {
     for (const d of disposables) {
       this.disposables.add(d);
@@ -17,8 +24,6 @@ class DisposableBag implements Disposable {
   }
 
   dispose() {
-    for (const d of this.disposables) {
-      d.dispose();
-    }
+    this.clear();
   }
 }
