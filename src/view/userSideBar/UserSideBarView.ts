@@ -60,8 +60,6 @@ class UserSideBarView extends Component {
 
     app.user.changed.subscribe(user => {
       userDisposables.clear();
-      console.log("updating sidebar");
-      console.log(user);
       if (user != null) {
         userDisposables.add(
           user.name.changed.subscribe(this.userNameSlot.text()),
