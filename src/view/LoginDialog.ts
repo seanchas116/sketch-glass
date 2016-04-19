@@ -27,7 +27,7 @@ class LoginDialog extends Component {
   }
 
   async auth() {
-    const authData = await firebaseRoot.authWithOAuthPopup("google");
+    const authData = await firebaseRoot.authWithOAuthPopup("google", {scope: "email"});
     const user = await UserFirebase.fromGoogleAuth(authData);
     console.log(user);
     app.user.value = user;
