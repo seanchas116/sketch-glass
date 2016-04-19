@@ -1,5 +1,6 @@
 import Component from "../lib/ui/Component";
-import firebaseRoot from "../firebaseRoot";
+import firebaseRoot from "../firebase/root";
+import UserFirebase from "../firebase/UserFirebase";
 import User from "../model/User";
 import App, {app} from "../model/App";
 import * as Rx from "rx";
@@ -27,7 +28,7 @@ class LoginDialog extends Component {
 
   async auth() {
     const authData = await firebaseRoot.authWithOAuthPopup("google");
-    const user = await User.fromGoogleAuth(authData);
+    const user = await UserFirebase.fromGoogleAuth(authData);
     console.log(user);
     app.user.value = user;
   }

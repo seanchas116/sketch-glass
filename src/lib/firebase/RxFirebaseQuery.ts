@@ -6,8 +6,8 @@ class RxFirebaseQuery {
   constructor(public query: FirebaseQuery) {
   }
 
-  on(event: string): Rx.Observable<Firebase.DataSnapshot> {
-    return Rx.Observable.create(observer => {
+  on(event: string) {
+    return Rx.Observable.create<FirebaseDataSnapshot>(observer => {
       this.query.on(event, (value) => {
         observer.onNext(value)
       }, (err) => {
