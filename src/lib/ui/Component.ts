@@ -1,9 +1,9 @@
 import Slot from "./Slot";
-import DisposableBag from "../DisposableBag";
+import TreeDisposable from "../TreeDisposable";
 import Variable from "../rx/Variable";
 
 export default
-class Component {
+class Component extends TreeDisposable {
   static template = "";
   static templateElement: Element | null;
 
@@ -18,11 +18,11 @@ class Component {
 
   element = (this.constructor as typeof Component).getTemplateElement().cloneNode(true) as Element;
   slot = new Slot(this.element);
-  disposables = new DisposableBag();
 
   isShown = new Variable(true);
 
   constructor(mountPoint: Element | null) {
+    super();
     if (mountPoint != null) {
       this.mount(mountPoint);
     }
@@ -39,9 +39,5 @@ class Component {
   }
   slotFor(selector: string) {
     return new Slot(this.elementFor(selector));
-  }
-
-  dispose() {
-    this.disposables.dispose();
   }
 }

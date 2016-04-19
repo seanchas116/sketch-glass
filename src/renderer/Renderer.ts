@@ -11,7 +11,7 @@ import Model from "./Model";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
 import Brush, {BrushType} from "../model/Brush";
-import DisposableBag from "../lib/DisposableBag";
+import TreeDisposable from "../lib/TreeDisposable";
 
 function calcAntialiasEdge(width: number) {
   const radius = width * 0.5;
@@ -59,7 +59,7 @@ function calcVelocities(lastVelocity: number, duration: number, vertices: Vec2[]
 }
 
 export default
-class Renderer {
+class Renderer extends TreeDisposable {
   strokeModelMap = new Map<Stroke, Model>();
   strokeFinalizedModel: Model;
   strokePrecedingModel: Model;
@@ -75,9 +75,9 @@ class Renderer {
   shader: FillShader;
   backgroundModel: Model;
   backgroundShader: Shader;
-  disposables = new DisposableBag();
 
   constructor(public element: HTMLCanvasElement, public canvas: Canvas) {
+    super();
     this.background = new Background(Color.white);
 
     // TODO: check why explicit cast is required
@@ -116,7 +116,7 @@ class Renderer {
   }
 
   dispose() {
-    this.disposables.dispose();
+    super.dispose();
     for (const model of this.strokeModelMap.values()) {
       model.dispose();
     }
