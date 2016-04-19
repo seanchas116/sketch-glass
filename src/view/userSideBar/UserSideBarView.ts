@@ -1,13 +1,13 @@
-import Component from "../lib/ui/Component";
-import Variable from "../lib/rx/Variable";
-import ButtonView from "./ButtonView";
+import Component from "../../lib/ui/Component";
+import Variable from "../../lib/rx/Variable";
+import ButtonView from "../ButtonView";
 
 interface SideBarState {
   open: boolean;
 }
 
 export default
-class SideBarView extends Component {
+class UserSideBarView extends Component {
   static template = `
     <div class="sg-sidebar">
       <div class="sg-sidebar-clip">
