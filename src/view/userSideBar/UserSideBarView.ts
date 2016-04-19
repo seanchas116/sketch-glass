@@ -2,10 +2,6 @@ import Component from "../../lib/ui/Component";
 import Variable from "../../lib/rx/Variable";
 import ButtonView from "../ButtonView";
 
-interface SideBarState {
-  open: boolean;
-}
-
 export default
 class UserSideBarView extends Component {
   static template = `
