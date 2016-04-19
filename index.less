@@ -14,13 +14,13 @@
 }
 
 .sg-sidebar {
-  @sidebar-width: 200px;
+  @sidebar-width: 250px;
   width: 0;
   height: 100vh;
   top: 0;
   left: 0;
   position: relative;
-  background-color: #34383D;
+  background-color: #252526;
   box-shadow: inset -8px 0px 10px -10px rgba(0,0,0,0.5);
   transition: width 0.2s ease;
 
@@ -69,26 +69,37 @@
   }
 
   .sg-canvas-cell {
-    background-color: #00A896;
-    padding: 20px;
+    &.selected {
+      background-color: #3D3E3F;
+      border-left: 4px solid #1568C9;
+    }
     color: white;
+    height: 80px;
+    position: relative;
 
     .thumbnail {
-      width: 160px;
-      height: 120px;
+      position: absolute;
+      width: 48px;
+      height: 36px;
+      left: 22px;
+      top: 22px;
       background-color: white;
       border: 1px solid #979797;
     }
     .title {
-      margin-top: 15px;
-      margin-bottom: 5px;
+      position: absolute;
+      margin: 0;
+      top: 20px;
+      left: 22px * 2 + 48px;
       font-size: 16px;
     }
     .updated-at {
-      margin-top: 5px;
-      margin-bottom: 0;
-      font-size: 14px;
-      font-weight: lighter;
+      position: absolute;
+      margin: 0;
+      bottom: 20px;
+      left: 22px * 2 + 48px;
+      font-size: 12px;
+      color: #CDCDCD;
     }
   }
 }

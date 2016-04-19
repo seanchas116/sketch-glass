@@ -13,7 +13,7 @@ class SideBarView extends Component {
       <div class="sg-sidebar-clip">
         <aside class="sg-sidebar-content">
           <input placeholder="Search" class="sg-search">
-          <div class="sg-canvas-cell">
+          <div class="sg-canvas-cell selected">
             <div class="thumbnail"></div>
             <p class="title">Design sketch</p>
             <p class="updated-at">2 days ago</p>
