@@ -87,6 +87,12 @@ class StrokeHandler {
     this.canvas.transform.value = transform;
     this.renderer.update();
   }
+
+  scale(center: Vec2, scale: number) {
+    const transform = Transform.translation(center.negate()).scale(new Vec2(scale, scale)).translate(center);
+    this.canvas.transform.value = this.canvas.transform.value.merge(transform);
+    this.renderer.update();
+  }
 }
 
 export default
@@ -137,7 +143,8 @@ class CanvasView extends Component {
   }
 
   private onWheel(ev: WheelEvent) {
-    this.strokeHandler.translate(new Vec2(-ev.deltaX, -ev.deltaY));
+    console.log(ev.deltaY);
+    this.strokeHandler.scale(new Vec2(ev.clientX, ev.clientY), Math.pow(2, ev.deltaY / 128));
     ev.preventDefault();
   }
 
