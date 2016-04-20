@@ -42,6 +42,7 @@ class Renderer extends TreeDisposable {
   size = new Vec2(0, 0);
   background: Background;
   gl: WebGLRenderingContext;
+  transform: Transform;
   viewportTransform: Transform;
   shader: FillShader;
   backgroundModel: Model;
@@ -49,6 +50,11 @@ class Renderer extends TreeDisposable {
 
   constructor(public element: HTMLCanvasElement, public canvas: Canvas) {
     super();
+
+    this.disposables.add(
+      canvas.transform.changed.subscribe(t => this.transform = t)
+    );
+
     this.background = new Background(Color.white);
 
     // TODO: check why explicit cast is required
@@ -186,7 +192,7 @@ class Renderer extends TreeDisposable {
 
     this.renderBackground();
 
-    const transform = this.canvas.transform.value;
+    const {transform} = this;
 
     shader.use();
     shader.setTransforms(this.viewportTransform, transform);

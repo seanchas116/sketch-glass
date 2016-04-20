@@ -6,7 +6,7 @@ import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
 import Canvas from "../model/Canvas";
-import DisposableBag from "../lib/DisposableBag";
+import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
 
 function touchPoint(touch: Touch) {
@@ -17,26 +17,29 @@ enum InteractionState {
   None, Pressed, Pinching
 }
 
-class StrokeHandler {
+class StrokeHandler extends TreeDisposable {
   interactionState = InteractionState.None;
+  startPoint: Vec2;
   pinchStartPoints: Vec2[];
 
+  transform: Transform;
   initialTransform = Transform.identity();
 
   currentStroke: Stroke;
   isStroking = false;
 
   constructor(public canvas: Canvas, public renderer: Renderer) {
-  }
-
-  dispose() {
-    this.renderer.dispose();
+    super();
+    this.disposables.add(
+      this.renderer,
+      canvas.transform.changed.subscribe(t => this.transform = t)
+    );
   }
 
   pinchStart(points: Vec2[]) {
     this.interactionState = InteractionState.Pinching;
     this.pinchStartPoints = points;
-    this.initialTransform = this.canvas.transform.value;
+    this.initialTransform = this.transform;
   }
 
   pinchMove(points: Vec2[]) {
@@ -53,24 +56,25 @@ class StrokeHandler {
 
     let transform = Transform.scale(new Vec2(scale, scale)).merge(Transform.translation(diff));
 
-    this.canvas.transform.value = this.initialTransform.merge(transform);
+    this.renderer.transform = this.transform = this.initialTransform.merge(transform);
     this.renderer.update();
   }
 
   pinchEnd() {
     this.interactionState = InteractionState.None;
+    this.canvas.transform.value = this.transform;
   }
 
   pressStart(pos: Vec2) {
     this.interactionState = InteractionState.Pressed;
     this.renderer.strokeBegin();
-    pos = pos.transform(this.canvas.transform.value.invert());
+    pos = pos.transform(this.transform.invert());
     this.renderer.strokeNext(pos);
   }
 
   pressMove(pos: Vec2) {
     if (this.interactionState === InteractionState.Pressed) {
-      pos = pos.transform(this.canvas.transform.value.invert());
+      pos = pos.transform(this.transform.invert());
       this.renderer.strokeNext(pos);
     }
   }
@@ -80,12 +84,6 @@ class StrokeHandler {
       this.interactionState = InteractionState.None;
       this.renderer.strokeEnd();
     }
-  }
-
-  translate(offset: Vec2) {
-    const transform = this.canvas.transform.value.translate(offset);
-    this.canvas.transform.value = transform;
-    this.renderer.update();
   }
 
   scale(center: Vec2, scale: number) {
