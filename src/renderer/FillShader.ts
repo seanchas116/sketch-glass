@@ -9,11 +9,11 @@ class FillShader extends Shader {
     return `
       precision mediump float;
       uniform vec4 uColor;
+      uniform float uAntialiasEdge;
       varying highp vec2 vUVCoord;
       void main(void) {
-        float dist = abs(vUVCoord.x);
-        float edge = vUVCoord.y;
-        float alpha = 1.0 - smoothstep(edge, 1.0, dist);
+        float dist = length(vUVCoord);
+        float alpha = 1.0 - smoothstep(uAntialiasEdge, 1.0, dist);
         gl_FragColor = uColor * alpha;
       }
     `;
@@ -21,5 +21,13 @@ class FillShader extends Shader {
 
   constructor(gl: WebGLRenderingContext) {
     super(gl);
+
+    this.uAntialiasEdge = gl.getUniformLocation(this.program, 'uAntialiasEdge');
+  }
+
+  setDisplayWidth(width: number) {
+    const radius = width * 0.5;
+    const edge = (radius - 1) / radius;
+    this.gl.uniform1f(this.uAntialiasEdge, edge);
   }
 }
