@@ -119,9 +119,6 @@ class Renderer extends TreeDisposable {
     this.stroke.points.push(pos);
     const {points, width} = this.stroke;
     const nPoints = points.length;
-    const finalizedModel = this.strokeFinalizedModel;
-    const precedingModel = this.strokePrecedingModel;
-    precedingModel.vertices = [];
 
     let lastVertices: Vec2[];
     let currVertices: Vec2[];
@@ -135,7 +132,13 @@ class Renderer extends TreeDisposable {
     } else if (nPoints > 3) {
       lastVertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
       currVertices = Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide();
+    } else {
+      return;
     }
+
+    const finalizedModel = this.strokeFinalizedModel;
+    const precedingModel = this.strokePrecedingModel;
+    precedingModel.vertices = [];
 
     addSegments(finalizedModel, width, lastVertices);
     addSegments(precedingModel, width, currVertices);
