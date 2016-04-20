@@ -61,17 +61,17 @@ class StrokeHandler {
     this.interactionState = InteractionState.None;
   }
 
-  pressStart(pos: Vec2, timeStamp: number) {
+  pressStart(pos: Vec2) {
     this.interactionState = InteractionState.Pressed;
     this.renderer.strokeBegin();
     pos = pos.transform(this.canvas.transform.value.invert());
-    this.renderer.strokeNext(pos, timeStamp);
+    this.renderer.strokeNext(pos);
   }
 
-  pressMove(pos: Vec2, timeStamp: number) {
+  pressMove(pos: Vec2) {
     if (this.interactionState === InteractionState.Pressed) {
       pos = pos.transform(this.canvas.transform.value.invert());
-      this.renderer.strokeNext(pos, timeStamp);
+      this.renderer.strokeNext(pos);
     }
   }
 
@@ -99,11 +99,11 @@ class CanvasView extends Component {
 
   private onMouseMove(ev: MouseEvent) {
     //console.log(`mouse move at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressMove(new Vec2(ev.clientX, ev.clientY), ev.timeStamp);
+    this.strokeHandler.pressMove(new Vec2(ev.clientX, ev.clientY));
   }
   private onMouseDown(ev: MouseEvent) {
     //console.log(`mouse down at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressStart(new Vec2(ev.clientX, ev.clientY), ev.timeStamp);
+    this.strokeHandler.pressStart(new Vec2(ev.clientX, ev.clientY));
   }
   private onMouseUp(ev: MouseEvent) {
     //console.log(`mouse up at ${ev.clientX}, ${ev.clientY}`);
@@ -113,7 +113,7 @@ class CanvasView extends Component {
   private onTouchMove(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       const touch = ev.touches[0];
-      this.strokeHandler.pressMove(touchPoint(touch), ev.timeStamp);
+      this.strokeHandler.pressMove(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
       this.strokeHandler.pinchMove([0,1].map(i => touchPoint(ev.touches[i])));
@@ -123,7 +123,7 @@ class CanvasView extends Component {
   private onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       const touch = ev.touches[0];
-      this.strokeHandler.pressStart(touchPoint(touch), ev.timeStamp);
+      this.strokeHandler.pressStart(touchPoint(touch));
     }
     else if (ev.touches.length === 2) {
       this.strokeHandler.pinchStart([0,1].map(i => touchPoint(ev.touches[i])));

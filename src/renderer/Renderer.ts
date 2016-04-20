@@ -109,9 +109,7 @@ class Renderer extends TreeDisposable {
     this.strokePrecedingModel = new Model(this.gl, []);
   }
 
-  strokeNext(pos: Vec2, timeStamp: number) {
-    console.log(`timeStamp: ${timeStamp}`);
-
+  strokeNext(pos: Vec2) {
     this.stroke.points.push(pos);
     const {points, width} = this.stroke;
     const nPoints = points.length;
