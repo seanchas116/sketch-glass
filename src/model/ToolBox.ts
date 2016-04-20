@@ -1,5 +1,5 @@
 import Stroke from './Stroke';
-import Brush, {BrushType} from "./Brush";
+import Tool from "./Tool";
 import Color from '../lib/geometry/Color';
 import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";
@@ -8,8 +8,8 @@ import * as Rx from "rx";
 
 export default
 class ToolBox {
-  pen = new Brush(BrushType.Pen, 3, -0.1);
-  eraser = new Brush(BrushType.Eraser, 3, 10);
-  brush = new Variable(this.pen);
+  tool = new Variable(Tool.Pen);
+  penWidth = new Variable(3);
+  eraserWidth = new Variable(30);
   color = new Variable(Color.black);
 }

@@ -1,6 +1,6 @@
 import Component from "../lib/ui/Component";
 import ButtonView from "./ButtonView";
-import Brush, {BrushType} from "../model/Brush";
+import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 import ToolBox from "../model/ToolBox";
 
@@ -21,16 +21,16 @@ class ToolBoxView extends Component {
 
     this.disposables.add(
       this.penButton.clicked.subscribe(() => {
-        toolBox.brush.value = toolBox.pen;
+        toolBox.tool.value = Tool.Pen;
       }),
       this.eraserButton.clicked.subscribe(() => {
-        toolBox.brush.value = toolBox.eraser;
+        toolBox.tool.value = Tool.Eraser;
       }),
-      toolBox.brush.changed
-        .map(brush => brush == toolBox.pen)
+      toolBox.tool.changed
+        .map(tool => tool == Tool.Pen)
         .subscribe(this.penButton.isChecked),
-      toolBox.brush.changed
-        .map(brush => brush == toolBox.eraser)
+      toolBox.tool.changed
+        .map(tool => tool == Tool.Eraser)
         .subscribe(this.eraserButton.isChecked)
     );
   }

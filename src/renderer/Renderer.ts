@@ -10,8 +10,8 @@ import FillShader from "./FillShader";
 import Model from "./Model";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
-import Brush, {BrushType} from "../model/Brush";
 import TreeDisposable from "../lib/TreeDisposable";
+import Tool from "../model/Tool";
 
 function calcAntialiasEdge(width: number) {
   const radius = width * 0.5;
@@ -126,9 +126,14 @@ class Renderer extends TreeDisposable {
   }
 
   strokeBegin() {
-    const color = this.canvas.toolBox.color.value;
-    const brush = this.canvas.toolBox.brush.value;
-    const stroke = this.stroke = new Stroke([], color, brush);
+    const stroke = this.stroke = new Stroke();
+    if (this.canvas.toolBox.tool.value == Tool.Pen) {
+      stroke.width = this.canvas.toolBox.penWidth.value;
+      stroke.color = this.canvas.toolBox.color.value;
+    } else {
+      stroke.width = this.canvas.toolBox.eraserWidth.value;
+      stroke.color = new Color(255,255,255,1);
+    }
     this.strokeFinalizedModel = new Model(this.gl, []);
     this.strokePrecedingModel = new Model(this.gl, []);
   }
@@ -137,8 +142,7 @@ class Renderer extends TreeDisposable {
     console.log(`timeStamp: ${timeStamp}`);
 
     this.stroke.points.push(pos);
-    const {points} = this.stroke;
-    const {width, widthGrowth} = this.stroke.brush;
+    const {points, width} = this.stroke;
     const nPoints = points.length;
     if (nPoints == 1) {
       return;
@@ -164,19 +168,15 @@ class Renderer extends TreeDisposable {
 
     const duration = timeStamp - this.lastTimeStamp;
 
-    const velocitiesToWidths = (velocities: number[]) => {
-      return velocities.map(v => Math.max(width + v * widthGrowth, 0));
-    };
-
     if (lastVertices.length > 0) {
       const lastVelocities = calcVelocities(this.lastVelocity, duration, lastVertices);
       console.log(lastVelocities);
       this.lastVelocity = lastVelocities[lastVelocities.length - 1];
 
-      addSegments(finalizedModel, velocitiesToWidths(lastVelocities), lastVertices);
+      addSegments(finalizedModel, lastVelocities, lastVertices);
 
       const currVelocities = calcVelocities(this.lastVelocity, duration, currVertices);
-      addSegments(precedingModel, velocitiesToWidths(currVelocities), currVertices);
+      addSegments(precedingModel, currVelocities, currVertices);
     }
     this.lastTimeStamp = timeStamp;
 
@@ -240,11 +240,7 @@ class Renderer extends TreeDisposable {
 
     const draw = (stroke: Stroke, model: Model) => {
       if (model.vertices.length > 0) {
-        if (stroke.brush.type == BrushType.Pen) {
-          shader.setColor(stroke.color);
-        } else {
-          shader.setColor(Color.white);
-        }
+        shader.setColor(stroke.color);
         model.draw(shader);
       }
     };

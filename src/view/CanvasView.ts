@@ -7,6 +7,7 @@ import Transform from '../lib/geometry/Transform';
 import Background from '../lib/geometry/Background';
 import Canvas from "../model/Canvas";
 import DisposableBag from "../lib/DisposableBag";
+import Tool from "../model/Tool";
 
 function touchPoint(touch: Touch) {
   return new Vec2(touch.clientX, touch.clientY);
