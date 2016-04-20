@@ -14,7 +14,7 @@ function touchPoint(touch: Touch) {
 }
 
 enum InteractionState {
-  None, Pressed, Pinching
+  None, Pressed, Pinching, Dragging
 }
 
 class StrokeHandler extends TreeDisposable {
@@ -86,6 +86,26 @@ class StrokeHandler extends TreeDisposable {
     }
   }
 
+  dragStart(pos: Vec2) {
+    this.interactionState = InteractionState.Dragging;
+    this.startPoint = pos;
+    this.initialTransform = this.canvas.transform.value;
+  }
+
+  dragMove(pos: Vec2) {
+    if (this.interactionState == InteractionState.Dragging) {
+      this.transform = this.renderer.transform = this.initialTransform.translate(pos.sub(this.startPoint));
+      this.renderer.update();
+    }
+  }
+
+  dragEnd() {
+    if (this.interactionState == InteractionState.Dragging) {
+      this.canvas.transform.value = this.transform;
+      this.interactionState = InteractionState.None;
+    }
+  }
+
   scale(center: Vec2, scale: number) {
     const transform = Transform.translation(center.negate()).scale(new Vec2(scale, scale)).translate(center);
     this.canvas.transform.value = this.canvas.transform.value.merge(transform);
@@ -102,16 +122,28 @@ class CanvasView extends Component {
   }
 
   private onMouseMove(ev: MouseEvent) {
-    //console.log(`mouse move at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressMove(new Vec2(ev.clientX, ev.clientY));
+    const pos = new Vec2(ev.clientX, ev.clientY)
+    if (ev.button == 0) {
+      this.strokeHandler.pressMove(pos);
+    } else if (ev.button == 2) {
+      this.strokeHandler.dragMove(pos);
+    }
   }
   private onMouseDown(ev: MouseEvent) {
-    //console.log(`mouse down at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressStart(new Vec2(ev.clientX, ev.clientY));
+    const pos = new Vec2(ev.clientX, ev.clientY)
+    if (ev.button == 0) {
+      this.strokeHandler.pressStart(pos);
+    } else if (ev.button == 2) {
+      console.log("right click");
+      this.strokeHandler.dragStart(pos);
+    }
   }
   private onMouseUp(ev: MouseEvent) {
-    //console.log(`mouse up at ${ev.clientX}, ${ev.clientY}`);
-    this.strokeHandler.pressEnd();
+    if (ev.button == 0) {
+      this.strokeHandler.pressEnd();
+    } else if (ev.button == 2) {
+      this.strokeHandler.dragEnd();
+    }
   }
 
   private onTouchMove(ev: TouchEvent) {
@@ -142,7 +174,7 @@ class CanvasView extends Component {
 
   private onWheel(ev: WheelEvent) {
     console.log(ev.deltaY);
-    this.strokeHandler.scale(new Vec2(ev.clientX, ev.clientY), Math.pow(2, ev.deltaY / 128));
+    this.strokeHandler.scale(new Vec2(ev.clientX, ev.clientY), Math.pow(2, ev.deltaY / 256));
     ev.preventDefault();
   }
 
@@ -171,6 +203,10 @@ class CanvasView extends Component {
     this.element.addEventListener('touchend', this.onTouchEnd.bind(this));
 
     this.element.addEventListener('wheel', this.onWheel.bind(this));
+
+    this.element.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+    });
 
     this.setNewCanvas(canvas);
   }
