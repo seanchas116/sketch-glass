@@ -60,9 +60,10 @@ class Renderer extends TreeDisposable {
     // TODO: check why explicit cast is required
     const glOpts = {
       alpha: false,
-      antialias: false,
       depth: false,
-      premultipliedAlpha: true
+      stencil: false,
+      antialias: false,
+      premultipliedAlpha: true,
     };
     const gl = this.gl = <WebGLRenderingContext>(
       this.element.getContext("webgl", glOpts) || this.element.getContext("experimental-webgl", glOpts)
