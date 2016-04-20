@@ -24,12 +24,34 @@ class LoginDialog extends Component {
       app.user.changed.map(u => u == null).subscribe(this.isShown),
       this.clicked.subscribe(() => this.auth())
     );
+    this.authWithLastToken();
+  }
+
+  async authWithLastToken() {
+    const authToken = localStorage["auth.token"];
+    const authExpires = localStorage["auth.expires"];
+    console.log(`token: ${authToken}`);
+    console.log(`expires: ${authExpires}`);
+
+    if (authToken && authExpires - Date.now() / 1000 > 12 * 60 * 60) {
+      this.isShown.value = false;
+      try {
+        const authData = await firebaseRoot.authWithCustomToken(authToken);
+        const user = await UserFirebase.fromGoogleAuth(authData);
+        app.user.value = user;
+      } catch (e) {
+        console.error("reauth error!");
+        console.error(e);
+        this.isShown.value = true;
+      }
+    }
   }
 
   async auth() {
     const authData = await firebaseRoot.authWithOAuthPopup("google", {scope: "email"});
+    localStorage["auth.token"] = authData.token;
+    localStorage["auth.expires"] = authData.expires;
     const user = await UserFirebase.fromGoogleAuth(authData);
-    console.log(user);
     app.user.value = user;
   }
 }

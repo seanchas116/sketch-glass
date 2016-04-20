@@ -25,7 +25,7 @@ class Curve {
 
   subdivide() {
     const controls = [this.start, this.control1, this.control2, this.end].map(p => [p.x, p.y]);
-    return (subdivide(controls) as [number, number][]).map(([x, y]) => new Vec2(x, y))
+    return (subdivide(controls, {approximationScale: 0.5}) as [number, number][]).map(([x, y]) => new Vec2(x, y))
   }
 
   private bezier() {
