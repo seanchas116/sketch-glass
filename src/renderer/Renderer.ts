@@ -12,31 +12,13 @@ import Shader from "./Shader";
 import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
-
-function addSegment(model: Model, width: number, last: Vec2, point: Vec2) {
-  const vertices = model.vertices;
-
-  const normal = point.sub(last).normalize().rotate90();
-  const toLeft = normal.mul(width / 2);
-  const toRight = normal.mul(-width / 2);
-  vertices.push([last.add(toLeft), new Vec2(-1, 0)]);
-  vertices.push([last.add(toRight), new Vec2(1, 0)]);
-  vertices.push([point.add(toLeft), new Vec2(-1, 0)]);
-  vertices.push([point.add(toRight), new Vec2(1, 0)]);
-}
-
-function addSegments(model: Model, width: number, vertices: Vec2[]) {
-  for (let i = 0; i < vertices.length - 1; ++i) {
-    addSegment(model, width, vertices[i], vertices[i+1]);
-  }
-}
+import StrokeWeaver from "./StrokeWeaver";
 
 export default
 class Renderer extends TreeDisposable {
-  strokeModelMap = new Map<Stroke, Model>();
-  strokeFinalizedModel: Model;
-  strokePrecedingModel: Model;
-  stroke: Stroke | null;
+  strokeWeaverMap = new Map<Stroke, StrokeWeaver>();
+  currentStrokeWeaver: StrokeWeaver;
+  currentStroke: Stroke | null;
   isUpdateQueued = false;
   devicePixelRatio = 1;
   size = new Vec2(0, 0);
@@ -88,23 +70,20 @@ class Renderer extends TreeDisposable {
 
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
-
-    this.strokeFinalizedModel = new Model(gl, []);
-    this.strokePrecedingModel = new Model(gl, []);
   }
 
   dispose() {
     super.dispose();
-    for (const model of this.strokeModelMap.values()) {
-      model.dispose();
+    for (const weaver of this.strokeWeaverMap.values()) {
+      weaver.dispose();
     }
-    if (this.strokePrecedingModel) {
-      this.strokePrecedingModel.dispose();
+    if (this.currentStrokeWeaver) {
+      this.currentStrokeWeaver.dispose();
     }
   }
 
   strokeBegin() {
-    const stroke = this.stroke = new Stroke();
+    const stroke = this.currentStroke = new Stroke();
     if (this.canvas.toolBox.tool.value == Tool.Pen) {
       stroke.width = this.canvas.toolBox.penWidth.value;
       stroke.color = this.canvas.toolBox.color.value;
@@ -112,56 +91,38 @@ class Renderer extends TreeDisposable {
       stroke.width = this.canvas.toolBox.eraserWidth.value;
       stroke.color = new Color(255,255,255,1);
     }
-    this.strokeFinalizedModel = new Model(this.gl, []);
-    this.strokePrecedingModel = new Model(this.gl, []);
+    this.currentStrokeWeaver = new StrokeWeaver(this.gl, stroke);
   }
 
   strokeNext(pos: Vec2) {
-    this.stroke.points.push(pos);
-    const {points, width} = this.stroke;
+    this.currentStroke.points.push(pos);
+    const {points, width} = this.currentStroke;
     const nPoints = points.length;
-
-    let lastVertices: Vec2[];
-    let currVertices: Vec2[];
+    const weaver = this.currentStrokeWeaver;
 
     if (nPoints === 2) {
-      lastVertices = [];
-      currVertices = points;
+      weaver.addSection(points);
     } else if (nPoints === 3) {
-      lastVertices = Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide();
-      currVertices = Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide();
+      weaver.rewindLastSection();
+      weaver.addSection(Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide());
+      weaver.addSection(Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide());
     } else if (nPoints > 3) {
-      lastVertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
-      currVertices = Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide();
+      weaver.rewindLastSection();
+      weaver.addSection(Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide());
+      weaver.addSection(Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide());
     } else {
       return;
     }
-
-    const finalizedModel = this.strokeFinalizedModel;
-    const precedingModel = this.strokePrecedingModel;
-    precedingModel.vertices = [];
-
-    addSegments(finalizedModel, width, lastVertices);
-    addSegments(precedingModel, width, currVertices);
-
-    finalizedModel.updateBuffer();
-    precedingModel.updateBuffer();
+    weaver.model.updateBuffer();
     this.render();
   }
 
   strokeEnd() {
-    const model = new Model(this.gl, this.strokeFinalizedModel.vertices.concat(this.strokePrecedingModel.vertices));
-    this.strokeFinalizedModel.vertices = [];
-    this.strokePrecedingModel.vertices = [];
+    this.strokeWeaverMap.set(this.currentStroke, this.currentStrokeWeaver);
+    this.canvas.strokes.push(this.currentStroke);
 
-    model.updateBuffer();
-    this.strokeFinalizedModel.updateBuffer();
-    this.strokePrecedingModel.updateBuffer();
-
-    this.strokeModelMap.set(this.stroke, model);
-    this.canvas.strokes.push(this.stroke);
-
-    this.stroke = null;
+    this.currentStroke = null;
+    this.currentStrokeWeaver = null;
   }
 
   update(immediate = false) {
@@ -201,7 +162,7 @@ class Renderer extends TreeDisposable {
     shader.use();
     shader.setTransforms(this.viewportTransform, transform);
 
-    const draw = (stroke: Stroke, model: Model) => {
+    const draw = ({model, stroke}: StrokeWeaver) => {
       if (model.vertices.length > 0) {
         shader.setColor(stroke.color);
         shader.setDisplayWidth(stroke.width * transform.m11);
@@ -209,12 +170,11 @@ class Renderer extends TreeDisposable {
       }
     };
 
-    for (const [stroke, model] of this.strokeModelMap) {
-      draw(stroke, model);
+    for (const weaver of this.strokeWeaverMap.values()) {
+      draw(weaver);
     }
-    if (this.stroke) {
-      draw(this.stroke, this.strokeFinalizedModel);
-      draw(this.stroke, this.strokePrecedingModel);
+    if (this.currentStrokeWeaver) {
+      draw(this.currentStrokeWeaver);
     }
   }
 
@@ -232,7 +192,6 @@ class Renderer extends TreeDisposable {
     this.gl.viewport(0, 0, width * dpr, height * dpr);
 
     console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
-
 
     this.update();
   }
