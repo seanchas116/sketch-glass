@@ -1,7 +1,7 @@
 import Shader from './shader';
 
 export default
-class FillShader extends Shader {
+class StrokeShader extends Shader {
 
   uAntialiasEdge: WebGLUniformLocation;
 

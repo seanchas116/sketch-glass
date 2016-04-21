@@ -6,7 +6,7 @@ import Curve from "../lib/geometry/Curve";
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
 import Background from "../lib/geometry/Background";
-import FillShader from "./FillShader";
+import StrokeShader from "./StrokeShader";
 import Model from "./Model";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
@@ -44,7 +44,7 @@ class Renderer extends TreeDisposable {
   gl: WebGLRenderingContext;
   transform: Transform;
   viewportTransform: Transform;
-  shader: FillShader;
+  shader: StrokeShader;
   backgroundModel: Model;
   backgroundShader: Shader;
 
@@ -71,7 +71,7 @@ class Renderer extends TreeDisposable {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-    this.shader = new FillShader(gl);
+    this.shader = new StrokeShader(gl);
 
     this.backgroundShader = new Shader(gl);
     this.backgroundShader.setColor(this.background.color);
