@@ -187,22 +187,15 @@ class CanvasView extends Component {
     ev.preventDefault();
   }
 
-  private setNewCanvas(canvas: Canvas) {
-    if (this.strokeHandler) {
-      this.strokeHandler.dispose();
-      this.disposables.delete(this.strokeHandler);
-    }
-    const renderer = new Renderer(this.element as HTMLCanvasElement, canvas);
-    this.strokeHandler = new StrokeHandler(canvas, renderer)
-    this.disposables.add(this.strokeHandler);
-  }
-
   static template = `
     <canvas class="sg-canvas"></canvas>
   `;
 
   constructor(mountPoint: Element, canvas: Canvas) {
     super(mountPoint);
+    this.strokeHandler = new StrokeHandler(canvas, new Renderer(this.element as HTMLCanvasElement, canvas));
+    this.disposables.add(this.strokeHandler);
+
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
     this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
     this.element.addEventListener('mouseup', this.onMouseUp.bind(this));
@@ -216,7 +209,5 @@ class CanvasView extends Component {
     this.element.addEventListener('contextmenu', (ev) => {
       ev.preventDefault();
     });
-
-    this.setNewCanvas(canvas);
   }
 }
