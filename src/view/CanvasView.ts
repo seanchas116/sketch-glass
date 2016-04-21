@@ -6,6 +6,7 @@ import Transform from '../lib/geometry/Transform';
 import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
+import Variable from "../lib/rx/Variable";
 
 function touchPoint(touch: Touch) {
   return new Vec2(touch.clientX, touch.clientY);
@@ -16,7 +17,7 @@ enum InteractionState {
 }
 
 class StrokeHandler extends TreeDisposable {
-  interactionState = InteractionState.None;
+  interactionState = new Variable(InteractionState.None);
   startPoint: Vec2;
   pinchStartPoints: Vec2[];
 
@@ -35,13 +36,13 @@ class StrokeHandler extends TreeDisposable {
   }
 
   pinchStart(points: Vec2[]) {
-    this.interactionState = InteractionState.Pinching;
+    this.interactionState.value = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.transform;
   }
 
   pinchMove(points: Vec2[]) {
-    if (this.interactionState !== InteractionState.Pinching) {
+    if (this.interactionState.value !== InteractionState.Pinching) {
       this.pinchStart(points);
     }
 
@@ -59,18 +60,18 @@ class StrokeHandler extends TreeDisposable {
   }
 
   pinchEnd() {
-    this.interactionState = InteractionState.None;
+    this.interactionState.value = InteractionState.None;
     this.canvas.transform.value = this.transform;
   }
 
   pressStart(pos: Vec2) {
     pos = pos.transform(this.transform.invert());
     if (this.canvas.toolBox.tool.value == Tool.Pen) {
-      this.interactionState = InteractionState.Drawing;
+      this.interactionState.value = InteractionState.Drawing;
       this.renderer.strokeBegin(this.canvas.toolBox.penWidth.value, this.canvas.toolBox.color.value);
       this.renderer.strokeNext(pos);
     } else {
-      this.interactionState = InteractionState.Erasing;
+      this.interactionState.value = InteractionState.Erasing;
       this.renderer.eraseBegin(this.canvas.toolBox.eraserWidth.value);
       this.renderer.eraseNext(pos);
     }
@@ -78,39 +79,39 @@ class StrokeHandler extends TreeDisposable {
 
   pressMove(pos: Vec2) {
     pos = pos.transform(this.transform.invert());
-    if (this.interactionState === InteractionState.Drawing) {
+    if (this.interactionState.value === InteractionState.Drawing) {
       this.renderer.strokeNext(pos);
-    } else if (this.interactionState == InteractionState.Erasing) {
+    } else if (this.interactionState.value == InteractionState.Erasing) {
       this.renderer.eraseNext(pos);
     }
   }
 
   pressEnd() {
-    if (this.interactionState === InteractionState.Drawing) {
-      this.interactionState = InteractionState.None;
+    if (this.interactionState.value === InteractionState.Drawing) {
+      this.interactionState.value = InteractionState.None;
       this.renderer.strokeEnd();
-    } else if (this.interactionState == InteractionState.Erasing) {
+    } else if (this.interactionState.value == InteractionState.Erasing) {
       this.renderer.eraseEnd();
     }
   }
 
   dragStart(pos: Vec2) {
-    this.interactionState = InteractionState.Dragging;
+    this.interactionState.value = InteractionState.Dragging;
     this.startPoint = pos;
     this.initialTransform = this.canvas.transform.value;
   }
 
   dragMove(pos: Vec2) {
-    if (this.interactionState == InteractionState.Dragging) {
+    if (this.interactionState.value == InteractionState.Dragging) {
       this.transform = this.renderer.transform = this.initialTransform.translate(pos.sub(this.startPoint));
       this.renderer.update();
     }
   }
 
   dragEnd() {
-    if (this.interactionState == InteractionState.Dragging) {
+    if (this.interactionState.value == InteractionState.Dragging) {
       this.canvas.transform.value = this.transform;
-      this.interactionState = InteractionState.None;
+      this.interactionState.value = InteractionState.None;
     }
   }
 
