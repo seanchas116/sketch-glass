@@ -140,8 +140,6 @@ class Renderer extends TreeDisposable {
     const collider = new StrokeCollider(this.erasingWidth, vertices);
     const strokeToErase: Stroke[] = [];
     for (const [stroke, weaver] of this.strokeWeaverMap) {
-      console.log(collider);
-      console.log(weaver.collider);
       if (weaver.collider.collides(collider)) {
         strokeToErase.push(stroke);
       }
