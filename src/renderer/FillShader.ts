@@ -7,10 +7,10 @@ class FillShader extends Shader {
 
   get fragmentShader() {
     return `
-      precision mediump float;
+      precision lowp float;
       uniform vec4 uColor;
       uniform float uAntialiasEdge;
-      varying highp vec2 vUVCoord;
+      varying vec2 vUVCoord;
       void main(void) {
         float dist = length(vUVCoord);
         float alpha = 1.0 - smoothstep(uAntialiasEdge, 1.0, dist);

@@ -15,8 +15,8 @@ class Shader {
     return `
       uniform mat3 uTransform;
       attribute vec2 aPosition;
-      attribute vec2 aUVCoord;
-      varying vec2 vUVCoord;
+      attribute mediump vec2 aUVCoord;
+      varying mediump vec2 vUVCoord;
       void main(void) {
         vUVCoord = aUVCoord;
         vec3 pos = uTransform * vec3(aPosition, 1.0);
@@ -27,7 +27,7 @@ class Shader {
 
   get fragmentShader(): string {
     return `
-      precision mediump float;
+      precision lowp float;
       uniform vec4 uColor;
       void main(void) {
         gl_FragColor = uColor;
