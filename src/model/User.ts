@@ -1,4 +1,3 @@
-import * as Firebase from "firebase";
 import * as Rx from "rx";
 import Variable from "../lib/rx/Variable";
 import TreeDisposable from "../lib/TreeDisposable";

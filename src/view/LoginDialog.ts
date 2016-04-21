@@ -1,8 +1,7 @@
 import Component from "../lib/ui/Component";
 import firebaseRoot from "../firebase/root";
 import UserFirebase from "../firebase/UserFirebase";
-import User from "../model/User";
-import App, {app} from "../model/App";
+import {app} from "../model/App";
 import * as Rx from "rx";
 
 export default

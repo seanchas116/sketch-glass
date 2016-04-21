@@ -1,7 +1,6 @@
 import Component from "../lib/ui/Component";
 import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
-import Variable from "../lib/rx/Variable";
 import ToolBox from "../model/ToolBox";
 
 export default

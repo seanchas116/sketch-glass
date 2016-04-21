@@ -1,5 +1,4 @@
 import User from "../model/User";
-import * as Firebase from "firebase";
 import root from "./root";
 import RxFirebaseQuery from "../lib/firebase/RxFirebaseQuery";
 import TreeDisposable from "../lib/TreeDisposable";

@@ -1,7 +1,5 @@
-import * as _ from 'lodash';
 import Color from '../lib/geometry/Color';
 import Vec2 from '../lib/geometry/Vec2';
-import Rect from '../lib/geometry/Rect';
 import Curve from "../lib/geometry/Curve";
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
@@ -11,7 +9,6 @@ import Model from "./Model";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
-import Tool from "../model/Tool";
 import StrokeWeaver from "./StrokeWeaver";
 import StrokeCollider from "./StrokeCollider";
 
@@ -94,7 +91,7 @@ class Renderer extends TreeDisposable {
 
   strokeNext(pos: Vec2) {
     this.currentStroke.points.push(pos);
-    const {points, width} = this.currentStroke;
+    const {points} = this.currentStroke;
     const nPoints = points.length;
     const weaver = this.currentStrokeWeaver;
 
@@ -171,7 +168,6 @@ class Renderer extends TreeDisposable {
   }
 
   renderBackground() {
-    const gl = this.gl;
     const shader = this.backgroundShader;
     const model = this.backgroundModel;
 

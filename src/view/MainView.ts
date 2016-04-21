@@ -1,7 +1,6 @@
 import Component from "../lib/ui/Component";
 import CanvasView from "./CanvasView";
 import UserSideBarView from "./userSideBar/UserSideBarView";
-import ButtonView from "./ButtonView";
 import ToolBoxView from "./ToolBoxView";
 import InfoButtonsView from "./InfoButtonsView";
 import LoginDialog from "./LoginDialog";
