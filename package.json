@@ -42,6 +42,7 @@
     "lodash": "^4.9.0",
     "normalize.css": "^4.0.0",
     "rx": "^4.1.0",
+    "sat": "^0.5.0",
     "setimmediate": "^1.0.2"
   }
 }
