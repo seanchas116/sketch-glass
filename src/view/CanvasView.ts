@@ -14,7 +14,7 @@ function touchPoint(touch: Touch) {
 }
 
 enum InteractionState {
-  None, Pressed, Pinching, Dragging
+  None, Drawing, Erasing, Pinching, Dragging
 }
 
 class StrokeHandler extends TreeDisposable {
@@ -66,23 +66,33 @@ class StrokeHandler extends TreeDisposable {
   }
 
   pressStart(pos: Vec2) {
-    this.interactionState = InteractionState.Pressed;
-    this.renderer.strokeBegin();
     pos = pos.transform(this.transform.invert());
-    this.renderer.strokeNext(pos);
+    if (this.canvas.toolBox.tool.value == Tool.Pen) {
+      this.interactionState = InteractionState.Drawing;
+      this.renderer.strokeBegin(this.canvas.toolBox.penWidth.value, this.canvas.toolBox.color.value);
+      this.renderer.strokeNext(pos);
+    } else {
+      this.interactionState = InteractionState.Erasing;
+      this.renderer.eraseBegin(this.canvas.toolBox.eraserWidth.value);
+      this.renderer.eraseNext(pos);
+    }
   }
 
   pressMove(pos: Vec2) {
-    if (this.interactionState === InteractionState.Pressed) {
-      pos = pos.transform(this.transform.invert());
+    pos = pos.transform(this.transform.invert());
+    if (this.interactionState === InteractionState.Drawing) {
       this.renderer.strokeNext(pos);
+    } else if (this.interactionState == InteractionState.Erasing) {
+      this.renderer.eraseNext(pos);
     }
   }
 
   pressEnd() {
-    if (this.interactionState === InteractionState.Pressed) {
+    if (this.interactionState === InteractionState.Drawing) {
       this.interactionState = InteractionState.None;
       this.renderer.strokeEnd();
+    } else if (this.interactionState == InteractionState.Erasing) {
+      this.renderer.eraseEnd();
     }
   }
 

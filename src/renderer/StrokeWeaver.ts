@@ -2,13 +2,14 @@ import Stroke from "../model/Stroke";
 import Model from "./Model";
 import Vec2 from "../lib/geometry/Vec2";
 import TreeDisposable from "../lib/TreeDisposable";
-const SAT = require("sat");
+import StrokeCollider from "./StrokeCollider";
 
 export default
 class StrokeWeaver extends TreeDisposable {
   model = new Model(this.gl, []);
   lastSectionLength = 0;
-  satPolygons: any[];
+  collider: StrokeCollider;
+  vertices: Vec2[] = [];
 
   constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
     super();
@@ -32,40 +33,19 @@ class StrokeWeaver extends TreeDisposable {
     for (let i = 0; i < vertices.length - 1; ++i) {
       this.addSegment(vertices[i], vertices[i+1]);
     }
-    this.lastSectionLength = (vertices.length - 1) * 4;
+    this.vertices.pop();
+    this.vertices.push(...vertices);
+    this.lastSectionLength = vertices.length - 1;
   }
 
   rewindLastSection() {
-    const {vertices} = this.model;
     const count = this.lastSectionLength;
-    vertices.splice(-count, count);
+    this.model.vertices.splice(-count * 4, count * 4);
+    this.vertices.splice(-count, count);
     this.lastSectionLength = 0;
   }
 
-  generateSATPolygons() {
-    const satPolygons: any[] = [];
-    const {vertices} = this.model;
-    for (let i = 0; i < vertices.length; i += 4) {
-      const points = [
-        vertices[i+1][0], vertices[i][0], vertices[i+2][0], vertices[i+3][0]
-      ];
-      const poly = new SAT.Polygon(new SAT.Vector(),
-        points.map(({x, y}) => new SAT.Vector(x, y))
-      );
-      satPolygons.push(poly);
-    }
-    return satPolygons;
-  }
-
-  collides(satPolygon: any) {
-    if (!this.satPolygons) {
-      this.satPolygons = this.generateSATPolygons();
-    }
-    for (const poly of this.satPolygons) {
-      if (!SAT.testPolygonPolygon(poly, satPolygon)) {
-        return false;
-      }
-    }
-    return true;
+  finalize() {
+    this.collider = new StrokeCollider(this.stroke.width, this.vertices);
   }
 }

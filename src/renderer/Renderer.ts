@@ -13,12 +13,15 @@ import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
 import StrokeWeaver from "./StrokeWeaver";
+import StrokeCollider from "./StrokeCollider";
 
 export default
 class Renderer extends TreeDisposable {
   strokeWeaverMap = new Map<Stroke, StrokeWeaver>();
   currentStrokeWeaver: StrokeWeaver;
   currentStroke: Stroke | null;
+  erasingWidth: number;
+  erasingPoints: Vec2[] = [];
   isUpdateQueued = false;
   devicePixelRatio = 1;
   size = new Vec2(0, 0);
@@ -82,15 +85,10 @@ class Renderer extends TreeDisposable {
     }
   }
 
-  strokeBegin() {
+  strokeBegin(width: number, color: Color) {
     const stroke = this.currentStroke = new Stroke();
-    if (this.canvas.toolBox.tool.value == Tool.Pen) {
-      stroke.width = this.canvas.toolBox.penWidth.value;
-      stroke.color = this.canvas.toolBox.color.value;
-    } else {
-      stroke.width = this.canvas.toolBox.eraserWidth.value;
-      stroke.color = new Color(255,255,255,1);
-    }
+    stroke.width = width;
+    stroke.color = color;
     this.currentStrokeWeaver = new StrokeWeaver(this.gl, stroke);
   }
 
@@ -118,11 +116,45 @@ class Renderer extends TreeDisposable {
   }
 
   strokeEnd() {
+    this.currentStrokeWeaver.finalize();
     this.strokeWeaverMap.set(this.currentStroke, this.currentStrokeWeaver);
     this.canvas.strokes.push(this.currentStroke);
 
     this.currentStroke = null;
     this.currentStrokeWeaver = null;
+  }
+
+  eraseBegin(width: number) {
+    this.erasingWidth = width;
+    this.erasingPoints = [];
+  }
+
+  eraseNext(pos: Vec2) {
+    const points = this.erasingPoints;
+    points.push(pos);
+    const nPoints = points.length;
+    if (nPoints <= 3) {
+      return;
+    }
+    const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
+    const collider = new StrokeCollider(this.erasingWidth, vertices);
+    const strokeToErase: Stroke[] = [];
+    for (const [stroke, weaver] of this.strokeWeaverMap) {
+      console.log(collider);
+      console.log(weaver.collider);
+      if (weaver.collider.collides(collider)) {
+        strokeToErase.push(stroke);
+      }
+    }
+    if (strokeToErase.length > 0) {
+      for (const stroke of strokeToErase) {
+        this.strokeWeaverMap.delete(stroke);
+      }
+      this.render();
+    }
+  }
+
+  eraseEnd() {
   }
 
   update(immediate = false) {
