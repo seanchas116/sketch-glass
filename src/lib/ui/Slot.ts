@@ -1,4 +1,5 @@
 import * as Rx from "rx";
+import {toggleClass} from "./util";
 
 export default
 class Slot {
@@ -18,13 +19,7 @@ class Slot {
 
   toggleClass(klass: string) {
     return (value: boolean) => {
-      const classes = new Set(this.element.className.split(" "));
-      if (value) {
-        classes.add(klass);
-      } else {
-        classes.delete(klass);
-      }
-      this.element.className = Array.from(classes).join(" ");
+      toggleClass(this.element, klass, value);
     };
   }
 
