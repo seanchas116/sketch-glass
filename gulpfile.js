@@ -35,6 +35,10 @@ gulp.task("tsc", shell.task([
   "tsc"
 ]));
 
+gulp.task("tslint", shell.task([
+  "tslint src/**/*.ts"
+]));
+
 gulp.task("less", () => {
   return gulp.src("index.less")
     .pipe(sourcemaps.init())

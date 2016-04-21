@@ -26,6 +26,7 @@
     "gulp-uglify": "^1.2.0",
     "gulp-webserver": "^0.9.1",
     "gutil": "^1.6.4",
+    "tslint": "^3.7.4",
     "typescript": "^1.9.0-dev.20160409",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
