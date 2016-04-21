@@ -17,7 +17,7 @@ class StrokeWeaver extends TreeDisposable {
     const {vertices} = this.model;
     const {width} = this.stroke;
 
-    const normal = point.sub(last).normalize().rotate90();
+    const normal = point.sub(last).normal();
     const toLeft = normal.mul(width / 2);
     const toRight = normal.mul(-width / 2);
     vertices.push([last.add(toLeft), new Vec2(-1, 0)]);

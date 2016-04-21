@@ -75,6 +75,10 @@ class Vec2 {
     return new Vec2(Math.ceil(this.x), Math.ceil(this.y));
   }
 
+  normal() {
+    return this.normalize().rotate90();
+  }
+
   transform(t: Transform) {
     const x = t.m11 * this.x + t.m21 * this.y + t.dx;
     const y = t.m12 * this.x + t.m22 * this.y + t.dy;
