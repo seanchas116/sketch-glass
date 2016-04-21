@@ -209,5 +209,9 @@ class CanvasView extends Component {
     this.element.addEventListener('contextmenu', (ev) => {
       ev.preventDefault();
     });
+
+    this.strokeHandler.interactionState.changed
+      .map(s => s == InteractionState.Dragging)
+      .subscribe(this.slot.toggleClass("dragging"));
   }
 }
