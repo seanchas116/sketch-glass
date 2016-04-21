@@ -1,6 +1,7 @@
 CACHE MANIFEST
 
 CACHE:
+dist/app.manifest
 dist/bundle.js
 dist/bundle.js.map
 dist/index.css
@@ -13,4 +14,4 @@ dist/vendor/normalize.css
 NETWORK:
 *
 
-# hash: fe55fca1d0029f5e96236e9739e621e80b867436dcceeb7b824218b3fd3f1c73
+# hash: 3a28e5d88311012e49e27c911cd2ded6faa30e6020448ef893b60edd650271b9
