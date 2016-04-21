@@ -10,9 +10,11 @@ class Model {
   }
 
   updateBuffer() {
-    const values = this.vertices.map(([xy, uv]) => [xy.x, xy.y, uv.x, uv.y])
-      .reduce((a, b) => a.concat(b), []);
-    const data = new Float32Array(values);
+    const data = new Float32Array(this.vertices.length * 4);
+    for (let i = 0; i < this.vertices.length; ++i) {
+      const [xy, uv] = this.vertices[i];
+      data.set([xy.x, xy.y, uv.x, uv.y], i * 4);
+    }
     const gl = this.gl;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STREAM_DRAW);
