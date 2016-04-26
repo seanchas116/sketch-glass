@@ -1,8 +1,8 @@
 import Component from "../lib/ui/Component";
-import firebaseRoot from "../firebase/root";
-import UserFirebase from "../firebase/UserFirebase";
+import UserFetcher from "../fetcher/UserFetcher";
 import {app} from "../model/App";
 import * as Rx from "rx";
+import * as Auth from "../Auth";
 
 export default
 class LoginDialog extends Component {
@@ -35,8 +35,7 @@ class LoginDialog extends Component {
     if (authToken && authExpires - Date.now() / 1000 > 12 * 60 * 60) {
       this.isShown.value = false;
       try {
-        const authData = await firebaseRoot.authWithCustomToken(authToken);
-        const user = await UserFirebase.fromGoogleAuth(authData);
+        let [_, user] = await Promise.all([await Auth.authFirebase(), await UserFetcher.fetchCurrent()]);
         app.user.value = user;
       } catch (e) {
         console.error("reauth error!");
@@ -46,11 +45,7 @@ class LoginDialog extends Component {
     }
   }
 
-  async auth() {
-    const authData = await firebaseRoot.authWithOAuthPopup("google", {scope: "email"});
-    localStorage["auth.token"] = authData.token;
-    localStorage["auth.expires"] = authData.expires;
-    const user = await UserFirebase.fromGoogleAuth(authData);
-    app.user.value = user;
+  auth() {
+    Auth.loginWithGoogle();
   }
 }
