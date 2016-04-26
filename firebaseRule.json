@@ -4,6 +4,19 @@
     ".write": false,
     "strokes": {
       "$canvas_id": {
+        ".validate": "newData.hasChildren(['user_id', 'brush', 'fragments'])",
+        "user_id": { ".validate": "root.child('users').hasChild(newData.val())" },
+        "brush": {
+          ".validate": "newData.hasChildren(['type', 'color', 'width'])",
+          "type": { ".validate": "newData.val() == 'pen' || newData.val() == 'eraser'" },
+          "color": { ".validate": "newData.isString()" },
+          "width": { ".validate": "newData.isNumber()" }
+        },
+        "fragments": {
+          "$id": {
+            ".validate": "newData.isString()"
+          },
+        },
         ".write": "auth != null && root.child('collaborations').child($canvas_id).child(auth.uid).val() == true"
       }
     }
