@@ -7,6 +7,7 @@
     "node": "registry:dt/node#4.0.0+20160330064709",
     "react": "registry:dt/react#0.14.0+20160412154040",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
-    "rx": "npm:rx/ts/rx.all.d.ts"
+    "rx": "npm:rx/ts/rx.all.d.ts",
+    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160412133644"
   }
 }

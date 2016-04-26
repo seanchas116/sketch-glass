@@ -1,4 +1,5 @@
 require("setimmediate");
+require("whatwg-fetch");
 require("babel-polyfill");
 import MainView from './view/MainView';
 
