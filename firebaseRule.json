@@ -14,7 +14,7 @@
         "fragments": {
           "$id": {
             ".validate": "newData.isString()"
-          },
+          }
         },
         ".write": "auth != null && root.child('collaborations').child($canvas_id).child(auth.uid).val() == true"
       }
