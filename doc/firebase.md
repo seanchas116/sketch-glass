@@ -16,7 +16,6 @@ strokes:
     $id:
       user_id: $user_id
       brush:
-        type: "pen" | "eraser"
         color: string
         width: number
       fragments:
