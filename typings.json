@@ -5,6 +5,7 @@
   "ambientDependencies": {
     "firebase": "registry:dt/firebase#2.4.1+20160412125105",
     "node": "registry:dt/node#4.0.0+20160330064709",
+    "page": "registry:dt/page#0.0.0+20160317120654",
     "react": "registry:dt/react#0.14.0+20160412154040",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
     "rx": "npm:rx/ts/rx.all.d.ts",
