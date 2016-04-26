@@ -2,21 +2,19 @@
 
 ```yaml
 users:
-  $uid:
+  $id:
     name: string
     email: string
 canvases:
   $id:
     name: string
-    description: string
-    ownerId: string
-canvasCollaborators:
-  $canvasId:
-    $userId:
+collaborations:
+  $canvas_id:
+    $user_id:
 strokes:
-  $canvasId:
+  $canvas_id:
     $id:
-      user: $userId
+      user: $user_id
       brush:
         type: "pen" | "eraser"
         color: string

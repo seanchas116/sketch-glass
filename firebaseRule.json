@@ -1,0 +1,11 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+    "strokes": {
+      "$canvas_id": {
+        ".write": "auth != null && root.child('collaborations').child($canvas_id).child(auth.uid).val() == true"
+      }
+    }
+  }
+}
