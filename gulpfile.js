@@ -18,6 +18,7 @@ const jade = require("gulp-jade");
 const less = require("gulp-less")
 const iconfont = require("gulp-iconfont");
 const manifest = require("gulp-manifest");
+const envify = require('envify/custom');
 
 const runTimestamp = Math.round(Date.now()/1000);
 
@@ -76,7 +77,8 @@ gulp.task('watch-bundle', ["tsc"], () => {
     debug: true
   });
   const bundler = watchify(browserify('./build/index.js', args))
-    .transform("babelify", {presets: ["es2015"]});
+    .transform("babelify", {presets: ["es2015"]})
+    .transform(envify({NODE_ENV: 'development'}));
 
   const bundle = () => {
     return bundler
@@ -94,6 +96,7 @@ gulp.task('watch-bundle', ["tsc"], () => {
 gulp.task('release-bundle', ["build-assets"], () => {
   return browserify('./build/index.js')
     .transform("babelify", {presets: ["es2015"]})
+    .transform(envify({NODE_ENV: 'production'}))
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())

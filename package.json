@@ -13,6 +13,7 @@
     "babelify": "^7.2.0",
     "bower": "^1.4.1",
     "browserify": "^13.0.0",
+    "envify": "^3.4.0",
     "gulp": "^3.9.0",
     "gulp-gh-pages": "^0.5.2",
     "gulp-iconfont": "^6.0.0",
