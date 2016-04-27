@@ -1,30 +1,44 @@
 import config from "./config";
-import * as querystring from "querystring";
+import * as qs from "querystring";
 import firebaseRoot from "./firebaseRoot";
+import * as APIRequest from "./APIRequest";
+import UserFetcher from "./fetcher/UserFetcher";
+import {app} from "./model/App";
 
 async function fetchFirebaseToken() {
-  const res = await fetch(`${config.api.root}/firebase_token`, {method: "POST"});
-  if (res.status == 201) {
-    const json = await res.json();
-    return json["token"] as string;
-  } else {
-    throw new Error("cannot create firebase token");
-  }
+  const json = await APIRequest.request(`/firebase_tokens`, {method: "POST"});
+  return json["token"] as string;
 }
 
-export
 async function authFirebase() {
   const token = await fetchFirebaseToken();
   return await firebaseRoot.authWithCustomToken(token);
 }
 
-const callbackURL = `${location.origin}${location.pathname}#!/auth_callback`
+const callbackURL = `${location.origin}${location.pathname}`;
+
+export
+async function authWithCallbackParams() {
+  const hash = location.hash;
+  if (hash.length > 1) {
+    const params = qs.parse(hash.slice(1));
+    const token = params["access_token"];
+    APIRequest.setAuthToken(token);
+    let [_, user] = await Promise.all([await authFirebase(), await UserFetcher.fetchCurrent()]);
+    app.user.value = user;
+    await authFirebase();
+    return true;
+  }
+  return false;
+}
 
 export
 function loginWithGoogle() {
-  const url = `${config.api.root}/login?` + querystring.stringify({
-    strategy: "google",
-    callback_url: callbackURL
+  const url = `${config.api.root}/login/google?` + qs.stringify({
+    response_type: "token",
+    client_id: config.api.applicationID,
+    state: "", // TODO: use state
+    redirect_uri: callbackURL
   });
   location.href = url;
 }

@@ -20,7 +20,7 @@ async function request<T>(path: string, options: Object = {}) {
   deepAssign(opts, options);
 
   const response = await fetch(`${config.api.root}${path}`, opts);
-  if (response.status == 200) {
+  if (response.status >= 200 && response.status < 300) {
     return await response.json<T>();
   } else {
     throw new Error("request failed");

@@ -23,26 +23,6 @@ class LoginDialog extends Component {
       app.user.changed.map(u => u == null).subscribe(this.isShown),
       this.clicked.subscribe(() => this.auth())
     );
-    this.authWithLastToken();
-  }
-
-  async authWithLastToken() {
-    const authToken = localStorage["auth.token"];
-    const authExpires = localStorage["auth.expires"];
-    console.log(`token: ${authToken}`);
-    console.log(`expires: ${authExpires}`);
-
-    if (authToken && authExpires - Date.now() / 1000 > 12 * 60 * 60) {
-      this.isShown.value = false;
-      try {
-        let [_, user] = await Promise.all([await Auth.authFirebase(), await UserFetcher.fetchCurrent()]);
-        app.user.value = user;
-      } catch (e) {
-        console.error("reauth error!");
-        console.error(e);
-        this.isShown.value = true;
-      }
-    }
   }
 
   auth() {
