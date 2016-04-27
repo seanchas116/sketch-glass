@@ -2,7 +2,7 @@ import User from "../model/User";
 import firebaseRoot from "../firebaseRoot";
 import RxFirebaseQuery from "../lib/firebase/RxFirebaseQuery";
 import TreeDisposable from "../lib/TreeDisposable";
-import config from "../config";
+import * as APIRequest from "../APIRequest";
 
 interface UserData {
   name: string;
@@ -53,18 +53,13 @@ class UserFetcher extends TreeDisposable {
   }
 
   static async fetchCurrent() {
-    const response = await fetch(`${config.api.root}/users/current`);
-    if (response.status == 200) {
-      const json = await response.json();
-      const user = new User(json["id"]);
-      const userFetcher = new UserFetcher(user);
-      userFetcher.data = {
-        name: json["name"],
-        email: json["email"]
-      };
-      return user;
-    } else {
-      throw new Error("cannot fetch current user");
-    }
+    const json = await APIRequest.request("/users/current");
+    const user = new User(json["id"]);
+    const userFetcher = new UserFetcher(user);
+    userFetcher.data = {
+      name: json["name"],
+      email: json["email"]
+    };
+    return user;
   }
 }

@@ -18,7 +18,7 @@ async function authFirebase() {
   return await firebaseRoot.authWithCustomToken(token);
 }
 
-const callbackURL = `${location.origin}${location.pathname}#/auth_callback`
+const callbackURL = `${location.origin}${location.pathname}#!/auth_callback`
 
 export
 function loginWithGoogle() {

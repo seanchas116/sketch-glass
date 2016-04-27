@@ -39,6 +39,7 @@
     "babel-polyfill": "^6.7.4",
     "bezier-js": "^2.0.0",
     "bezier-subdivide": "0.0.1",
+    "deep-assign": "^2.0.0",
     "firebase": "^2.4.2",
     "gravatar": "^1.5.2",
     "lodash": "^4.9.0",
