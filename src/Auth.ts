@@ -34,11 +34,12 @@ async function authWithCallbackParams() {
 
 export
 function loginWithGoogle() {
-  const url = `${config.api.root}/login/google?` + qs.stringify({
+  const url = `${config.api.root}/oauth/authorize?` + qs.stringify({
     response_type: "token",
     client_id: config.api.applicationID,
     state: "", // TODO: use state
-    redirect_uri: callbackURL
+    redirect_uri: callbackURL,
+    login_with: "google_oauth2"
   });
   location.href = url;
 }
