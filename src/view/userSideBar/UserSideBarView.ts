@@ -4,7 +4,6 @@ import ButtonView from "../ButtonView";
 import DisposableBag from "../../lib/DisposableBag";
 import {app} from "../../model/App";
 import Slot from "../../lib/ui/Slot";
-const gravatar = require('gravatar');
 
 function gravatarURL(emailMD5: string) {
   const dpr = window.devicePixelRatio || 1;
