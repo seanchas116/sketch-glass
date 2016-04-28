@@ -4,17 +4,20 @@
 users:
   $id:
     name: string
-    email: string
+    email_md5: string
 canvases:
   $id:
     name: string
 collaborations:
-  $canvas_id:
-    $user_id:
-strokes:
+  c$canvas_id:
+    u$user_id: true
+  u$user_id:
+    c$canvas_id: true
+shapes:
   $canvas_id:
     $id:
       user_id: $user_id
+      type: "stroke"
       brush:
         color: string
         width: number
