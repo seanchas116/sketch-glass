@@ -5,7 +5,7 @@ import TreeDisposable from "../lib/TreeDisposable";
 export default
 class User extends TreeDisposable {
   name = new Variable("");
-  email = new Variable("");
+  emailMD5 = new Variable("");
   saveRequested = new Rx.Subject<void>();
 
   constructor(public id: string) {

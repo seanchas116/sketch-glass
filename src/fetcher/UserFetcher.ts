@@ -3,10 +3,11 @@ import firebaseRoot from "../firebaseRoot";
 import RxFirebaseQuery from "../lib/firebase/RxFirebaseQuery";
 import TreeDisposable from "../lib/TreeDisposable";
 import * as APIRequest from "../APIRequest";
+import {md5} from "../util";
 
 interface UserData {
   name: string;
-  email: string;
+  email_md5: string;
 }
 
 // UserFetcher is responsible for fetching and auto-updating User data
@@ -18,13 +19,13 @@ class UserFetcher extends TreeDisposable {
 
   set data(data: UserData) {
     this.user.name.value = data.name;
-    this.user.email.value = data.email;
+    this.user.emailMD5.value = data.email_md5;
   }
 
   get data() {
     return {
       name: this.user.name.value || "",
-      email: this.user.email.value || ""
+      email_md5: this.user.emailMD5.value || ""
     };
   }
 
@@ -58,7 +59,7 @@ class UserFetcher extends TreeDisposable {
     const userFetcher = new UserFetcher(user);
     userFetcher.data = {
       name: json["name"],
-      email: json["email"]
+      email_md5: md5(json["email"])
     };
     return user;
   }

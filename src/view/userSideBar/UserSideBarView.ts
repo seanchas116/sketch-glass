@@ -6,9 +6,9 @@ import {app} from "../../model/App";
 import Slot from "../../lib/ui/Slot";
 const gravatar = require('gravatar');
 
-function gravatarURL(email: string) {
+function gravatarURL(emailMD5: string) {
   const dpr = window.devicePixelRatio || 1;
-  return gravatar.url(email, {protocol: 'https', s: 32 * dpr});
+  return `https://www.gravatar.com/avatar/${emailMD5}?s=${32 * dpr}`;
 }
 
 export default
@@ -63,7 +63,7 @@ class UserSideBarView extends Component {
       if (user != null) {
         userDisposables.add(
           user.name.changed.subscribe(this.userNameSlot.text()),
-          user.email.changed
+          user.emailMD5.changed
             .map(gravatarURL)
             .subscribe(this.avatarSlot.attribute("src"))
         );
