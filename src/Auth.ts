@@ -1,45 +1,42 @@
 import config from "./config";
-import * as qs from "querystring";
-import firebaseRoot from "./firebaseRoot";
-import * as APIRequest from "./APIRequest";
-import UserFetcher from "./fetcher/UserFetcher";
-import {app} from "./model/App";
-
-async function fetchFirebaseToken() {
-  const json = await APIRequest.request(`/firebase_tokens`, {method: "POST"});
-  return json["token"] as string;
-}
-
-async function authFirebase() {
-  const token = await fetchFirebaseToken();
-  return await firebaseRoot.authWithCustomToken(token);
-}
-
-const callbackURL = `${location.origin}${location.pathname}`;
+import Variable from "./lib/rx/Variable";
 
 export
-async function authWithCallbackParams() {
-  const hash = location.hash;
-  if (hash.length > 1) {
-    const params = qs.parse(hash.slice(1));
-    const token = params["access_token"];
-    APIRequest.setAuthToken(token);
-    let [_, user] = await Promise.all([await authFirebase(), await UserFetcher.fetchCurrent()]);
-    app.user.value = user;
-    await authFirebase();
-    return true;
-  }
-  return false;
-}
+let accessToken: string;
 
 export
-function loginWithGoogle() {
-  const url = `${config.api.root}/oauth/authorize?` + qs.stringify({
-    response_type: "token",
-    client_id: config.api.applicationID,
-    state: "", // TODO: use state
-    redirect_uri: callbackURL,
-    login_with: "google_oauth2"
+const isAuthenticated = new Variable(false);
+
+function authenticate({immediate = false}) {
+  return new Promise<GoogleApiOAuth2TokenObject>((resolve, reject) => {
+    gapi.auth.authorize({
+      client_id: config.google.clientID,
+      scope: "https://www.googleapis.com/auth/drive.file",
+      immediate
+    }, (authResult) => {
+      if (authResult.error) {
+        reject(new Error(authResult.error));
+      } else {
+        resolve(authResult);
+      }
+    });
   });
-  location.href = url;
+}
+
+export
+async function check() {
+  try {
+    const result = await authenticate({immediate: true});
+    accessToken = result.access_token;
+    isAuthenticated.value = true;
+  } catch (error) {
+    console.log("need to relogin", error);
+  }
+}
+
+export
+async function popup() {
+  const result = await authenticate({immediate: false});
+  accessToken = result.access_token;
+  isAuthenticated.value = true;
 }

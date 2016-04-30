@@ -5,11 +5,6 @@ import DisposableBag from "../../lib/DisposableBag";
 import {app} from "../../model/App";
 import Slot from "../../lib/ui/Slot";
 
-function gravatarURL(emailMD5: string) {
-  const dpr = window.devicePixelRatio || 1;
-  return `https://www.gravatar.com/avatar/${emailMD5}?s=${32 * dpr}`;
-}
-
 export default
 class UserSideBarView extends Component {
   static template = `
@@ -54,19 +49,13 @@ class UserSideBarView extends Component {
       this.open.value = !this.open.value;
     });
 
-    const userDisposables = new DisposableBag();
-    this.disposables.add(userDisposables);
-
-    app.user.changed.subscribe(user => {
-      userDisposables.clear();
-      if (user != null) {
-        userDisposables.add(
-          user.name.changed.subscribe(this.userNameSlot.text()),
-          user.emailMD5.changed
-            .map(gravatarURL)
-            .subscribe(this.avatarSlot.attribute("src"))
-        );
-      }
-    });
+    this.disposables.add(
+      app.user.changed.subscribe(user => {
+        if (user != null) {
+          this.userNameSlot.text()(user.displayName),
+          this.avatarSlot.attribute("src")(user.photoLink)
+        }
+      })
+    );
   }
 }

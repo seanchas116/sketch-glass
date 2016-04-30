@@ -1,5 +1,4 @@
 import Component from "../lib/ui/Component";
-import UserFetcher from "../fetcher/UserFetcher";
 import {app} from "../model/App";
 import * as Rx from "rx";
 import * as Auth from "../Auth";
@@ -9,7 +8,7 @@ class LoginDialog extends Component {
   static template = `
     <div class='sg-login-dialog'>
       <section class='dialog'>
-        <h1>Sign In / Sign Up</h1>
+        <h1>Sign in</h1>
         <button class='login-google'>Continue with Google</button>
       </section>
     </div>
@@ -20,12 +19,12 @@ class LoginDialog extends Component {
   constructor(mountPoint: Element) {
     super(mountPoint);
     this.disposables.add(
-      app.user.changed.map(u => u == null).subscribe(this.isShown),
+      Auth.isAuthenticated.changed.map(a => !a).subscribe(this.isShown),
       this.clicked.subscribe(() => this.auth())
     );
   }
 
   auth() {
-    Auth.loginWithGoogle();
+    Auth.popup();
   }
 }

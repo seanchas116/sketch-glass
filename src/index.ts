@@ -4,7 +4,9 @@ require("babel-polyfill");
 import MainView from './view/MainView';
 import * as Auth from "./Auth";
 
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   new MainView(document.getElementById("root"));
-  Auth.authWithCallbackParams();
-});
+  Auth.check();
+}
+
+window["initApp"] = initApp;
