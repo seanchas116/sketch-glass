@@ -3,7 +3,6 @@
     "lodash": "registry:npm/lodash#4.0.0+20160305082308"
   },
   "ambientDependencies": {
-    "firebase": "registry:dt/firebase#2.4.1+20160412125105",
     "gapi": "registry:dt/gapi#0.0.0+20160412153822",
     "node": "registry:dt/node#4.0.0+20160330064709",
     "page": "registry:dt/page#0.0.0+20160317120654",
