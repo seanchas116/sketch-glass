@@ -83,9 +83,7 @@ class Renderer extends TreeDisposable {
   }
 
   strokeBegin(width: number, color: Color) {
-    const stroke = this.currentStroke = new Stroke();
-    stroke.width = width;
-    stroke.color = color;
+    const stroke = this.currentStroke = new Stroke([], color, width);
     this.currentStrokeWeaver = new StrokeWeaver(this.gl, stroke);
   }
 
