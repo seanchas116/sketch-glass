@@ -25,42 +25,25 @@ declare namespace gapi.drive.realtime {
     NO_WRITE_PERMISSION,
   }
 
-  enum EventType {
-    OBJECT_CHANGED,
-    VALUES_SET,
-    VALUES_ADDED,
-    VALUES_REMOVED,
-    VALUE_CHANGED,
-    TEXT_INSERTED,
-    TEXT_DELETED,
-    COLLABORATOR_JOINED,
-    COLLABORATOR_LEFT,
-    REFERENCE_SHIFTED,
-    DOCUMENT_SAVE_STATE_CHANGED,
-    UNDO_REDO_STATE_CHANGED,
-    ATTRIBUTE_CHANGED,
-  }
-
   namespace EventType {
-    type OBJECT_CHANGED = "object_changed";
-    type VALUES_SET = "values_set";
-    type VALUES_ADDED = "values_added";
-    type VALUES_REMOVED = "values_removed";
-    type VALUE_CHANGED = "values_changed";
-    type TEXT_INSERTED = "text_inserted";
-    type TEXT_DELETED = "text_deleted";
-    type COLLABORATOR_JOINED = "collaborator_joined";
-    type COLLABORATOR_LEFT = "collaborator_left";
-    type REFERENCE_SHIFTED = "reference_shifted";
-    type DOCUMENT_SAVE_STATE_CHANGED = "document_save_state_changed";
-    type UNDO_REDO_STATE_CHANGED = "undo_redo_state_changed";
-    type ATTRIBUTE_CHANGED = "attribute_changed";
+    var OBJECT_CHANGED: "object_changed";
+    var VALUES_SET: "values_set";
+    var VALUES_ADDED: "values_added";
+    var VALUES_REMOVED: "values_removed";
+    var VALUE_CHANGED: "values_changed";
+    var TEXT_INSERTED: "text_inserted";
+    var TEXT_DELETED: "text_deleted";
+    var COLLABORATOR_JOINED: "collaborator_joined";
+    var COLLABORATOR_LEFT: "collaborator_left";
+    var REFERENCE_SHIFTED: "reference_shifted";
+    var DOCUMENT_SAVE_STATE_CHANGED: "document_save_state_changed";
+    var UNDO_REDO_STATE_CHANGED: "undo_redo_state_changed";
+    var ATTRIBUTE_CHANGED: "attribute_changed";
   }
 
   class AttributeChangedEvent {
     attribute: Attribute;
     target: Document;
-    type: EventType.ATTRIBUTE_CHANGED;
     value: any;
   }
 
@@ -80,9 +63,9 @@ declare namespace gapi.drive.realtime {
 
   class CollaborativeList<T> extends CollaborativeObject {
     length: number;
-    addEventListener(type: EventType.VALUES_ADDED, listener: (event: ValuesAddedEvent<T>) => void, capture?: boolean): void;
-    addEventListener(type: EventType.VALUES_REMOVED, listener: (event: ValuesRemovedEvent<T>) => void, capture?: boolean): void;
-    addEventListener(type: EventType.VALUES_SET, listener: (event: ValuesSetEvent<T>) => void, capture?: boolean): void;
+    addEventListener(type: typeof EventType.VALUES_ADDED, listener: (event: ValuesAddedEvent<T>) => void, capture?: boolean): void;
+    addEventListener(type: typeof EventType.VALUES_REMOVED, listener: (event: ValuesRemovedEvent<T>) => void, capture?: boolean): void;
+    addEventListener(type: typeof EventType.VALUES_SET, listener: (event: ValuesSetEvent<T>) => void, capture?: boolean): void;
     asArray(): T[];
     clear(): void;
     get(index: number): T;
@@ -104,7 +87,7 @@ declare namespace gapi.drive.realtime {
 
   class CollaborativeMap<T> extends CollaborativeObject {
     size: number;
-    addEventListener(type: EventType.VALUE_CHANGED, listener: (event: ValueChangedEvent<T>) => void, capture?: boolean): void;
+    addEventListener(type: typeof EventType.VALUE_CHANGED, listener: (event: ValueChangedEvent<T>) => void, capture?: boolean): void;
     clear(): void;
     delete(key: string): T;
     get(key: string): T;
@@ -147,13 +130,11 @@ declare namespace gapi.drive.realtime {
   class CollaboratorJoinedEvent {
     collaborator: Collaborator;
     target: Document;
-    type: EventType.COLLABORATOR_JOINED;
   }
 
   class CollaboratorLeftEvent {
     collaborator: Collaborator;
     target: Document;
-    type: EventType.COLLABORATOR_LEFT;
   }
 
   class Document extends EventTarget {
@@ -174,7 +155,6 @@ declare namespace gapi.drive.realtime {
     isPending: boolean;
     isSaving: boolean;
     target: Document;
-    type: EventType.DOCUMENT_SAVE_STATE_CHANGED;
   }
 
   class Error {
@@ -192,7 +172,7 @@ declare namespace gapi.drive.realtime {
 
   class IndexReference extends CollaborativeObject {
     index: number;
-    addEventListener(type: EventType.REFERENCE_SHIFTED, listener: (event: ReferenceShiftedEvent) => void, capture?: boolean): void;
+    addEventListener(type: typeof EventType.REFERENCE_SHIFTED, listener: (event: ReferenceShiftedEvent) => void, capture?: boolean): void;
     deleteMode(): IndexReference.DeleteMode;
     referencedObject(): CollaborativeObject;
   }
@@ -211,7 +191,7 @@ declare namespace gapi.drive.realtime {
     canRedo: boolean;
     canUndo: boolean;
     static createJsObject(typeName: string): Object;
-    addEventListener(type: EventType.UNDO_REDO_STATE_CHANGED, listener: (event: UndoRedoStateChangedEvent) => void, capture?: boolean): void;
+    addEventListener(type: typeof EventType.UNDO_REDO_STATE_CHANGED, listener: (event: UndoRedoStateChangedEvent) => void, capture?: boolean): void;
     beginCompoundOperation(name?: string, isUndoable?: boolean): void;
     create(ref: Function | string, args: any[]): CollaborativeObject;
     createList<T>(initialValue?: T[]): CollaborativeList<T>;
@@ -228,7 +208,6 @@ declare namespace gapi.drive.realtime {
 
   class ObjectChangedEvent extends BaseModelEvent {
     events: BaseModelEvent[];
-    type: EventType.OBJECT_CHANGED;
   }
 
   class ReferenceShiftedEvent extends BaseModelEvent {
@@ -236,33 +215,28 @@ declare namespace gapi.drive.realtime {
     newObject: CollaborativeObject;
     oldIndex: number;
     oldObject: CollaborativeObject;
-    type: EventType.REFERENCE_SHIFTED;
   }
 
   class TextDeletedEvent extends BaseModelEvent {
     index: number;
     text: string;
-    type: EventType.TEXT_DELETED;
   }
 
   class TextInsertedEvent extends BaseModelEvent {
     index: number;
     text: string;
-    type: EventType.TEXT_INSERTED;
   }
 
   class UndoRedoStateChangedEvent {
     canRedo: boolean;
     canUndo: boolean;
     target: Model;
-    type: EventType.UNDO_REDO_STATE_CHANGED;
   }
 
   class ValueChangedEvent<T> extends BaseModelEvent {
     newValue: T;
     oldValue: T;
     property: string;
-    type: EventType.VALUE_CHANGED;
   }
 
   class ValuesAddedEvent<T> extends BaseModelEvent {
