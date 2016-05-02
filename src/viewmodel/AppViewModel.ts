@@ -1,10 +1,10 @@
 import Variable from "../lib/rx/Variable";
-import User from "./User";
-import Canvas from "./Canvas";
+import User from "../model/User";
+import Canvas from "../model/Canvas";
 import * as Auth from "../Auth";
 
 export default
-class App {
+class AppViewModel {
   user = new Variable<User>(null);
   canvas = new Variable<Canvas>(null);
 
@@ -15,4 +15,4 @@ class App {
   }
 }
 
-export const app = new App();
+export const appViewModel = new AppViewModel();

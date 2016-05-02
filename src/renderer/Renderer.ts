@@ -33,10 +33,6 @@ class Renderer extends TreeDisposable {
   constructor(public element: HTMLCanvasElement, public canvas: Canvas) {
     super();
 
-    this.disposables.add(
-      canvas.transform.changed.subscribe(t => this.transform = t)
-    );
-
     this.background = new Background(Color.white);
 
     // TODO: check why explicit cast is required

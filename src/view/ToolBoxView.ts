@@ -1,7 +1,7 @@
 import Component from "../lib/ui/Component";
 import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
-import ToolBox from "../model/ToolBox";
+import CanvasViewModel from "../viewmodel/CanvasViewModel";
 
 export default
 class ToolBoxView extends Component {
@@ -15,20 +15,20 @@ class ToolBoxView extends Component {
   penButton = new ButtonView(this.elementFor(".pen-button"), "pen");
   eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
 
-  constructor(mountPoint: Element, public toolBox: ToolBox) {
+  constructor(mountPoint: Element, public canvasViewModel: CanvasViewModel) {
     super(mountPoint);
 
     this.disposables.add(
       this.penButton.clicked.subscribe(() => {
-        toolBox.tool.value = Tool.Pen;
+        canvasViewModel.tool.value = Tool.Pen;
       }),
       this.eraserButton.clicked.subscribe(() => {
-        toolBox.tool.value = Tool.Eraser;
+        canvasViewModel.tool.value = Tool.Eraser;
       }),
-      toolBox.tool.changed
+      canvasViewModel.tool.changed
         .map(tool => tool == Tool.Pen)
         .subscribe(this.penButton.isChecked),
-      toolBox.tool.changed
+      canvasViewModel.tool.changed
         .map(tool => tool == Tool.Eraser)
         .subscribe(this.eraserButton.isChecked)
     );

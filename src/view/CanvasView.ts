@@ -7,6 +7,7 @@ import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
+import CanvasViewModel from "../viewmodel/CanvasViewModel";
 
 function touchPoint(touch: Touch) {
   return new Vec2(touch.clientX, touch.clientY);
@@ -27,11 +28,14 @@ class StrokeHandler extends TreeDisposable {
   currentStroke: Stroke;
   isStroking = false;
 
-  constructor(public canvas: Canvas, public renderer: Renderer) {
+  constructor(public canvasViewModel: CanvasViewModel, public renderer: Renderer) {
     super();
     this.disposables.add(
       this.renderer,
-      canvas.transform.changed.subscribe(t => this.transform = t)
+      canvasViewModel.transform.changed.subscribe(t => {
+        renderer.transform = t;
+        this.transform = t;
+      })
     );
   }
 
@@ -61,18 +65,18 @@ class StrokeHandler extends TreeDisposable {
 
   pinchEnd() {
     this.interactionState.value = InteractionState.None;
-    this.canvas.transform.value = this.transform;
+    this.canvasViewModel.transform.value = this.transform;
   }
 
   pressStart(pos: Vec2) {
     pos = pos.transform(this.transform.invert());
-    if (this.canvas.toolBox.tool.value == Tool.Pen) {
+    if (this.canvasViewModel.tool.value == Tool.Pen) {
       this.interactionState.value = InteractionState.Drawing;
-      this.renderer.strokeBegin(this.canvas.toolBox.penWidth.value, this.canvas.toolBox.color.value);
+      this.renderer.strokeBegin(this.canvasViewModel.penWidth.value, this.canvasViewModel.color.value);
       this.renderer.strokeNext(pos);
     } else {
       this.interactionState.value = InteractionState.Erasing;
-      this.renderer.eraseBegin(this.canvas.toolBox.eraserWidth.value);
+      this.renderer.eraseBegin(this.canvasViewModel.eraserWidth.value);
       this.renderer.eraseNext(pos);
     }
   }
@@ -98,7 +102,7 @@ class StrokeHandler extends TreeDisposable {
   dragStart(pos: Vec2) {
     this.interactionState.value = InteractionState.Dragging;
     this.startPoint = pos;
-    this.initialTransform = this.canvas.transform.value;
+    this.initialTransform = this.canvasViewModel.transform.value;
   }
 
   dragMove(pos: Vec2) {
@@ -110,14 +114,14 @@ class StrokeHandler extends TreeDisposable {
 
   dragEnd() {
     if (this.interactionState.value == InteractionState.Dragging) {
-      this.canvas.transform.value = this.transform;
+      this.canvasViewModel.transform.value = this.transform;
       this.interactionState.value = InteractionState.None;
     }
   }
 
   scale(center: Vec2, scale: number) {
     const transform = Transform.translation(center.negate()).scale(new Vec2(scale, scale)).translate(center);
-    this.canvas.transform.value = this.canvas.transform.value.merge(transform);
+    this.canvasViewModel.transform.value = this.canvasViewModel.transform.value.merge(transform);
     this.renderer.update();
   }
 }
@@ -125,10 +129,6 @@ class StrokeHandler extends TreeDisposable {
 export default
 class CanvasView extends Component {
   strokeHandler: StrokeHandler;
-
-  get canvas() {
-    return this.strokeHandler.canvas;
-  }
 
   private onMouseMove(ev: MouseEvent) {
     const pos = new Vec2(ev.clientX, ev.clientY)
@@ -191,9 +191,9 @@ class CanvasView extends Component {
     <canvas class="sg-canvas"></canvas>
   `;
 
-  constructor(mountPoint: Element, canvas: Canvas) {
+  constructor(mountPoint: Element, canvasViewModel: CanvasViewModel) {
     super(mountPoint);
-    this.strokeHandler = new StrokeHandler(canvas, new Renderer(this.element as HTMLCanvasElement, canvas));
+    this.strokeHandler = new StrokeHandler(canvasViewModel, new Renderer(this.element as HTMLCanvasElement, canvasViewModel.canvas));
     this.disposables.add(this.strokeHandler);
 
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));

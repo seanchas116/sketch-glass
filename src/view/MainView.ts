@@ -4,7 +4,7 @@ import UserSideBarView from "./userSideBar/UserSideBarView";
 import ToolBoxView from "./ToolBoxView";
 import InfoButtonsView from "./InfoButtonsView";
 import LoginDialog from "./LoginDialog";
-import Canvas from "../model/Canvas";
+import CanvasViewModel from "../viewmodel/CanvasViewModel";
 
 export default
 class MainView extends Component {
@@ -17,10 +17,10 @@ class MainView extends Component {
       <div class='login-dialog'></div>
     </div>
   `;
-  canvas = new Canvas();
-  canvasView = new CanvasView(this.elementFor(".canvas-view"), this.canvas);
+  canvasViewModel = new CanvasViewModel();
+  canvasView = new CanvasView(this.elementFor(".canvas-view"), this.canvasViewModel);
   UserSideBarView = new UserSideBarView(this.elementFor(".user-sidebar-view"));
-  toolBoxView = new ToolBoxView(this.elementFor(".palette-view"), this.canvas.toolBox);
+  toolBoxView = new ToolBoxView(this.elementFor(".palette-view"), this.canvasViewModel);
   infoButtonsView = new InfoButtonsView(this.elementFor(".info-buttons-view"));
   loginDialog = new LoginDialog(this.elementFor(".login-dialog"));
 

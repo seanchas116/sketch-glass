@@ -1,5 +1,4 @@
 import Component from "../lib/ui/Component";
-import {app} from "../model/App";
 import * as Rx from "rx";
 import * as Auth from "../Auth";
 

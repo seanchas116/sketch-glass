@@ -2,7 +2,7 @@ import Component from "../../lib/ui/Component";
 import Variable from "../../lib/rx/Variable";
 import ButtonView from "../ButtonView";
 import DisposableBag from "../../lib/DisposableBag";
-import {app} from "../../model/App";
+import {appViewModel} from "../../viewmodel/AppViewModel";
 import Slot from "../../lib/ui/Slot";
 
 export default
@@ -50,7 +50,7 @@ class UserSideBarView extends Component {
     });
 
     this.disposables.add(
-      app.user.changed.subscribe(user => {
+      appViewModel.user.changed.subscribe(user => {
         if (user != null) {
           this.userNameSlot.text()(user.displayName),
           this.avatarSlot.attribute("src")(user.photoLink)

@@ -39,6 +39,10 @@ class ObservableArray<T> {
     return this._values[index];
   }
 
+  push(value: T) {
+    this.insert(this.length, [value]);
+  }
+
   insert(index: number, values: T[]) {
     this._values.splice(index, 0, ...values);
     this._changed.onNext(new Inserted(index, values));
