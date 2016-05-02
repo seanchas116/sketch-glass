@@ -21,7 +21,7 @@ async function check() {
 
 export
 async function popup() {
-  const result = await GoogleAPI.authorize(config.google.clientID, {immediate: true});
+  const result = await GoogleAPI.authorize(config.google.clientID, {immediate: false});
   accessToken = result.access_token;
   isAuthenticated.value = true;
 }
