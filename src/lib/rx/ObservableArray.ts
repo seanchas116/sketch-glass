@@ -1,27 +1,27 @@
 import * as Rx from "rx";
 
-export
-class Inserted<T> {
-  constructor(public index: number, public values: T[]) {}
+interface Inserted<T> {
+  index: number;
+  values: T[];
 }
 
-export
-class Removed<T> {
-  constructor(public index: number, public values: T[]) {}
+interface Removed<T> {
+  index: number;
+  values: T[];
 }
 
-export
-class Replaced<T> {
-  constructor(public index: number, public newValues: T[], public oldValues: T[]) {}
+interface Replaced<T> {
+  index: number;
+  newValues: T[];
+  oldValues: T[];
 }
-
-export
-type Changed<T> = Inserted<T> | Removed<T> | Replaced<T>;
 
 export default
 class ObservableArray<T> {
   private _values: T[];
-  private _changed = new Rx.Subject<Changed<T>>();
+  private _inserted = new Rx.Subject<Inserted<T>>();
+  private _removed = new Rx.Subject<Removed<T>>();
+  private _replaced = new Rx.Subject<Replaced<T>>();
 
   get length() {
     return this._values.length;
@@ -34,6 +34,15 @@ class ObservableArray<T> {
     this.remove(0, this.length);
     this.insert(0, values);
   }
+  get inserted(): Rx.Observable<Inserted<T>> {
+    return this._inserted;
+  }
+  get removed(): Rx.Observable<Removed<T>> {
+    return this._removed;
+  }
+  get replaced(): Rx.Observable<Replaced<T>> {
+    return this._replaced;
+  }
 
   get(index: number) {
     return this._values[index];
@@ -45,18 +54,18 @@ class ObservableArray<T> {
 
   insert(index: number, values: T[]) {
     this._values.splice(index, 0, ...values);
-    this._changed.onNext(new Inserted(index, values));
+    this._inserted.onNext({index, values});
   }
 
   remove(index: number, count: number) {
-    const removed = this._values.splice(index, 2);
-    this._changed.onNext(new Removed(index, removed));
-    return removed;
+    const values = this._values.splice(index, 2);
+    this._removed.onNext({index, values});
+    return values;
   }
 
-  replace(index: number, values: T[]) {
-    const removed = this._values.splice(index, values.length, ...values);
-    this._changed.onNext(new Replaced(index, values, removed));
+  replace(index: number, newValues: T[]) {
+    const oldValues = this._values.splice(index, newValues.length, ...newValues);
+    this._replaced.onNext({index, newValues, oldValues});
   }
 
   set(index: number, value: T) {
