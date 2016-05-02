@@ -6,6 +6,10 @@
   display: none;
 }
 
+.sg-list-view {
+  overflow-y: scroll;
+}
+
 .sg-canvas {
   cursor: crosshair;
   flex: 1;
@@ -54,6 +58,11 @@
     top: 0; left: 0;
     height: 100vh; width: @sidebar-width;
     .force-layer();
+    display: flex;
+    flex-direction: column;
+    .sg-list-view {
+      flex: 1;
+    }
   }
 
   .user-header {
