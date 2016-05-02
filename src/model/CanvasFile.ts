@@ -27,7 +27,7 @@ class CanvasFile {
   static async list() {
     const data = await GoogleAPI.get<any>("https://www.googleapis.com/drive/v3/files", {
       orderBy: "modifiedTime desc",
-      q: "appProperties has { key='showInList' and value='true' }",
+      q: "appProperties has { key='showInList' and value='true' } and trashed = false",
       fields: "files(id,modifiedTime,name),kind,nextPageToken"
     });
     return (data.files as any[]).map(d => this.fromData(d));
