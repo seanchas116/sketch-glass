@@ -35,7 +35,18 @@ class UserSideBarView extends Component {
   sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
   avatarSlot = this.slotFor(".avatar")
   userNameSlot = this.slotFor(".userName");
-  canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), this.viewModel.files, file => new CanvasFileCell(null, file));
+  canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), this.viewModel.files, file => {
+    const component = new CanvasFileCell(null, file);
+    component.disposables.add(
+      this.viewModel.currentFile.changed
+        .map(current => current == file)
+        .subscribe(component.isSelected),
+      component.clicked.subscribe(() => {
+        this.viewModel.currentFile.value = file;
+      })
+    );
+    return component;
+  });
   addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
 
   constructor(mountPoint: Element, public viewModel: UserSideBarViewModel) {

@@ -16,14 +16,14 @@ class CanvasFileCell extends Component {
     </div>
   `;
 
-  selected = new Variable(false);
+  isSelected = new Variable(false);
   thumbnailSlot = this.slotFor(".thumbnail");
   titleSlot = this.slotFor(".title");
   updatedAtSlot = this.slotFor(".updated-at");
 
   constructor(mountPoint: Element, public canvasFile: CanvasFile) {
     super(mountPoint);
-    this.selected.changed.subscribe(this.slot.toggleClass("selected"));
+    this.isSelected.changed.subscribe(this.slot.toggleClass("selected"));
     this.titleSlot.text()(canvasFile.name);
     this.updatedAtSlot.text()(moment(canvasFile.modifiedTime).fromNow());
   }

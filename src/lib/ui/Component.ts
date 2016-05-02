@@ -1,6 +1,7 @@
 import Slot from "./Slot";
 import TreeDisposable from "../TreeDisposable";
 import Variable from "../rx/Variable";
+import * as Rx from "rx";
 
 export default
 class Component extends TreeDisposable {
@@ -20,6 +21,7 @@ class Component extends TreeDisposable {
   slot = new Slot(this.element);
 
   isShown = new Variable(true);
+  clicked = Rx.Observable.fromEvent(this.element, 'click');
 
   constructor(mountPoint: Element | null) {
     super();
