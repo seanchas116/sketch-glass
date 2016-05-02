@@ -1,7 +1,17 @@
 
 export
+function init() {
+  return new Promise((resolve, reject) => {
+    window["googleAPILoaded"] = resolve;
+    const script = document.createElement("script");
+    script.src = "https://apis.google.com/js/client.js?onload=googleAPILoaded";
+    document.body.appendChild(script);
+  });
+}
+
+export
 function load(apis: string) {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     gapi.load(apis, resolve);
   });
 }
