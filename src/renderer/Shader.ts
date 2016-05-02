@@ -13,6 +13,7 @@ class Shader {
 
   get vertexShader(): string {
     return `
+      precision highp float;
       uniform mat3 uTransform;
       attribute vec2 aPosition;
       attribute mediump vec2 aUVCoord;
