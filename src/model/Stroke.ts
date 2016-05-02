@@ -3,6 +3,7 @@ import Color from '../lib/geometry/Color';
 
 export
 interface StrokeData {
+  type: "stroke";
   points: [number, number][];
   color: [number, number, number, number];
   width: number;
@@ -23,6 +24,7 @@ class Stroke {
 
   toData(): StrokeData {
     return {
+      type: "stroke",
       points: this.points.map(p => [p.x, p.y] as [number, number]),
       color: [this.color.r, this.color.g, this.color.b, this.color.a],
       width: this.width,
