@@ -2,7 +2,7 @@ import * as Rx from "rx";
 import Variable from "../lib/rx/Variable";
 import TreeDisposable from "../lib/TreeDisposable";
 import * as Auth from "../Auth";
-import * as gapiUtil from "../lib/gapi/util";
+import * as GoogleAPI from "../lib/GoogleAPI";
 
 export default
 class User extends TreeDisposable {
@@ -11,7 +11,7 @@ class User extends TreeDisposable {
   }
 
   static async fetchCurrent() {
-    const {user} = await gapiUtil.get<any>("https://www.googleapis.com/drive/v3/about", {fields: "user" });
+    const {user} = await GoogleAPI.request<any>("https://www.googleapis.com/drive/v3/about", {fields: "user" });
     return new User(user.displayName, user.photoLink, user.emailAddress);
   }
 }
