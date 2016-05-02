@@ -2,11 +2,9 @@ import * as GoogleAPI from "../lib/GoogleAPI";
 
 export default
 class CanvasFile {
-  constructor(
-    public id: string,
-    public name: string,
-    public thumbnailLink: string
-  ) {}
+  id: string;
+  name: string;
+  modifiedTime: Date;
 
   static async create() {
     const data = await GoogleAPI.post<any>("https://www.googleapis.com/drive/v3/files", {}, {
@@ -19,17 +17,18 @@ class CanvasFile {
   }
 
   static fromData(data: any) {
-    return new CanvasFile(
-      data.id,
-      data.name,
-      data.thumbnailLink
-    );
+    const file = new CanvasFile();
+    file.id = data.id;
+    file.name = data.name;
+    file.modifiedTime = new Date(data.modifiedTime);
+    return file;
   }
 
   static async list() {
     const data = await GoogleAPI.get<any>("https://www.googleapis.com/drive/v3/files", {
       orderBy: "modifiedTime desc",
-      q: "appProperties has { key='showInList' and value='true' }"
+      q: "appProperties has { key='showInList' and value='true' }",
+      fields: "files(id,modifiedTime,name),kind,nextPageToken"
     });
     return (data.files as any[]).map(d => this.fromData(d));
   }

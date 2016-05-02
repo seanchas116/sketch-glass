@@ -2,6 +2,7 @@ import Component from "../../lib/ui/Component";
 import Variable from "../../lib/rx/Variable";
 import Slot from "../../lib/ui/Slot";
 import CanvasFile from "../../model/CanvasFile";
+import * as moment from "moment";
 
 export default
 class CanvasFileCell extends Component {
@@ -24,5 +25,6 @@ class CanvasFileCell extends Component {
     super(mountPoint);
     this.selected.changed.subscribe(this.slot.toggleClass("selected"));
     this.titleSlot.text()(canvasFile.name);
+    this.updatedAtSlot.text()(moment(canvasFile.modifiedTime).fromNow());
   }
 }
