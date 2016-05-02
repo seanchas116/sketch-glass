@@ -2,7 +2,10 @@
 export
 function init() {
   return new Promise((resolve, reject) => {
-    window["googleAPILoaded"] = resolve;
+    window["googleAPILoaded"] = () => {
+      resolve();
+      delete window["googleAPILoaded"];
+    };
     const script = document.createElement("script");
     script.src = "https://apis.google.com/js/client.js?onload=googleAPILoaded";
     document.body.appendChild(script);
