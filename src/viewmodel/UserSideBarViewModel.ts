@@ -25,6 +25,6 @@ class UserSideBarViewModel {
 
   async addFile() {
     const file = await CanvasFile.create();
-    this.files.push(file);
+    this.files.unshift(file);
   }
 }

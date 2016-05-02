@@ -4,6 +4,10 @@ import ButtonView from "../ButtonView";
 import DisposableBag from "../../lib/DisposableBag";
 import UserSideBarViewModel from "../../viewmodel/UserSideBarViewModel";
 import Slot from "../../lib/ui/Slot";
+import ListView from "../../lib/ui/ListView";
+import CanvasFile from "../../model/CanvasFile";
+import CanvasFileCell from "./CanvasFileCell";
+import * as Rx from "rx";
 
 export default
 class UserSideBarView extends Component {
@@ -20,15 +24,7 @@ class UserSideBarView extends Component {
             <button class="add-canvas">+</button>
           </div>
           <input placeholder="Search" class="sg-search">
-          <div class="canvas-list">
-            <div class="sg-canvas-cell selected">
-              <div class="thumbnail"></div>
-              <div class="info">
-                <p class="title">Design sketch</p>
-                <p class="updated-at">2 days ago</p>
-              </div>
-            </div>
-          </div>
+          <div class="canvas-list"></div>
         </aside>
       </div>
       <div class="sidebar-button"></div>
@@ -39,20 +35,28 @@ class UserSideBarView extends Component {
   sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
   avatarSlot = this.slotFor(".avatar")
   userNameSlot = this.slotFor(".userName");
+  canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), this.viewModel.files, file => new CanvasFileCell(null, file));
+  addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
 
-  constructor(mountPoint: Element, viewModel: UserSideBarViewModel) {
+  constructor(mountPoint: Element, public viewModel: UserSideBarViewModel) {
     super(mountPoint);
 
-    this.open.changed.subscribe(this.slot.toggleClass("open"));
-    this.open.changed.subscribe(this.sidebarButton.isChecked);
-    this.sidebarButton.clicked.subscribe(() => {
-      this.open.value = !this.open.value;
-    });
-
     this.disposables.add(
+      this.open.changed.subscribe(this.slot.toggleClass("open")),
+
+      this.open.changed.subscribe(this.sidebarButton.isChecked),
+
+      this.sidebarButton.clicked.subscribe(() => {
+        this.open.value = !this.open.value;
+      }),
+
       viewModel.user.changed.subscribe(user => {
         this.userNameSlot.text()(user.displayName),
         this.avatarSlot.attribute("src")(user.photoLink)
+      }),
+
+      this.addCanvasClicked.subscribe(() => {
+        viewModel.addFile()
       })
     );
   }
