@@ -1,5 +1,7 @@
 require("setimmediate");
 require("whatwg-fetch");
+require("babel-regenerator-runtime");
+
 import MainView from './view/MainView';
 import * as GoogleAPI from "./lib/GoogleAPI";
 import * as Auth from "./Auth";

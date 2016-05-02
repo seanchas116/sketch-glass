@@ -22,26 +22,6 @@ const envify = require('envify/custom');
 
 const runTimestamp = Math.round(Date.now()/1000);
 
-const babelPlugins = [
-  "es2015-arrow-functions",
-  "es2015-block-scoped-functions",
-  "es2015-block-scoping",
-  "es2015-classes",
-  "es2015-computed-properties",
-  "es2015-destructuring",
-  "es2015-duplicate-keys",
-  "es2015-function-name",
-  "es2015-literals",
-  "es2015-object-super",
-  "es2015-parameters",
-  "es2015-shorthand-properties",
-  "es2015-spread",
-  "es2015-sticky-regex",
-  "es2015-template-literals",
-  "es2015-typeof-symbol",
-  "es2015-unicode-regex",
-].map(name => require(`babel-plugin-transform-${name}`));
-
 function notifyError () {
   return plumber({
     errorHandler: notify.onError('Error: <%= error.message %>')
@@ -97,7 +77,7 @@ gulp.task('watch-bundle', ["tsc"], () => {
     debug: true
   });
   const bundler = watchify(browserify('./build/index.js', args))
-    .transform("babelify", {plugins: babelPlugins})
+    .transform("babelify", {presets: ["es2015"]})
     .transform(envify({NODE_ENV: 'development'}));
 
   const bundle = () => {
@@ -115,7 +95,7 @@ gulp.task('watch-bundle', ["tsc"], () => {
 
 gulp.task('release-bundle', ["build-assets"], () => {
   return browserify('./build/index.js')
-    .transform("babelify", {plugins: babelPlugins})
+    .transform("babelify", {presets: ["es2015"]})
     .transform(envify({NODE_ENV: 'production'}))
     .bundle()
     .pipe(source('bundle.js'))
