@@ -36,7 +36,6 @@
   },
   "private": true,
   "dependencies": {
-    "babel-polyfill": "^6.7.4",
     "bezier-js": "^2.0.0",
     "bezier-subdivide": "0.0.1",
     "deep-assign": "^2.0.0",

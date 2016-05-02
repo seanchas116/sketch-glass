@@ -1,6 +1,5 @@
 require("setimmediate");
 require("whatwg-fetch");
-require("babel-polyfill");
 import MainView from './view/MainView';
 import * as GoogleAPI from "./lib/GoogleAPI";
 import * as Auth from "./Auth";
