@@ -15,6 +15,8 @@ class ListView<T> extends Component {
   ) {
     super(mountPoint);
 
+    this._insert(0, array.values);
+
     this.disposables.add(
       array.inserted.subscribe(({index, values}) => {
         this._insert(index, values);
@@ -33,8 +35,8 @@ class ListView<T> extends Component {
     const {element, factory} = this;
     const before = element.childNodes[index];
     for (const value of values) {
-      const elem = factory(value).element;
-      element.insertBefore(element, before);
+      const newElem = factory(value).element;
+      element.insertBefore(newElem, before);
     }
   }
 
