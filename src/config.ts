@@ -5,7 +5,7 @@ const config = (() => {
   if (env === "production") {
     return {
       google: {
-        clientID: "TODO"
+        clientID: "505664874088-43685mt6pknd2fl8jicmikv94p4g5tgi.apps.googleusercontent.com"
       }
     };
   } else {
