@@ -37,9 +37,19 @@ function authorize(clientID: string, {immediate = false}) {
 }
 
 export
-function request<T>(path: string, params: any = {}, body: any = undefined) {
-  const req = gapi.client.request({path, params, body});
+function request<T>(method: string, path: string, params: any = {}, body: any = undefined) {
+  const req = gapi.client.request({method, path, params, body});
   return new Promise<T>((resolve, reject) => {
     req.then(({result}) => resolve(result), ({body}) => reject(new Error(body)));
   });
+}
+
+export
+function get<T>(path: string, params: any = {}) {
+  return request<T>("GET", path, params);
+}
+
+export
+function post<T>(path: string, params: any = {}, body: any = undefined) {
+  return request<T>("POST", path, params, body);
 }

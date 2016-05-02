@@ -10,7 +10,7 @@ class App {
 
   constructor() {
     Auth.isAuthenticated.changed.filter(a => a).forEach(async () => {
-      this.user.value = await User.fetchCurrent();
+      this.user.value = await User.current();
     });
   }
 }
