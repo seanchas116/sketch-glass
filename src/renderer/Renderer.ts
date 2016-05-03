@@ -79,7 +79,6 @@ class Renderer extends TreeDisposable {
       if (canvas != undefined) {
         this.canvasDisposables.add(
           canvas.strokes.bindToOther(this.strokeWeavers, stroke => {
-            console.log(stroke.points.length);
             const weaver = new StrokeWeaver(gl, stroke);
             weaver.finalize();
             return weaver;

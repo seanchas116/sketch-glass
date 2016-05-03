@@ -220,7 +220,6 @@ class CanvasView extends Component {
   }
 
   private onWheel(ev: WheelEvent) {
-    console.log(ev.deltaY);
     this.strokeHandler.scale(new Vec2(ev.clientX, ev.clientY), Math.pow(0.5, ev.deltaY / 256));
     ev.preventDefault();
   }

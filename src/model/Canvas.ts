@@ -19,21 +19,16 @@ function mapToObservableArray<TData, TValue>(
   observableArray: ObservableArray<TValue>,
   mapper: (data: TData) => TValue
 ) {
-  const initValues = collaborativeList.asArray();
-  console.log("init values", initValues);
-  observableArray.values = initValues.map(mapper);
+  observableArray.values = collaborativeList.asArray().map(mapper);
 
-  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, (event) => {
-    console.log("values added", event.index, event.values);
-    observableArray.insert(event.index, event.values.map(mapper));
+  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, ({index, values}) => {
+    observableArray.insert(index, values.map(mapper));
   });
-  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, (event) => {
-    console.log("values removed", event.index, event.values);
-    observableArray.remove(event.index, event.values.length);
+  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, ({index, values}) => {
+    observableArray.remove(index, values.length);
   });
-  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, (event) => {
-    console.log("values set", event.index, event.newValues, event.oldValues);
-    observableArray.replace(event.index, event.newValues.map(mapper));
+  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, ({index, newValues}) => {
+    observableArray.replace(index, newValues.map(mapper));
   });
 }
 
