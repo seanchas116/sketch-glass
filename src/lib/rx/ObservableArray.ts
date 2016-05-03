@@ -45,6 +45,13 @@ class ObservableArray<T> {
   get replaced(): Rx.Observable<Replaced<T>> {
     return this._replaced;
   }
+  get changed(): Rx.Observable<void> {
+    return Rx.Observable.merge<void>(
+      this.inserted.map(() => {}),
+      this.removed.map(() => {}),
+      this.replaced.map(() => {})
+    );
+  }
 
   get(index: number) {
     return this._values[index];

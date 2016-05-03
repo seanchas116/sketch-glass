@@ -72,7 +72,12 @@ class Renderer extends TreeDisposable {
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
 
-    this.disposables.add(this.strokeWeavers);
+    this.disposables.add(
+      this.strokeWeavers,
+      this.strokeWeavers.changed.subscribe(() => {
+        this.render();
+      })
+    );
 
     this.canvas.changed.subscribe(canvas => {
       this.canvasDisposables.clear();
@@ -87,7 +92,6 @@ class Renderer extends TreeDisposable {
       } else {
         this.strokeWeavers.values = [];
       }
-      this.render();
     });
   }
 
