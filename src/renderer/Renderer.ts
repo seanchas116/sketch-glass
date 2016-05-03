@@ -12,12 +12,12 @@ import TreeDisposable from "../lib/TreeDisposable";
 import StrokeWeaver from "./StrokeWeaver";
 import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
-import ObservableArray from "../lib/rx/ObservableArray";
+import AutoDisposeArray from "../lib/rx/AutoDisposeArray";
 import DisposableBag from "../lib/DisposableBag";
 
 export default
 class Renderer extends TreeDisposable {
-  strokeWeavers = new ObservableArray<StrokeWeaver>();
+  strokeWeavers = new AutoDisposeArray<StrokeWeaver>();
   currentWeaver: StrokeWeaver | undefined;
   erasingWidth: number;
   erasingPoints: Vec2[] = [];
@@ -72,7 +72,7 @@ class Renderer extends TreeDisposable {
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
 
-    ObservableArray.autoDispose(this.strokeWeavers);
+    this.disposables.add(this.strokeWeavers);
 
     this.canvas.changed.subscribe(canvas => {
       this.canvasDisposables.clear();
@@ -91,7 +91,6 @@ class Renderer extends TreeDisposable {
 
   dispose() {
     super.dispose();
-    this.strokeWeavers.values = [];
     if (this.currentWeaver) {
       this.currentWeaver.dispose();
     }

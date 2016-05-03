@@ -102,13 +102,4 @@ class ObservableArray<T> {
   constructor(values: T[] = []) {
     this._values = values;
   }
-
-  static autoDispose<T extends Disposable>(array: ObservableArray<T>) {
-    array.removed.subscribe(({index, values}) => {
-      values.forEach(v => v.dispose());
-    });
-    array.replaced.subscribe(({index, newValues, oldValues}) => {
-      oldValues.forEach(v => v.dispose());
-    });
-  }
 }
