@@ -38,6 +38,7 @@ class AppViewModel {
       this.initData();
     });
     this.currentFile.changed.subscribe(async (file) => {
+      this.canvasViewModel.value = undefined;
       if (file == undefined) { return; }
       const canvas = await Canvas.fromFile(file);
       this.canvasViewModel.value = new CanvasViewModel(canvas);

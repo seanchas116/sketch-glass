@@ -85,7 +85,10 @@ class Renderer extends TreeDisposable {
             return weaver;
           })
         );
+      } else {
+        this.strokeWeavers.values = [];
       }
+      this.render();
     });
   }
 
