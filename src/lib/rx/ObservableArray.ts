@@ -64,7 +64,7 @@ class ObservableArray<T> {
   }
 
   remove(index: number, count: number) {
-    const values = this._values.splice(index, 2);
+    const values = this._values.splice(index, count);
     this._removed.onNext({index, values});
     return values;
   }
