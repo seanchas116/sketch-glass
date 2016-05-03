@@ -35,7 +35,7 @@ class ListView<T> extends Component {
     const {element, factory} = this;
     const before = element.childNodes[index];
     for (const value of values) {
-      const newElem = factory(value).element;
+      const newElem = factory(value!).element;
       element.insertBefore(newElem, before);
     }
   }

@@ -39,10 +39,10 @@ class Shader {
   constructor(public gl: WebGLRenderingContext) {
     this.setup();
 
-    this.aPosition = gl.getAttribLocation(this.program, 'aPosition');
-    this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord');
-    this.uTransform = gl.getUniformLocation(this.program, 'uTransform');
-    this.uColor = gl.getUniformLocation(this.program, 'uColor');
+    this.aPosition = gl.getAttribLocation(this.program, 'aPosition')!;
+    this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord')!;
+    this.uTransform = gl.getUniformLocation(this.program, 'uTransform')!;
+    this.uColor = gl.getUniformLocation(this.program, 'uColor')!;
 
     gl.enableVertexAttribArray(this.aPosition);
     gl.enableVertexAttribArray(this.aUVCoord);
@@ -79,7 +79,7 @@ class Shader {
   private setup() {
     const gl = this.gl;
 
-    const program = this.program = gl.createProgram();
+    const program = this.program = gl.createProgram()!;
     gl.attachShader(program, this.compile(this.vertexShader, gl.VERTEX_SHADER));
     gl.attachShader(program, this.compile(this.fragmentShader, gl.FRAGMENT_SHADER));
     gl.linkProgram(program);

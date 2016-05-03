@@ -60,7 +60,7 @@ class StrokeWeaver extends TreeDisposable {
       this.addSegment(vertices[i], vertices[i+1]);
     }
     this.vertices.pop();
-    this.vertices.push(...vertices);
+    this.vertices.push(...(vertices as any));
     this.lastSectionLength = vertices.length - 1;
   }
 

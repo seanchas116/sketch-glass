@@ -15,8 +15,7 @@ import StrokeCollider from "./StrokeCollider";
 export default
 class Renderer extends TreeDisposable {
   strokeWeaverMap = new Map<Stroke, StrokeWeaver>();
-  currentStrokeWeaver: StrokeWeaver;
-  currentStroke: Stroke | null;
+  currentWeaver: StrokeWeaver | undefined;
   erasingWidth: number;
   erasingPoints: Vec2[] = [];
   isUpdateQueued = false;
@@ -71,30 +70,32 @@ class Renderer extends TreeDisposable {
   dispose() {
     super.dispose();
     for (const weaver of this.strokeWeaverMap.values()) {
-      weaver.dispose();
+      weaver!.dispose();
     }
-    if (this.currentStrokeWeaver) {
-      this.currentStrokeWeaver.dispose();
+    if (this.currentWeaver) {
+      this.currentWeaver.dispose();
     }
   }
 
   strokeBegin(width: number, color: Color) {
-    const stroke = this.currentStroke = new Stroke([], color, width);
-    this.currentStrokeWeaver = new StrokeWeaver(this.gl, stroke);
+    const stroke = new Stroke([], color, width);
+    this.currentWeaver = new StrokeWeaver(this.gl, stroke);
   }
 
   strokeNext(pos: Vec2) {
-    this.currentStrokeWeaver.addPoint(pos);
+    if (this.currentWeaver) {
+      this.currentWeaver.addPoint(pos);
+    }
     this.render();
   }
 
   strokeEnd() {
-    this.currentStrokeWeaver.finalize();
-    this.strokeWeaverMap.set(this.currentStroke, this.currentStrokeWeaver);
-    this.canvas.strokes.push(this.currentStroke);
-
-    this.currentStroke = null;
-    this.currentStrokeWeaver = null;
+    if (this.currentWeaver) {
+      this.currentWeaver.finalize();
+      this.strokeWeaverMap.set(this.currentWeaver.stroke, this.currentWeaver);
+      this.canvas.strokes.push(this.currentWeaver.stroke);
+      this.currentWeaver = undefined;
+    }
   }
 
   eraseBegin(width: number) {
@@ -112,14 +113,15 @@ class Renderer extends TreeDisposable {
     const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
     const collider = new StrokeCollider(this.erasingWidth, vertices);
     const strokeToErase: Stroke[] = [];
-    for (const [stroke, weaver] of this.strokeWeaverMap) {
+    for (const kv of this.strokeWeaverMap) {
+      const [stroke, weaver] = kv!;
       if (weaver.collider.collides(collider)) {
         strokeToErase.push(stroke);
       }
     }
     if (strokeToErase.length > 0) {
       for (const stroke of strokeToErase) {
-        this.strokeWeaverMap.delete(stroke);
+        this.strokeWeaverMap.delete(stroke!);
       }
       this.render();
     }
@@ -173,10 +175,10 @@ class Renderer extends TreeDisposable {
     };
 
     for (const weaver of this.strokeWeaverMap.values()) {
-      draw(weaver);
+      draw(weaver!);
     }
-    if (this.currentStrokeWeaver) {
-      draw(this.currentStrokeWeaver);
+    if (this.currentWeaver) {
+      draw(this.currentWeaver);
     }
   }
 

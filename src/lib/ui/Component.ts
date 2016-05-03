@@ -23,9 +23,9 @@ class Component extends TreeDisposable {
   isShown = new Variable(true);
   clicked = Rx.Observable.fromEvent(this.element, 'click');
 
-  constructor(mountPoint: Element | null) {
+  constructor(mountPoint: Element | undefined) {
     super();
-    if (mountPoint != null) {
+    if (mountPoint != undefined) {
       this.mount(mountPoint);
     }
     this.isShown.changed.map(x => !x).subscribe(this.slot.toggleClass("sg-hidden"));

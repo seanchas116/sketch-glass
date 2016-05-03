@@ -7,7 +7,7 @@ export default
 class UserSideBarViewModel {
   user = new Variable<User>(User.empty());
   files = new ObservableArray<CanvasFile>();
-  currentFile = new Variable<CanvasFile>(null);
+  currentFile = new Variable<CanvasFile | undefined>(undefined);
 
   async init() {
     await Promise.all([

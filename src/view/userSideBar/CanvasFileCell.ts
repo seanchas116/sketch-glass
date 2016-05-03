@@ -21,7 +21,7 @@ class CanvasFileCell extends Component {
   titleSlot = this.slotFor(".title");
   updatedAtSlot = this.slotFor(".updated-at");
 
-  constructor(mountPoint: Element, public canvasFile: CanvasFile) {
+  constructor(mountPoint: Element | undefined, public canvasFile: CanvasFile) {
     super(mountPoint);
     this.isSelected.changed.subscribe(this.slot.toggleClass("selected"));
     this.titleSlot.text()(canvasFile.name);

@@ -22,7 +22,7 @@ class StrokeShader extends Shader {
   constructor(gl: WebGLRenderingContext) {
     super(gl);
 
-    this.uAntialiasEdge = gl.getUniformLocation(this.program, 'uAntialiasEdge');
+    this.uAntialiasEdge = gl.getUniformLocation(this.program, 'uAntialiasEdge')!;
   }
 
   setDisplayWidth(width: number) {

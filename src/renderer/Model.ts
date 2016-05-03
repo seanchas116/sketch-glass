@@ -6,7 +6,7 @@ class Model {
   buffer: WebGLBuffer;
 
   constructor(public gl: WebGLRenderingContext, public vertices: [Vec2, Vec2][]) {
-    this.buffer = gl.createBuffer();
+    this.buffer = gl.createBuffer()!;
   }
 
   updateBuffer() {
