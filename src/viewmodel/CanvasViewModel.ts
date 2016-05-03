@@ -11,5 +11,7 @@ class CanvasViewModel {
   penWidth = new Variable(3);
   eraserWidth = new Variable(30);
   color = new Variable(Color.black);
-  canvas = new Canvas();
+
+  constructor(public canvas: Canvas) {
+  }
 }

@@ -69,7 +69,7 @@ declare namespace gapi.drive.realtime {
     asArray(): T[];
     clear(): void;
     get(index: number): T;
-    indexOf(value: T, comparator: (a: T, b: T) => number): number;
+    indexOf(value: T, comparator: (a: T, b: T) => boolean): number;
     insert(index: number, value: T): void;
     insertAll(index: number, values: T[]): void;
     lastIndexOf(value: T, comparator: (a: T, b: T) => number): number;

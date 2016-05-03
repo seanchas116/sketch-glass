@@ -18,14 +18,15 @@ class MainView extends Component {
       <div class='login-dialog'></div>
     </div>
   `;
-  canvasViewModel = new CanvasViewModel();
-  canvasView = new CanvasView(this.elementFor(".canvas-view"), this.canvasViewModel);
-  UserSideBarView = new UserSideBarView(this.elementFor(".user-sidebar-view"), appViewModel.userSideBar);
-  toolBoxView = new ToolBoxView(this.elementFor(".palette-view"), this.canvasViewModel);
+  canvasView = new CanvasView(this.elementFor(".canvas-view"));
+  userSideBarView = new UserSideBarView(this.elementFor(".user-sidebar-view"));
+  toolBoxView = new ToolBoxView(this.elementFor(".palette-view"));
   infoButtonsView = new InfoButtonsView(this.elementFor(".info-buttons-view"));
   loginDialog = new LoginDialog(this.elementFor(".login-dialog"));
 
   constructor(mountPoint: Element) {
     super(mountPoint);
+    appViewModel.canvasViewModel.changed.subscribe(this.toolBoxView.canvasViewModel);
+    appViewModel.canvasViewModel.changed.subscribe(this.canvasView.canvasViewModel);
   }
 }

@@ -84,6 +84,7 @@ class ObservableArray<T> {
 
   bindToOther<U>(other: ObservableArray<U>, transform: (value: T) => U): Disposable {
     const bag = new DisposableBag();
+    other.values = this.values.map(transform);
     bag.add(
       this.inserted.subscribe(({index, values}) => {
         other.insert(index, values.map(transform));

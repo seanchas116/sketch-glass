@@ -2,6 +2,8 @@ import Component from "../lib/ui/Component";
 import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import DisposableBag from "../lib/DisposableBag";
+import Variable from "../lib/rx/Variable";
 
 export default
 class ToolBoxView extends Component {
@@ -14,23 +16,34 @@ class ToolBoxView extends Component {
 
   penButton = new ButtonView(this.elementFor(".pen-button"), "pen");
   eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
+  canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
+  canvasDisposables = new DisposableBag();
 
-  constructor(mountPoint: Element, public canvasViewModel: CanvasViewModel) {
+  constructor(mountPoint: Element) {
     super(mountPoint);
 
-    this.disposables.add(
-      this.penButton.clicked.subscribe(() => {
-        canvasViewModel.tool.value = Tool.Pen;
-      }),
-      this.eraserButton.clicked.subscribe(() => {
-        canvasViewModel.tool.value = Tool.Eraser;
-      }),
-      canvasViewModel.tool.changed
-        .map(tool => tool == Tool.Pen)
-        .subscribe(this.penButton.isChecked),
-      canvasViewModel.tool.changed
-        .map(tool => tool == Tool.Eraser)
-        .subscribe(this.eraserButton.isChecked)
-    );
+    this.disposables.add(this.canvasDisposables);
+
+    this.canvasViewModel.changed.subscribe(vm => {
+      this.canvasDisposables.clear();
+      if (vm != undefined) {
+        // FIXME: directly using vm doesn't work
+        const viewModel = vm;
+        this.canvasDisposables.add(
+          this.penButton.clicked.subscribe(() => {
+            viewModel.tool.value = Tool.Pen;
+          }),
+          this.eraserButton.clicked.subscribe(() => {
+            viewModel.tool.value = Tool.Eraser;
+          }),
+          viewModel.tool.changed
+            .map(tool => tool == Tool.Pen)
+            .subscribe(this.penButton.isChecked),
+          viewModel.tool.changed
+            .map(tool => tool == Tool.Eraser)
+            .subscribe(this.eraserButton.isChecked)
+        );
+      }
+    });
   }
 }

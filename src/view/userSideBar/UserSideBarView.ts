@@ -2,11 +2,11 @@ import Component from "../../lib/ui/Component";
 import Variable from "../../lib/rx/Variable";
 import ButtonView from "../ButtonView";
 import DisposableBag from "../../lib/DisposableBag";
-import UserSideBarViewModel from "../../viewmodel/UserSideBarViewModel";
 import Slot from "../../lib/ui/Slot";
 import ListView from "../../lib/ui/ListView";
 import CanvasFile from "../../model/CanvasFile";
 import CanvasFileCell from "./CanvasFileCell";
+import {appViewModel} from "../../viewmodel/AppViewModel";
 import * as Rx from "rx";
 
 export default
@@ -35,21 +35,21 @@ class UserSideBarView extends Component {
   sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
   avatarSlot = this.slotFor(".avatar")
   userNameSlot = this.slotFor(".userName");
-  canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), this.viewModel.files, file => {
+  canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), appViewModel.files, file => {
     const component = new CanvasFileCell(undefined, file);
     component.disposables.add(
-      this.viewModel.currentFile.changed
+      appViewModel.currentFile.changed
         .map(current => current == file)
         .subscribe(component.isSelected),
       component.clicked.subscribe(() => {
-        this.viewModel.currentFile.value = file;
+        appViewModel.currentFile.value = file;
       })
     );
     return component;
   });
   addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
 
-  constructor(mountPoint: Element, public viewModel: UserSideBarViewModel) {
+  constructor(mountPoint: Element) {
     super(mountPoint);
 
     this.disposables.add(
@@ -61,13 +61,13 @@ class UserSideBarView extends Component {
         this.open.value = !this.open.value;
       }),
 
-      viewModel.user.changed.subscribe(user => {
-        this.userNameSlot.text()(user.displayName),
-        this.avatarSlot.attribute("src")(user.photoLink)
+      appViewModel.user.changed.subscribe(user => {
+        this.userNameSlot.text()(user.displayName);
+        this.avatarSlot.attribute("src")(user.photoLink);
       }),
 
       this.addCanvasClicked.subscribe(() => {
-        viewModel.addFile()
+        appViewModel.addFile();
       })
     );
   }

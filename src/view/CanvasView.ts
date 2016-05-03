@@ -8,6 +8,7 @@ import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import DisposableBag from "../lib/DisposableBag";
 
 function touchPoint(touch: Touch) {
   return new Vec2(touch.clientX, touch.clientY);
@@ -28,24 +29,37 @@ class StrokeHandler extends TreeDisposable {
   currentStroke: Stroke;
   isStroking = false;
 
-  constructor(public canvasViewModel: CanvasViewModel, public renderer: Renderer) {
+  canvasDisposables = new DisposableBag();
+  canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
+
+  constructor(public renderer: Renderer) {
     super();
-    this.disposables.add(
-      this.renderer,
-      canvasViewModel.transform.changed.subscribe(t => {
-        renderer.transform = t;
-        this.transform = t;
-      })
-    );
+    this.canvasViewModel.changed.subscribe(vm => {
+      this.canvasDisposables.clear();
+      if (vm == undefined) { return; }
+      renderer.canvas.value = vm.canvas;
+      this.canvasDisposables.add(
+        vm.transform.changed.subscribe(t => {
+          renderer.transform = t;
+          this.transform = t;
+        })
+      );
+    });
   }
 
   pinchStart(points: Vec2[]) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     this.interactionState.value = InteractionState.Pinching;
     this.pinchStartPoints = points;
     this.initialTransform = this.transform;
   }
 
   pinchMove(points: Vec2[]) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     if (this.interactionState.value !== InteractionState.Pinching) {
       this.pinchStart(points);
     }
@@ -64,24 +78,33 @@ class StrokeHandler extends TreeDisposable {
   }
 
   pinchEnd() {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     this.interactionState.value = InteractionState.None;
-    this.canvasViewModel.transform.value = this.transform;
+    viewModel.transform.value = this.transform;
   }
 
   pressStart(pos: Vec2) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     pos = pos.transform(this.transform.invert());
-    if (this.canvasViewModel.tool.value == Tool.Pen) {
+    if (viewModel.tool.value == Tool.Pen) {
       this.interactionState.value = InteractionState.Drawing;
-      this.renderer.strokeBegin(this.canvasViewModel.penWidth.value, this.canvasViewModel.color.value);
+      this.renderer.strokeBegin(viewModel.penWidth.value, viewModel.color.value);
       this.renderer.strokeNext(pos);
     } else {
       this.interactionState.value = InteractionState.Erasing;
-      this.renderer.eraseBegin(this.canvasViewModel.eraserWidth.value);
+      this.renderer.eraseBegin(viewModel.eraserWidth.value);
       this.renderer.eraseNext(pos);
     }
   }
 
   pressMove(pos: Vec2) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     pos = pos.transform(this.transform.invert());
     if (this.interactionState.value === InteractionState.Drawing) {
       this.renderer.strokeNext(pos);
@@ -91,6 +114,9 @@ class StrokeHandler extends TreeDisposable {
   }
 
   pressEnd() {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     if (this.interactionState.value === InteractionState.Drawing) {
       this.interactionState.value = InteractionState.None;
       this.renderer.strokeEnd();
@@ -100,12 +126,18 @@ class StrokeHandler extends TreeDisposable {
   }
 
   dragStart(pos: Vec2) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     this.interactionState.value = InteractionState.Dragging;
     this.startPoint = pos;
-    this.initialTransform = this.canvasViewModel.transform.value;
+    this.initialTransform = viewModel.transform.value;
   }
 
   dragMove(pos: Vec2) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     if (this.interactionState.value == InteractionState.Dragging) {
       this.transform = this.renderer.transform = this.initialTransform.translate(pos.sub(this.startPoint));
       this.renderer.update();
@@ -113,15 +145,21 @@ class StrokeHandler extends TreeDisposable {
   }
 
   dragEnd() {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     if (this.interactionState.value == InteractionState.Dragging) {
-      this.canvasViewModel.transform.value = this.transform;
+      viewModel.transform.value = this.transform;
       this.interactionState.value = InteractionState.None;
     }
   }
 
   scale(center: Vec2, scale: number) {
+    const viewModel = this.canvasViewModel.value;
+    if (!viewModel) { return; }
+
     const transform = Transform.translation(center.negate()).scale(new Vec2(scale, scale)).translate(center);
-    this.canvasViewModel.transform.value = this.canvasViewModel.transform.value.merge(transform);
+    viewModel.transform.value = viewModel.transform.value.merge(transform);
     this.renderer.update();
   }
 }
@@ -191,10 +229,17 @@ class CanvasView extends Component {
     <canvas class="sg-canvas"></canvas>
   `;
 
-  constructor(mountPoint: Element, canvasViewModel: CanvasViewModel) {
+  canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
+
+  constructor(mountPoint: Element) {
     super(mountPoint);
-    this.strokeHandler = new StrokeHandler(canvasViewModel, new Renderer(this.element as HTMLCanvasElement, canvasViewModel.canvas));
-    this.disposables.add(this.strokeHandler);
+    const renderer = new Renderer(this.element as HTMLCanvasElement);
+    this.strokeHandler = new StrokeHandler(renderer);
+    this.disposables.add(
+      this.strokeHandler,
+      renderer,
+      this.canvasViewModel.changed.subscribe(this.strokeHandler.canvasViewModel)
+    );
 
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
     this.element.addEventListener('mousedown', this.onMouseDown.bind(this));

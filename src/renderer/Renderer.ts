@@ -11,10 +11,13 @@ import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
 import StrokeWeaver from "./StrokeWeaver";
 import StrokeCollider from "./StrokeCollider";
+import Variable from "../lib/rx/Variable";
+import ObservableArray from "../lib/rx/ObservableArray";
+import DisposableBag from "../lib/DisposableBag";
 
 export default
 class Renderer extends TreeDisposable {
-  strokeWeaverMap = new Map<Stroke, StrokeWeaver>();
+  strokeWeavers = new ObservableArray<StrokeWeaver>();
   currentWeaver: StrokeWeaver | undefined;
   erasingWidth: number;
   erasingPoints: Vec2[] = [];
@@ -23,13 +26,16 @@ class Renderer extends TreeDisposable {
   size = new Vec2(0, 0);
   background: Background;
   gl: WebGLRenderingContext;
-  transform: Transform;
-  viewportTransform: Transform;
+  transform = Transform.identity();
+  viewportTransform = Transform.identity();
   shader: StrokeShader;
   backgroundModel: Model;
   backgroundShader: Shader;
 
-  constructor(public element: HTMLCanvasElement, public canvas: Canvas) {
+  canvasDisposables = new DisposableBag();
+  canvas = new Variable<Canvas | undefined>(undefined);
+
+  constructor(public element: HTMLCanvasElement) {
     super();
 
     this.background = new Background(Color.white);
@@ -65,13 +71,27 @@ class Renderer extends TreeDisposable {
 
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
+
+    ObservableArray.autoDispose(this.strokeWeavers);
+
+    this.canvas.changed.subscribe(canvas => {
+      this.canvasDisposables.clear();
+      if (canvas != undefined) {
+        this.canvasDisposables.add(
+          canvas.strokes.bindToOther(this.strokeWeavers, stroke => {
+            console.log(stroke.points.length);
+            const weaver = new StrokeWeaver(gl, stroke);
+            weaver.finalize();
+            return weaver;
+          })
+        );
+      }
+    });
   }
 
   dispose() {
     super.dispose();
-    for (const weaver of this.strokeWeaverMap.values()) {
-      weaver.dispose();
-    }
+    this.strokeWeavers.values = [];
     if (this.currentWeaver) {
       this.currentWeaver.dispose();
     }
@@ -94,10 +114,12 @@ class Renderer extends TreeDisposable {
     if (this.currentWeaver == undefined) {
       return;
     }
-    this.currentWeaver.finalize();
-    this.strokeWeaverMap.set(this.currentWeaver.stroke, this.currentWeaver);
-    this.canvas.strokes.push(this.currentWeaver.stroke);
-
+    const canvas = this.canvas.value;
+    if (canvas == undefined) {
+      return;
+    }
+    canvas.pushStroke(this.currentWeaver.stroke);
+    this.currentWeaver.dispose();
     this.currentWeaver = undefined;
   }
 
@@ -107,6 +129,11 @@ class Renderer extends TreeDisposable {
   }
 
   eraseNext(pos: Vec2) {
+    const canvas = this.canvas.value;
+    if (canvas == undefined) {
+      return;
+    }
+
     const points = this.erasingPoints;
     points.push(pos);
     const nPoints = points.length;
@@ -116,14 +143,14 @@ class Renderer extends TreeDisposable {
     const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
     const collider = new StrokeCollider(this.erasingWidth, vertices);
     const strokeToErase: Stroke[] = [];
-    for (const [stroke, weaver] of this.strokeWeaverMap) {
+    for (const weaver of this.strokeWeavers.values) {
       if (weaver.collider.collides(collider)) {
-        strokeToErase.push(stroke);
+        strokeToErase.push(weaver.stroke);
       }
     }
     if (strokeToErase.length > 0) {
       for (const stroke of strokeToErase) {
-        this.strokeWeaverMap.delete(stroke);
+        canvas.deleteStroke(stroke);
       }
       this.render();
     }
@@ -176,7 +203,7 @@ class Renderer extends TreeDisposable {
       }
     };
 
-    for (const weaver of this.strokeWeaverMap.values()) {
+    for (const weaver of this.strokeWeavers.values) {
       draw(weaver);
     }
     if (this.currentWeaver) {
