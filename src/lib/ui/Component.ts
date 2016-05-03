@@ -28,7 +28,7 @@ class Component extends TreeDisposable {
     if (mountPoint != undefined) {
       this.mount(mountPoint);
     }
-    this.isShown.changed.map(x => !x).subscribe(this.slot.toggleClass("sg-hidden"));
+    this.isShown.observable.map(x => !x).subscribe(this.slot.toggleClass("sg-hidden"));
   }
 
   mount(mountPoint: Element) {

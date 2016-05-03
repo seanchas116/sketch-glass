@@ -26,7 +26,7 @@ class MainView extends Component {
 
   constructor(mountPoint: Element) {
     super(mountPoint);
-    appViewModel.canvasViewModel.changed.subscribe(this.toolBoxView.canvasViewModel);
-    appViewModel.canvasViewModel.changed.subscribe(this.canvasView.canvasViewModel);
+    appViewModel.canvasViewModel.observable.subscribe(this.toolBoxView.canvasViewModel);
+    appViewModel.canvasViewModel.observable.subscribe(this.canvasView.canvasViewModel);
   }
 }

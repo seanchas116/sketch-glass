@@ -24,7 +24,7 @@ class ToolBoxView extends Component {
 
     this.disposables.add(this.canvasDisposables);
 
-    this.canvasViewModel.changed.subscribe(vm => {
+    this.canvasViewModel.observable.subscribe(vm => {
       this.canvasDisposables.clear();
       if (vm != undefined) {
         // FIXME: directly using vm doesn't work
@@ -36,10 +36,10 @@ class ToolBoxView extends Component {
           this.eraserButton.clicked.subscribe(() => {
             viewModel.tool.value = Tool.Eraser;
           }),
-          viewModel.tool.changed
+          viewModel.tool.observable
             .map(tool => tool == Tool.Pen)
             .subscribe(this.penButton.isChecked),
-          viewModel.tool.changed
+          viewModel.tool.observable
             .map(tool => tool == Tool.Eraser)
             .subscribe(this.eraserButton.isChecked)
         );

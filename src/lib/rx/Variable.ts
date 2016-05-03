@@ -15,7 +15,7 @@ class Variable<T> implements Rx.IObserver<T> {
     }
   }
 
-  get changed(): Rx.Observable<T> {
+  get observable(): Rx.Observable<T> {
     return this._subject;
   }
 

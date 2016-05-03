@@ -34,12 +34,12 @@ class StrokeHandler extends TreeDisposable {
 
   constructor(public renderer: Renderer) {
     super();
-    this.canvasViewModel.changed.subscribe(vm => {
+    this.canvasViewModel.observable.subscribe(vm => {
       this.canvasDisposables.clear();
       if (vm == undefined) { return; }
       renderer.canvas.value = vm.canvas;
       this.canvasDisposables.add(
-        vm.transform.changed.subscribe(t => {
+        vm.transform.observable.subscribe(t => {
           renderer.transform = t;
           this.transform = t;
         })
@@ -237,7 +237,7 @@ class CanvasView extends Component {
     this.disposables.add(
       this.strokeHandler,
       renderer,
-      this.canvasViewModel.changed.subscribe(this.strokeHandler.canvasViewModel)
+      this.canvasViewModel.observable.subscribe(this.strokeHandler.canvasViewModel)
     );
 
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
@@ -254,7 +254,7 @@ class CanvasView extends Component {
       ev.preventDefault();
     });
 
-    this.strokeHandler.interactionState.changed
+    this.strokeHandler.interactionState.observable
       .map(s => s == InteractionState.Dragging)
       .subscribe(this.slot.toggleClass("dragging"));
   }

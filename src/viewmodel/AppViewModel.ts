@@ -34,10 +34,10 @@ class AppViewModel {
   }
 
   constructor() {
-    Auth.isAuthenticated.changed.filter(a => a).forEach(async () => {
+    Auth.isAuthenticated.observable.filter(a => a).forEach(async () => {
       this.initData();
     });
-    this.currentFile.changed.subscribe(async (file) => {
+    this.currentFile.observable.subscribe(async (file) => {
       this.canvasViewModel.value = undefined;
       if (file == undefined) { return; }
       const canvas = await Canvas.fromFile(file);

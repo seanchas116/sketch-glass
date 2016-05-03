@@ -38,7 +38,7 @@ class UserSideBarView extends Component {
   canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), appViewModel.files, file => {
     const component = new CanvasFileCell(undefined, file);
     component.disposables.add(
-      appViewModel.currentFile.changed
+      appViewModel.currentFile.observable
         .map(current => current == file)
         .subscribe(component.isSelected),
       component.clicked.subscribe(() => {
@@ -53,15 +53,15 @@ class UserSideBarView extends Component {
     super(mountPoint);
 
     this.disposables.add(
-      this.open.changed.subscribe(this.slot.toggleClass("open")),
+      this.open.observable.subscribe(this.slot.toggleClass("open")),
 
-      this.open.changed.subscribe(this.sidebarButton.isChecked),
+      this.open.observable.subscribe(this.sidebarButton.isChecked),
 
       this.sidebarButton.clicked.subscribe(() => {
         this.open.value = !this.open.value;
       }),
 
-      appViewModel.user.changed.subscribe(user => {
+      appViewModel.user.observable.subscribe(user => {
         this.userNameSlot.text()(user.displayName);
         this.avatarSlot.attribute("src")(user.photoLink);
       }),

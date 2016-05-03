@@ -79,7 +79,7 @@ class Renderer extends TreeDisposable {
       })
     );
 
-    this.canvas.changed.subscribe(canvas => {
+    this.canvas.observable.subscribe(canvas => {
       this.canvasDisposables.clear();
       if (canvas != undefined) {
         this.canvasDisposables.add(
