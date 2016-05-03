@@ -6,21 +6,20 @@ class DisposableBag implements Disposable {
 
   clear() {
     for (const d of this.disposables) {
-      // Microsoft/TypeScript#8357
-      d!.dispose();
+      d.dispose();
     }
     this.disposables.clear();
   }
 
   add(...disposables: Disposable[]) {
     for (const d of disposables) {
-      this.disposables.add(d!);
+      this.disposables.add(d);
     }
   }
 
   delete(...disposables: Disposable[]) {
     for (const d of disposables) {
-      this.disposables.delete(d!);
+      this.disposables.delete(d);
     }
   }
 

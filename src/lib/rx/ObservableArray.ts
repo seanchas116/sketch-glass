@@ -59,9 +59,7 @@ class ObservableArray<T> {
   }
 
   insert(index: number, values: T[]) {
-    // Microsoft/TypeScript#8430
-    // this._values.splice(index, 0, ...values);
-    this._values.splice(index, 0, ...(values as any));
+    this._values.splice(index, 0, ...values);
     this._inserted.onNext({index, values});
   }
 

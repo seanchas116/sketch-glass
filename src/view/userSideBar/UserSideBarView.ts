@@ -36,7 +36,7 @@ class UserSideBarView extends Component {
   avatarSlot = this.slotFor(".avatar")
   userNameSlot = this.slotFor(".userName");
   canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), this.viewModel.files, file => {
-    const component = new CanvasFileCell(undefined, file);
+    const component = new CanvasFileCell(null, file);
     component.disposables.add(
       this.viewModel.currentFile.changed
         .map(current => current == file)
