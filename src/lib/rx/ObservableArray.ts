@@ -1,3 +1,5 @@
+import Disposable from "../Disposable";
+import DisposableBag from "../DisposableBag";
 import * as Rx from "rx";
 
 interface Inserted<T> {
@@ -68,7 +70,11 @@ class ObservableArray<T> {
   }
 
   replace(index: number, newValues: T[]) {
-    const oldValues = this._values.splice(index, newValues.length, ...newValues);
+    const oldValues = Array<T>(newValues.length);
+    for (let i = 0; i < newValues.length; ++i) {
+      oldValues[i] = this._values[index + i];
+      this._values[index + i] = newValues[i];
+    }
     this._replaced.onNext({index, newValues, oldValues});
   }
 
@@ -76,7 +82,32 @@ class ObservableArray<T> {
     this.replace(index, [value]);
   }
 
+  bindToOther<U>(other: ObservableArray<U>, transform: (value: T) => U): Disposable {
+    const bag = new DisposableBag();
+    bag.add(
+      this.inserted.subscribe(({index, values}) => {
+        other.insert(index, values.map(transform));
+      }),
+      this.removed.subscribe(({index, values}) => {
+        other.remove(index, values.length);
+      }),
+      this.replaced.subscribe(({index, newValues}) => {
+        other.replace(index, newValues.map(transform));
+      })
+    );
+    return bag;
+  }
+
   constructor(values: T[] = []) {
     this._values = values;
+  }
+
+  static autoDispose<T extends Disposable>(array: ObservableArray<T>) {
+    array.removed.subscribe(({index, values}) => {
+      values.forEach(v => v.dispose());
+    });
+    array.replaced.subscribe(({index, newValues, oldValues}) => {
+      oldValues.forEach(v => v.dispose());
+    });
   }
 }
