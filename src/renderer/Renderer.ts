@@ -84,25 +84,7 @@ class Renderer extends TreeDisposable {
   }
 
   strokeNext(pos: Vec2) {
-    this.currentStroke.points.push(pos);
-    const {points} = this.currentStroke;
-    const nPoints = points.length;
-    const weaver = this.currentStrokeWeaver;
-
-    if (nPoints === 2) {
-      weaver.addSection(points);
-    } else if (nPoints === 3) {
-      weaver.rewindLastSection();
-      weaver.addSection(Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide());
-      weaver.addSection(Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide());
-    } else if (nPoints > 3) {
-      weaver.rewindLastSection();
-      weaver.addSection(Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide());
-      weaver.addSection(Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide());
-    } else {
-      return;
-    }
-    weaver.model.updateBuffer();
+    this.currentStrokeWeaver.addPoint(pos);
     this.render();
   }
 

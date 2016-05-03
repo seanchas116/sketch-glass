@@ -1,6 +1,7 @@
 import Stroke from "../model/Stroke";
 import Model from "./Model";
 import Vec2 from "../lib/geometry/Vec2";
+import Curve from "../lib/geometry/Curve";
 import TreeDisposable from "../lib/TreeDisposable";
 import StrokeCollider from "./StrokeCollider";
 
@@ -14,6 +15,31 @@ class StrokeWeaver extends TreeDisposable {
   constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
     super();
     this.disposables.add(this.model);
+  }
+
+  addPoint(pos: Vec2) {
+    this.stroke.points.push(pos);
+    const {points} = this.stroke;
+    const nPoints = points.length;
+
+    if (nPoints === 2) {
+      this.addSection(points);
+    } else if (nPoints === 3) {
+      this.rewindLastSection();
+      this.addSection(Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide());
+      this.addSection(Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide());
+    } else if (nPoints > 3) {
+      this.rewindLastSection();
+      this.addSection(Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide());
+      this.addSection(Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide());
+    } else {
+      return;
+    }
+    this.model.updateBuffer();
+  }
+
+  finalize() {
+    this.collider = new StrokeCollider(this.stroke.width, this.vertices);
   }
 
   addSegment(last: Vec2, point: Vec2) {
@@ -43,9 +69,5 @@ class StrokeWeaver extends TreeDisposable {
     this.model.vertices.splice(-count * 4, count * 4);
     this.vertices.splice(-count, count);
     this.lastSectionLength = 0;
-  }
-
-  finalize() {
-    this.collider = new StrokeCollider(this.stroke.width, this.vertices);
   }
 }
