@@ -15,8 +15,7 @@ import StrokeCollider from "./StrokeCollider";
 export default
 class Renderer extends TreeDisposable {
   strokeWeaverMap = new Map<Stroke, StrokeWeaver>();
-  currentStrokeWeaver: StrokeWeaver;
-  currentStroke: Stroke | null;
+  currentWeaver: StrokeWeaver | undefined;
   erasingWidth: number;
   erasingPoints: Vec2[] = [];
   isUpdateQueued = false;
@@ -73,28 +72,33 @@ class Renderer extends TreeDisposable {
     for (const weaver of this.strokeWeaverMap.values()) {
       weaver.dispose();
     }
-    if (this.currentStrokeWeaver) {
-      this.currentStrokeWeaver.dispose();
+    if (this.currentWeaver) {
+      this.currentWeaver.dispose();
     }
   }
 
   strokeBegin(width: number, color: Color) {
-    const stroke = this.currentStroke = new Stroke([], color, width);
-    this.currentStrokeWeaver = new StrokeWeaver(this.gl, stroke);
+    const stroke = new Stroke([], color, width);
+    this.currentWeaver = new StrokeWeaver(this.gl, stroke);
   }
 
   strokeNext(pos: Vec2) {
-    this.currentStrokeWeaver.addPoint(pos);
+    if (this.currentWeaver == undefined) {
+      return;
+    }
+    this.currentWeaver.addPoint(pos);
     this.render();
   }
 
   strokeEnd() {
-    this.currentStrokeWeaver.finalize();
-    this.strokeWeaverMap.set(this.currentStroke, this.currentStrokeWeaver);
-    this.canvas.strokes.push(this.currentStroke);
+    if (this.currentWeaver == undefined) {
+      return;
+    }
+    this.currentWeaver.finalize();
+    this.strokeWeaverMap.set(this.currentWeaver.stroke, this.currentWeaver);
+    this.canvas.strokes.push(this.currentWeaver.stroke);
 
-    this.currentStroke = null;
-    this.currentStrokeWeaver = null;
+    this.currentWeaver = undefined;
   }
 
   eraseBegin(width: number) {
@@ -175,8 +179,8 @@ class Renderer extends TreeDisposable {
     for (const weaver of this.strokeWeaverMap.values()) {
       draw(weaver);
     }
-    if (this.currentStrokeWeaver) {
-      draw(this.currentStrokeWeaver);
+    if (this.currentWeaver) {
+      draw(this.currentWeaver);
     }
   }
 

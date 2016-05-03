@@ -6,7 +6,7 @@ class Texture {
   size = new Vec2(0, 0);
 
   constructor(public gl: WebGLRenderingContext) {
-    this.texture = gl.createTexture();
+    this.texture = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -17,7 +17,7 @@ class Texture {
   resize(size: Vec2) {
     this.use();
     const {gl} = this;
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size.width, size.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size.width, size.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null as any);
     this.size = size;
   }
 

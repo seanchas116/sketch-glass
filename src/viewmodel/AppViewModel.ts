@@ -6,7 +6,7 @@ import UserSideBarViewModel from "./UserSideBarViewModel";
 
 export default
 class AppViewModel {
-  canvas = new Variable<Canvas>(null);
+  canvas = new Variable<Canvas | undefined>(undefined);
   userSideBar = new UserSideBarViewModel();
 
   constructor() {

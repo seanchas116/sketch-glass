@@ -7,7 +7,7 @@ class Framebuffer {
   texture: Texture;
 
   constructor(public gl: WebGLRenderingContext) {
-    this.framebuffer = gl.createFramebuffer();
+    this.framebuffer = gl.createFramebuffer()!;
     this.texture = new Texture(gl)
   }
 
@@ -23,6 +23,6 @@ class Framebuffer {
     const {gl} = this;
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     f();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null as any);
   }
 }
