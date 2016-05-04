@@ -34,4 +34,14 @@ class Slot {
       this.element.setAttribute(name, value);
     };
   }
+
+  isHidden() {
+    return (hidden: boolean) => {
+      if (hidden) {
+        this.element.setAttribute("hidden", "");
+      } else {
+        this.element.removeAttribute("hidden");
+      }
+    };
+  }
 }

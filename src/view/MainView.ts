@@ -31,6 +31,6 @@ class MainView extends Component {
     const canvasVM = appViewModel.canvasViewModel;
     canvasVM.observable.subscribe(this.toolBoxView.canvasViewModel);
     canvasVM.observable.subscribe(this.canvasView.canvasViewModel);
-    canvasVM.observable.map(vm => vm != undefined).subscribe(this.loadingBar.toggleClass("sg-hidden"));
+    canvasVM.observable.map(vm => vm != undefined).subscribe(this.loadingBar.isHidden());
   }
 }
