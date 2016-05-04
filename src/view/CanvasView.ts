@@ -36,14 +36,17 @@ class StrokeHandler extends TreeDisposable {
     super();
     this.canvasViewModel.observable.subscribe(vm => {
       this.canvasDisposables.clear();
-      if (vm == undefined) { return; }
-      renderer.canvas.value = vm.canvas;
-      this.canvasDisposables.add(
-        vm.transform.observable.subscribe(t => {
-          renderer.transform = t;
-          this.transform = t;
-        })
-      );
+      if (vm != undefined) {
+        renderer.canvas.value = vm.canvas;
+        this.canvasDisposables.add(
+          vm.transform.observable.subscribe(t => {
+            renderer.transform = t;
+            this.transform = t;
+          })
+        );
+      } else {
+        renderer.canvas.value = undefined;
+      }
     });
   }
 
