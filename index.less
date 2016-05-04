@@ -11,6 +11,38 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.sg-loading-bar {
+  @bar-width: 200px;
+  @bar-height: 2px;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: @bar-height;
+
+  &::before {
+    content: "";
+    background-color: #57a4ff;
+    display: block;
+    position: absolute;
+    width: @bar-width;
+    height: @bar-height;
+    top: 0;
+    left: 0;
+    animation: loading 1s linear infinite;
+
+    @keyframes loading {
+      from {
+        //left: -@bar-width;
+        transform: translateX(-@bar-width);
+      }
+      to {
+        //left: 100%;
+        transform: translateX(100vw);
+      }
+    }
+  }
+}
+
 .sg-canvas {
   cursor: crosshair;
   flex: 1;

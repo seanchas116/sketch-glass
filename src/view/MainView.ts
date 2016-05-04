@@ -16,8 +16,10 @@ class MainView extends Component {
       <div class='palette-view'></div>
       <div class='info-buttons-view'></div>
       <div class='login-dialog'></div>
+      <div class="sg-loading-bar"></div>
     </div>
   `;
+  loadingBar = this.slotFor(".sg-loading-bar");
   canvasView = new CanvasView(this.elementFor(".canvas-view"));
   userSideBarView = new UserSideBarView(this.elementFor(".user-sidebar-view"));
   toolBoxView = new ToolBoxView(this.elementFor(".palette-view"));
@@ -26,7 +28,9 @@ class MainView extends Component {
 
   constructor(mountPoint: Element) {
     super(mountPoint);
-    appViewModel.canvasViewModel.observable.subscribe(this.toolBoxView.canvasViewModel);
-    appViewModel.canvasViewModel.observable.subscribe(this.canvasView.canvasViewModel);
+    const canvasVM = appViewModel.canvasViewModel;
+    canvasVM.observable.subscribe(this.toolBoxView.canvasViewModel);
+    canvasVM.observable.subscribe(this.canvasView.canvasViewModel);
+    canvasVM.observable.map(vm => vm != undefined).subscribe(this.loadingBar.toggleClass("sg-hidden"));
   }
 }
