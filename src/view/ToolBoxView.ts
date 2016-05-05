@@ -11,11 +11,15 @@ class ToolBoxView extends Component {
     <div class="sg-palette">
       <div class="pen-button"></div>
       <div class="eraser-button"></div>
+      <div class="undo-button"></div>
+      <div class="redo-button"></div>
     </div>
   `;
 
   penButton = new ButtonView(this.elementFor(".pen-button"), "pen");
   eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
+  undoButton = new ButtonView(this.elementFor(".undo-button"), "undo");
+  redoButton = new ButtonView(this.elementFor(".redo-button"), "redo");
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
   canvasDisposables = new DisposableBag();
 
