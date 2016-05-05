@@ -1,3 +1,5 @@
+const tinycolor = require("tinycolor2");
+
 export default
 class Color {
 
@@ -15,4 +17,17 @@ class Color {
   static black = new Color(0,0,0,1);
   static white = new Color(255,255,255,1);
   static transparent = new Color(0,0,0,0);
+
+  static fromTinycolor(color: any) {
+    const {r, g, b, a} = color;
+    return new Color(r, g, b, a);
+  }
+
+  static fromString(str: string) {
+    return this.fromTinycolor(tinycolor(str));
+  }
+
+  static fromHSV(h: number, s: number, v: number) {
+    return this.fromTinycolor(tinycolor({h, s, v}));
+  }
 }
