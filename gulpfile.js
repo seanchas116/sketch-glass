@@ -58,7 +58,9 @@ gulp.task("iconfont", () => {
     .pipe(iconfont({
       fontName: "sg-icon",
       prependUnicode: true,
-      timestamp: runTimestamp
+      timestamp: runTimestamp,
+      normalize: true,
+      fontHeight: 1001
     }))
     .on("glyphs", (glyphs, options) => {
       console.log(glyphs, options);
