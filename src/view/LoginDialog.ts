@@ -1,6 +1,6 @@
 import Component from "../lib/ui/Component";
 import * as Rx from "rx";
-import * as Auth from "../Auth";
+import {appViewModel} from "../viewmodel/AppViewModel";
 
 export default
 class LoginDialog extends Component {
@@ -18,12 +18,12 @@ class LoginDialog extends Component {
   constructor(mountPoint: Element) {
     super(mountPoint);
     this.disposables.add(
-      Auth.isAuthenticated.observable.subscribe(this.slot.isHidden()),
+      appViewModel.isLoginNeeded.observable.map(x => !x).subscribe(this.slot.isHidden()),
       this.clicked.subscribe(() => this.auth())
     );
   }
 
   auth() {
-    Auth.popup();
+    appViewModel.logIn();
   }
 }
