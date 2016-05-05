@@ -121,11 +121,11 @@ class StrokeHandler extends TreeDisposable {
     if (!viewModel) { return; }
 
     if (this.interactionState.value === InteractionState.Drawing) {
-      this.interactionState.value = InteractionState.None;
       this.renderer.strokeEnd();
     } else if (this.interactionState.value == InteractionState.Erasing) {
       this.renderer.eraseEnd();
     }
+    this.interactionState.value = InteractionState.None;
   }
 
   dragStart(pos: Vec2) {
