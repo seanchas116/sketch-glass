@@ -4,12 +4,14 @@ import Tool from "../model/Tool";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
 import DisposableBag from "../lib/DisposableBag";
 import Variable from "../lib/rx/Variable";
+import ColorButtonView from "./ColorButtonView";
 
 export default
 class ToolBoxView extends Component {
   static template = `
     <div class="sg-palette">
       <div class="pen-button"></div>
+      <div class="color-button"></div>
       <div class="eraser-button"></div>
       <div class="undo-button"></div>
       <div class="redo-button"></div>
@@ -17,6 +19,7 @@ class ToolBoxView extends Component {
   `;
 
   penButton = new ButtonView(this.elementFor(".pen-button"), "pen");
+  colorButton = new ColorButtonView(this.elementFor(".color-button"));
   eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
   undoButton = new ButtonView(this.elementFor(".undo-button"), "undo");
   redoButton = new ButtonView(this.elementFor(".redo-button"), "redo");
