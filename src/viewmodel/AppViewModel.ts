@@ -21,6 +21,9 @@ class AppViewModel {
       this.fetchUser(),
       this.fetchFiles()
     ]);
+    if (this.files.length > 0) {
+      this.currentFile.value = this.files.values[0];
+    }
   }
 
   async fetchUser() {
