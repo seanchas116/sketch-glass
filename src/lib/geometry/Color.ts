@@ -19,7 +19,7 @@ class Color {
   static transparent = new Color(0,0,0,0);
 
   static fromTinycolor(color: any) {
-    const {r, g, b, a} = color;
+    const {r, g, b, a} = color.toRgb();
     return new Color(r, g, b, a);
   }
 
