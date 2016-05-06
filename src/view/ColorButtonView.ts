@@ -13,7 +13,7 @@ class ColorButtonView extends Component {
   `;
 
   isChecked = new Variable(false);
-  color = new Variable(new Color(0,0,255,1));
+  color = new Variable(Color.fromHSV(200, 0.9, 0.9));
   clicked = Rx.Observable.fromEvent(this.element, 'click');
   colorElem = this.elementFor(".color") as HTMLElement;
 
