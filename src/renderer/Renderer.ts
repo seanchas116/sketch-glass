@@ -179,7 +179,7 @@ class Renderer extends TreeDisposable {
   render() {
     const gl = this.gl;
     const shader = this.shader;
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    //gl.clear(gl.COLOR_BUFFER_BIT);
 
     this.renderBackground();
 
