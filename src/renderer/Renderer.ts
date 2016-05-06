@@ -172,18 +172,11 @@ class Renderer extends TreeDisposable {
     }
   }
 
-  renderBackground() {
-    this.backgroundModel.render(this.viewportTransform, this.transform);
-  }
-
   render() {
-    const gl = this.gl;
-    const shader = this.shader;
-    //gl.clear(gl.COLOR_BUFFER_BIT);
-
-    this.renderBackground();
-
     const {viewportTransform, transform} = this;
+
+    this.backgroundModel.render(this.viewportTransform, this.transform);
+
     for (const model of this.strokeModels.values) {
       model.render(viewportTransform, transform);
     }
