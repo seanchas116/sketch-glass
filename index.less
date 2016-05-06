@@ -62,29 +62,22 @@
   top: 0;
   left: 0;
   position: relative;
+  overflow: hidden;
   background-color: #252526;
   box-shadow: inset -8px 0px 10px -10px rgba(0,0,0,0.5);
   transition: width 0.2s ease;
 
   &.open {
     width: @sidebar-width;
-    .sg-button.sidebar {
-      position: absolute;
-      top: 15px;
+    > .sg-icon-array {
       left: @sidebar-width + 15px;
     }
   }
-  .sg-button.sidebar {
-    position: absolute;
+  > .sg-icon-array {
+    position: fixed;
     top: 15px;
     left: 15px;
     transition: left 0.2s ease;
-  }
-
-  .sg-sidebar-clip {
-    position: absolute;
-    overflow: hidden;
-    top: 0; left: 0; bottom: 0; right: 0;
   }
 
   .sg-sidebar-content {

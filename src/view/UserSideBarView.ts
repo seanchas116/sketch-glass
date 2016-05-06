@@ -13,21 +13,21 @@ export default
 class UserSideBarView extends Component {
   static template = `
     <div class="sg-sidebar">
-      <div class="sg-sidebar-clip">
-        <aside class="sg-sidebar-content">
-          <div class="user-header">
-            <img class="avatar">
-            <h1 class="userName"></h1>
-          </div>
-          <div class="canvases-header">
-            <h2>Canvases</h2>
-            <button class="add-canvas">+</button>
-          </div>
-          <input placeholder="Search" class="sg-search">
-          <div class="canvas-list"></div>
-        </aside>
+      <aside class="sg-sidebar-content">
+        <div class="user-header">
+          <img class="avatar">
+          <h1 class="userName"></h1>
+        </div>
+        <div class="canvases-header">
+          <h2>Canvases</h2>
+          <button class="add-canvas">+</button>
+        </div>
+        <input placeholder="Search" class="sg-search">
+        <div class="canvas-list"></div>
+      </aside>
+      <div class="sg-icon-array">
+        <div class="sidebar-button"></div>
       </div>
-      <div class="sidebar-button"></div>
     </div>
   `;
 
