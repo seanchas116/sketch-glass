@@ -47,7 +47,31 @@ class ToolBoxView extends Component {
         .subscribe(this.penButton.isChecked),
       viewModel.tool.observable
         .map(tool => tool == Tool.Eraser)
-        .subscribe(this.eraserButton.isChecked)
+        .subscribe(this.eraserButton.isChecked),
+      this.undoButton.clicked.subscribe(() => {
+        this.undo();
+      }),
+      this.redoButton.clicked.subscribe(() => {
+        this.redo();
+      })
     );
+  }
+
+  undo() {
+    const canvasVM = appViewModel.canvasViewModel.value;
+    if (canvasVM) {
+      try {
+        canvasVM.canvas.undo();
+      } catch (error) {}
+    }
+  }
+
+  redo() {
+    const canvasVM = appViewModel.canvasViewModel.value;
+    if (canvasVM) {
+      try {
+        canvasVM.canvas.redo();
+      } catch (error) {}
+    }
   }
 }

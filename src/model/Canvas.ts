@@ -36,14 +36,18 @@ export default
 class Canvas {
   strokes = new ObservableArray<Stroke>([]);
   strokeDataList: gapi.drive.realtime.CollaborativeList<StrokeData>;
+  canUndo = new Variable(false);
+  canRedo = new Variable(false);
 
   constructor(public document: gapi.drive.realtime.Document) {
     this.strokeDataList = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeList<StrokeData>;
     mapToObservableArray(this.strokeDataList, this.strokes, (data) => Stroke.fromData(data));
+    this.updateCanUndoRedo();
   }
 
   pushStroke(stroke: Stroke) {
     this.strokeDataList.push(stroke.toData());
+    this.updateCanUndoRedo();
   }
 
   deleteStroke(stroke: Stroke) {
@@ -57,6 +61,22 @@ class Canvas {
     if (index >= 0) {
       this.strokeDataList.remove(index);
     }
+    this.updateCanUndoRedo();
+  }
+
+  undo() {
+    this.document.getModel().undo();
+    this.updateCanUndoRedo();
+  }
+
+  redo() {
+    this.document.getModel().redo();
+    this.updateCanUndoRedo();
+  }
+
+  updateCanUndoRedo() {
+    this.canUndo.value = this.document.getModel().canUndo;
+    this.canRedo.value = this.document.getModel().canRedo;
   }
 
   static async fromFile(file: CanvasFile) {
