@@ -14,7 +14,10 @@ class CanvasSideBarView extends Component {
       <aside class="sg-sidebar-content">
         <div class="canvas-header">
           <img class="thumbnail">
-          <h1 class="canvas-name"></h1>
+          <h1 class="canvas-name">Untitled</h1>
+        </div>
+        <div class="users-header">
+          <h2>Users</h2>
         </div>
       </aside>
       <div class="sg-icon-array">
