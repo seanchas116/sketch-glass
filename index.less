@@ -60,24 +60,48 @@
   width: 0;
   height: 100vh;
   top: 0;
-  left: 0;
-  position: relative;
+  position: absolute;
   overflow: hidden;
   background-color: #252526;
-  box-shadow: inset -8px 0px 10px -10px rgba(0,0,0,0.5);
   transition: width 0.2s ease;
+
+  &.left {
+    left: 0;
+    box-shadow: inset -8px 0px 10px -10px rgba(0,0,0,0.5);
+
+    &.open {
+      > .sg-icon-array {
+        left: @sidebar-width + 15px;
+      }
+    }
+    > .sg-icon-array {
+      left: 15px;
+    }
+  }
+
+  &.right {
+    right: 0;
+    box-shadow: inset 8px 0px 10px -10px rgba(0,0,0,0.5);
+
+    &.open {
+      > .sg-icon-array {
+        right: @sidebar-width + 15px;
+      }
+    }
+    > .sg-icon-array {
+      right: 15px;
+    }
+  }
 
   &.open {
     width: @sidebar-width;
-    > .sg-icon-array {
-      left: @sidebar-width + 15px;
-    }
   }
+
   > .sg-icon-array {
     position: fixed;
     top: 15px;
-    left: 15px;
     transition: left 0.2s ease;
+    transition: right 0.2s ease;
   }
 
   .sg-sidebar-content {

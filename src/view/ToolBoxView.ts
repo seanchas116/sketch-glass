@@ -10,9 +10,9 @@ export default
 class ToolBoxView extends Component {
   static template = `
     <div class="sg-palette">
-      <div class="color-button"></div>
       <div class="pen-button"></div>
       <div class="eraser-button"></div>
+      <div class="color-button"></div>
       <div class="undo-button"></div>
       <div class="redo-button"></div>
     </div>
