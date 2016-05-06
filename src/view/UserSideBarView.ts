@@ -12,7 +12,7 @@ import * as Rx from "rx";
 export default
 class UserSideBarView extends Component {
   static template = `
-    <div class="sg-sidebar left">
+    <div class="sg-user-sidebar">
       <aside class="sg-sidebar-content">
         <div class="user-header">
           <img class="avatar">

@@ -10,7 +10,7 @@ import * as Rx from "rx";
 export default
 class CanvasSideBarView extends Component {
   static template = `
-    <div class="sg-sidebar right">
+    <div class="sg-canvas-sidebar">
       <aside class="sg-sidebar-content">
         <div class="canvas-header">
           <img class="thumbnail">
