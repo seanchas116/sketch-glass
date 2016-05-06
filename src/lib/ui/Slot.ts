@@ -35,6 +35,16 @@ class Slot {
     };
   }
 
+  toggleAttribute(name: string) {
+    return (value: boolean) => {
+      if (value) {
+        this.element.setAttribute(name, "");
+      } else {
+        this.element.removeAttribute(name);
+      }
+    }
+  }
+
   isHidden() {
     return (hidden: boolean) => {
       if (hidden) {

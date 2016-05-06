@@ -9,11 +9,13 @@ class ButtonView extends Component {
   `;
 
   isChecked = new Variable(false);
+  isDisabled = new Variable(false);
   clicked = Rx.Observable.fromEvent(this.element, 'click');
 
   constructor(mountPoint: Element, kind: string) {
     super(mountPoint);
     this.isChecked.observable.subscribe(this.slot.toggleClass("checked"));
+    this.isDisabled.observable.subscribe(this.slot.toggleAttribute("disabled"));
     this.element.className += ` ${kind}`;
   }
 }

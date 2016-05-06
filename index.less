@@ -297,6 +297,7 @@
   @border-width: 2px;
   @color: #7F7F7F;
   @hover-color: #5F5F5F;
+  @disabled-color: #b6b6b6;
 
   &::before {
     line-height: @icon-size;
@@ -331,6 +332,14 @@
   }
   &.checked:hover {
     background-color: @hover-color;
+  }
+  &[disabled] {
+    border-color: @disabled-color;
+    color: @disabled-color;
+    &.checked {
+      background-color: @disabled-color;
+      color: white;
+    }
   }
 
   &.pen {

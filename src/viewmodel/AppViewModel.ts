@@ -15,6 +15,7 @@ class AppViewModel {
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
   isAuthenticated = new Variable(false);
   isLoginNeeded = new Variable(false);
+  isLoading = new Variable(false);
 
   async initData() {
     await Promise.all([
@@ -71,6 +72,7 @@ class AppViewModel {
 
   constructor() {
     this.init();
+    this.canvasViewModel.observable.map(vm => vm == undefined).subscribe(this.isLoading);
   }
 }
 

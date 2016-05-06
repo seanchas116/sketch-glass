@@ -5,6 +5,7 @@ import CanvasViewModel from "../viewmodel/CanvasViewModel";
 import DisposableBag from "../lib/DisposableBag";
 import Variable from "../lib/rx/Variable";
 import ColorButtonView from "./ColorButtonView";
+import {appViewModel} from "../viewmodel/AppViewModel";
 
 export default
 class ToolBoxView extends Component {
@@ -25,11 +26,17 @@ class ToolBoxView extends Component {
   redoButton = new ButtonView(this.elementFor(".redo-button"), "redo");
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
   canvasDisposables = new DisposableBag();
+  buttons = [this.penButton, this.eraserButton, this.undoButton, this.redoButton, this.colorButton];
 
   constructor(mountPoint: Element) {
     super(mountPoint);
 
-    this.disposables.add(this.canvasDisposables);
+    this.disposables.add(
+      this.canvasDisposables,
+      ...this.buttons.map(button =>
+        appViewModel.isLoading.observable.subscribe(button.isDisabled)
+      )
+    );
 
     this.canvasViewModel.observable.subscribe(vm => {
       this.canvasDisposables.clear();

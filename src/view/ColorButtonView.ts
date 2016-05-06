@@ -13,6 +13,7 @@ class ColorButtonView extends Component {
   `;
 
   isChecked = new Variable(false);
+  isDisabled = new Variable(false);
   color = new Variable(Color.fromHSV(200, 0.9, 0.9));
   clicked = Rx.Observable.fromEvent(this.element, 'click');
   colorElem = this.elementFor(".color") as HTMLElement;
@@ -20,6 +21,7 @@ class ColorButtonView extends Component {
   constructor(mountPoint: Element) {
     super(mountPoint);
     this.isChecked.observable.subscribe(this.slot.toggleClass("checked"));
+    this.isDisabled.observable.subscribe(this.slot.toggleAttribute("disabled"));
     this.color.observable.subscribe(color => {
       this.colorElem.style.backgroundColor = color.toString();
     });
