@@ -3,17 +3,17 @@ import Shader from './shader';
 export default
 class StrokeShader extends Shader {
 
-  uAntialiasEdge: WebGLUniformLocation;
+  uHalfWidth = this.gl.getUniformLocation(this.program, 'uHalfWidth')!;
 
   get fragmentShader() {
     return `
       precision lowp float;
       uniform vec4 uColor;
-      uniform float uAntialiasEdge;
+      uniform float uHalfWidth;
       varying vec2 vUVCoord;
       void main(void) {
-        float dist = length(vUVCoord);
-        float alpha = 1.0 - smoothstep(uAntialiasEdge, 1.0, dist);
+        float dist = abs(vUVCoord.x);
+        float alpha = clamp(uHalfWidth * (1.0 - dist), 0.0, 1.0);
         gl_FragColor = uColor * alpha;
       }
     `;
@@ -21,13 +21,9 @@ class StrokeShader extends Shader {
 
   constructor(gl: WebGLRenderingContext) {
     super(gl);
-
-    this.uAntialiasEdge = gl.getUniformLocation(this.program, 'uAntialiasEdge')!;
   }
 
   setDisplayWidth(width: number) {
-    const radius = width * 0.5;
-    const edge = (radius - 1) / radius;
-    this.gl.uniform1f(this.uAntialiasEdge, edge);
+    this.gl.uniform1f(this.uHalfWidth, width * 0.5);
   }
 }
