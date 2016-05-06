@@ -1,8 +1,6 @@
 import Component from "../lib/ui/Component";
 import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
-import CanvasViewModel from "../viewmodel/CanvasViewModel";
-import DisposableBag from "../lib/DisposableBag";
 import Variable from "../lib/rx/Variable";
 import ColorButtonView from "./ColorButtonView";
 import {appViewModel} from "../viewmodel/AppViewModel";
@@ -24,40 +22,32 @@ class ToolBoxView extends Component {
   eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
   undoButton = new ButtonView(this.elementFor(".undo-button"), "undo");
   redoButton = new ButtonView(this.elementFor(".redo-button"), "redo");
-  canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
-  canvasDisposables = new DisposableBag();
   buttons = [this.penButton, this.eraserButton, this.undoButton, this.redoButton, this.colorButton];
 
   constructor(mountPoint: Element) {
     super(mountPoint);
 
+    const viewModel = appViewModel.toolBoxViewModel;
+
     this.disposables.add(
-      this.canvasDisposables,
       ...this.buttons.map(button =>
         appViewModel.isLoading.observable.subscribe(button.isDisabled)
       )
     );
 
-    this.canvasViewModel.observable.subscribe(vm => {
-      this.canvasDisposables.clear();
-      if (vm != undefined) {
-        // FIXME: directly using vm doesn't work
-        const viewModel = vm;
-        this.canvasDisposables.add(
-          this.penButton.clicked.subscribe(() => {
-            viewModel.tool.value = Tool.Pen;
-          }),
-          this.eraserButton.clicked.subscribe(() => {
-            viewModel.tool.value = Tool.Eraser;
-          }),
-          viewModel.tool.observable
-            .map(tool => tool == Tool.Pen)
-            .subscribe(this.penButton.isChecked),
-          viewModel.tool.observable
-            .map(tool => tool == Tool.Eraser)
-            .subscribe(this.eraserButton.isChecked)
-        );
-      }
-    });
+    this.disposables.add(
+      this.penButton.clicked.subscribe(() => {
+        viewModel.tool.value = Tool.Pen;
+      }),
+      this.eraserButton.clicked.subscribe(() => {
+        viewModel.tool.value = Tool.Eraser;
+      }),
+      viewModel.tool.observable
+        .map(tool => tool == Tool.Pen)
+        .subscribe(this.penButton.isChecked),
+      viewModel.tool.observable
+        .map(tool => tool == Tool.Eraser)
+        .subscribe(this.eraserButton.isChecked)
+    );
   }
 }

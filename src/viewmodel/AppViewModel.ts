@@ -4,6 +4,7 @@ import User from "../model/User";
 import Canvas from "../model/Canvas";
 import CanvasFile from "../model/CanvasFile";
 import CanvasViewModel from "./CanvasViewModel";
+import ToolBoxViewModel from "./ToolBoxViewModel";
 import * as Auth from "../Auth";
 import * as GoogleAPI from "../lib/GoogleAPI";
 
@@ -13,6 +14,7 @@ class AppViewModel {
   files = new ObservableArray<CanvasFile>();
   currentFile = new Variable<CanvasFile | undefined>(undefined);
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
+  toolBoxViewModel = new ToolBoxViewModel();
   isAuthenticated = new Variable(false);
   isLoginNeeded = new Variable(false);
   isLoading = new Variable(false);

@@ -9,6 +9,9 @@ import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
 import DisposableBag from "../lib/DisposableBag";
+import {appViewModel} from "../viewmodel/AppViewModel";
+
+const {toolBoxViewModel} = appViewModel;
 
 function touchPoint(touch: Touch) {
   return new Vec2(touch.clientX, touch.clientY);
@@ -93,13 +96,13 @@ class StrokeHandler extends TreeDisposable {
     if (!viewModel) { return; }
 
     pos = pos.transform(this.transform.invert());
-    if (viewModel.tool.value == Tool.Pen) {
+    if (toolBoxViewModel.tool.value == Tool.Pen) {
       this.interactionState.value = InteractionState.Drawing;
-      this.renderer.strokeBegin(viewModel.penWidth.value, viewModel.color.value);
+      this.renderer.strokeBegin(toolBoxViewModel.penWidth.value, toolBoxViewModel.color.value);
       this.renderer.strokeNext(pos);
     } else {
       this.interactionState.value = InteractionState.Erasing;
-      this.renderer.eraseBegin(viewModel.eraserWidth.value);
+      this.renderer.eraseBegin(toolBoxViewModel.eraserWidth.value);
       this.renderer.eraseNext(pos);
     }
   }
