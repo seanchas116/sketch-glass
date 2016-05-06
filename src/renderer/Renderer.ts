@@ -9,7 +9,7 @@ import Polygon from "./Polygon";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
-import StrokeWeaver from "./StrokeWeaver";
+import StrokeModel from "./StrokeModel";
 import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
 import AutoDisposeArray from "../lib/rx/AutoDisposeArray";
@@ -17,8 +17,8 @@ import DisposableBag from "../lib/DisposableBag";
 
 export default
 class Renderer extends TreeDisposable {
-  strokeWeavers = new AutoDisposeArray<StrokeWeaver>();
-  currentWeaver: StrokeWeaver | undefined;
+  strokeModels = new AutoDisposeArray<StrokeModel>();
+  currentModel: StrokeModel | undefined;
   erasingWidth: number;
   erasingPoints: Vec2[] = [];
   isUpdateQueued = false;
@@ -73,8 +73,8 @@ class Renderer extends TreeDisposable {
     this.onResize();
 
     this.disposables.add(
-      this.strokeWeavers,
-      this.strokeWeavers.changed.subscribe(() => {
+      this.strokeModels,
+      this.strokeModels.changed.subscribe(() => {
         this.render();
       })
     );
@@ -83,49 +83,49 @@ class Renderer extends TreeDisposable {
       this.canvasDisposables.clear();
       if (canvas != undefined) {
         this.canvasDisposables.add(
-          canvas.strokes.bindToOther(this.strokeWeavers, stroke => {
-            const weaver = new StrokeWeaver(gl, stroke);
-            weaver.finalize();
-            return weaver;
+          canvas.strokes.bindToOther(this.strokeModels, stroke => {
+            const model = new StrokeModel(gl, this.shader, stroke);
+            model.finalize();
+            return model;
           })
         );
       } else {
-        this.strokeWeavers.values = [];
+        this.strokeModels.values = [];
       }
     });
   }
 
   dispose() {
     super.dispose();
-    if (this.currentWeaver) {
-      this.currentWeaver.dispose();
+    if (this.currentModel) {
+      this.currentModel.dispose();
     }
   }
 
   strokeBegin(width: number, color: Color) {
     const stroke = new Stroke([], color, width);
-    this.currentWeaver = new StrokeWeaver(this.gl, stroke);
+    this.currentModel = new StrokeModel(this.gl, this.shader, stroke);
   }
 
   strokeNext(pos: Vec2) {
-    if (this.currentWeaver == undefined) {
+    if (this.currentModel == undefined) {
       return;
     }
-    this.currentWeaver.addPoint(pos);
+    this.currentModel.addPoint(pos);
     this.render();
   }
 
   strokeEnd() {
-    if (this.currentWeaver == undefined) {
+    if (this.currentModel == undefined) {
       return;
     }
     const canvas = this.canvas.value;
     if (canvas == undefined) {
       return;
     }
-    canvas.pushStroke(this.currentWeaver.stroke);
-    this.currentWeaver.dispose();
-    this.currentWeaver = undefined;
+    canvas.pushStroke(this.currentModel.stroke);
+    this.currentModel.dispose();
+    this.currentModel = undefined;
   }
 
   eraseBegin(width: number) {
@@ -148,9 +148,9 @@ class Renderer extends TreeDisposable {
     const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
     const collider = new StrokeCollider(this.erasingWidth, vertices);
     const strokeToErase: Stroke[] = [];
-    for (const weaver of this.strokeWeavers.values) {
-      if (weaver.collider.collides(collider)) {
-        strokeToErase.push(weaver.stroke);
+    for (const model of this.strokeModels.values) {
+      if (model.collider.collides(collider)) {
+        strokeToErase.push(model.stroke);
       }
     }
     if (strokeToErase.length > 0) {
@@ -200,7 +200,7 @@ class Renderer extends TreeDisposable {
     shader.use();
     shader.setTransforms(this.viewportTransform, transform);
 
-    const draw = ({polygon, stroke}: StrokeWeaver) => {
+    const draw = ({polygon, stroke}: StrokeModel) => {
       if (polygon.vertices.length > 0) {
         shader.setColor(stroke.color);
         shader.setDisplayWidth(stroke.width * transform.m11);
@@ -208,11 +208,11 @@ class Renderer extends TreeDisposable {
       }
     };
 
-    for (const weaver of this.strokeWeavers.values) {
-      draw(weaver);
+    for (const model of this.strokeModels.values) {
+      model.render(this.viewportTransform, transform);
     }
-    if (this.currentWeaver) {
-      draw(this.currentWeaver);
+    if (this.currentModel) {
+      this.currentModel.render(this.viewportTransform, transform);
     }
   }
 

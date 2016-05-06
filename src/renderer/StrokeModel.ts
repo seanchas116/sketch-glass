@@ -4,16 +4,19 @@ import Vec2 from "../lib/geometry/Vec2";
 import Curve from "../lib/geometry/Curve";
 import TreeDisposable from "../lib/TreeDisposable";
 import StrokeCollider from "./StrokeCollider";
+import StrokeShader from "./StrokeShader";
+import Model from "./Model";
+import Transform from "../lib/geometry/Transform";
 
 export default
-class StrokeWeaver extends TreeDisposable {
+class StrokeModel extends TreeDisposable implements Model {
   polygon = new Polygon(this.gl, []);
   lastSectionLength = 0;
   collider: StrokeCollider;
   vertices: Vec2[] = [];
   points: Vec2[] = [];
 
-  constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
+  constructor(public gl: WebGLRenderingContext, public shader: StrokeShader, public stroke: Stroke) {
     super();
     this.disposables.add(this.polygon);
     for (const pos of stroke.points) {
@@ -79,5 +82,14 @@ class StrokeWeaver extends TreeDisposable {
     this.polygon.vertices.splice(-count * 4, count * 4);
     this.vertices.splice(-count, count);
     this.lastSectionLength = 0;
+  }
+
+  render(viewportTransform: Transform, sceneTransform: Transform) {
+    const {polygon, shader, stroke} = this;
+    if (polygon.vertices.length > 0) {
+      shader.setColor(stroke.color);
+      shader.setDisplayWidth(stroke.width * sceneTransform.m11);
+      polygon.draw(shader);
+    }
   }
 }

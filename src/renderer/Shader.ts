@@ -10,6 +10,8 @@ class Shader {
   uColor: WebGLUniformLocation;
 
   program: WebGLProgram;
+  viewportTransform = Transform.identity();
+  sceneTransform = Transform.identity();
 
   get vertexShader(): string {
     return `
@@ -46,6 +48,8 @@ class Shader {
 
     gl.enableVertexAttribArray(this.aPosition);
     gl.enableVertexAttribArray(this.aUVCoord);
+
+    this.updateTransforms();
   }
 
   setColor(color: Color) {
@@ -57,7 +61,15 @@ class Shader {
   }
 
   setTransforms(viewportTransform: Transform, sceneTransform: Transform) {
-    const transform = sceneTransform.merge(viewportTransform);
+    if (this.viewportTransform != viewportTransform || this.sceneTransform != sceneTransform) {
+      this.viewportTransform = viewportTransform;
+      this.sceneTransform = sceneTransform;
+      this.updateTransforms();
+    }
+  }
+
+  private updateTransforms() {
+    const transform = this.sceneTransform.merge(this.viewportTransform);
     this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
   }
 
