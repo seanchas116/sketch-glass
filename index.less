@@ -72,9 +72,10 @@
 
   > .sg-icon-array {
     position: fixed;
-    top: 15px;
-    transition: left 0.2s ease;
-    transition: right 0.2s ease;
+    top: 12px;
+    transition-property: left right;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
   }
 
   .sg-sidebar-content {
@@ -96,11 +97,11 @@
 
   &.open {
     > .sg-icon-array {
-      left: @sidebar-width + 15px;
+      left: @sidebar-width + 12px;
     }
   }
   > .sg-icon-array {
-    left: 15px;
+    left: 12px;
   }
 }
 
@@ -110,11 +111,11 @@
 
   &.open {
     > .sg-icon-array {
-      right: @sidebar-width + 15px;
+      right: @sidebar-width + 12px;
     }
   }
   > .sg-icon-array {
-    right: 15px;
+    right: 12px;
   }
 }
 
@@ -391,7 +392,7 @@
 
   > * {
     pointer-events: auto;
-    margin: 0 5px !important;
+    margin: 0 4px !important;
   }
 }
 
@@ -400,15 +401,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 15px;
-}
-
-.sg-info-buttons {
-  .sg-icon-array();
-
-  position: absolute;
-  right: 15px;
-  top: 15px;
+  top: 12px;
 }
 
 .sg-login-dialog {
