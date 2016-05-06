@@ -5,13 +5,16 @@ dist/app.manifest
 dist/bundle.js
 dist/bundle.js.map
 dist/index.css
+dist/index.css.map
 dist/index.html
 dist/fonts/sg-icon.eot
+dist/fonts/sg-icon.svg
 dist/fonts/sg-icon.ttf
 dist/fonts/sg-icon.woff
+dist/fonts/sg-icon.woff2
 dist/vendor/normalize.css
 
 NETWORK:
 *
 
-# hash: 0dc6fa937c2a2f731a32bcc27de8805d6a23068cd8e60bf8c28e8b45e25d3194
+# hash: 1ad9c7afc0562a880842900e97aeeeccb4d951ba48d5761fcdc3beef562087b1
