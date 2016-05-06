@@ -10,6 +10,7 @@ import Shader from "./Shader";
 import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
 import StrokeModel from "./StrokeModel";
+import BackgroundModel from "./BackgroundModel";
 import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
 import AutoDisposeArray from "../lib/rx/AutoDisposeArray";
@@ -29,8 +30,7 @@ class Renderer extends TreeDisposable {
   transform = Transform.identity();
   viewportTransform = Transform.identity();
   shader: StrokeShader;
-  backgroundPolygon: Polygon;
-  backgroundShader: Shader;
+  backgroundModel: BackgroundModel;
 
   canvasDisposables = new DisposableBag();
   canvas = new Variable<Canvas | undefined>(undefined);
@@ -56,16 +56,9 @@ class Renderer extends TreeDisposable {
 
     this.shader = new StrokeShader(gl);
 
-    this.backgroundShader = new Shader(gl);
-    this.backgroundShader.setColor(this.background.color);
-
-    this.backgroundPolygon = new Polygon(gl, [
-      [new Vec2(-1, -1), new Vec2(0, 0)],
-      [new Vec2(-1, 1), new Vec2(0, 0)],
-      [new Vec2(1, -1), new Vec2(0, 0)],
-      [new Vec2(1, 1), new Vec2(0, 0)],
-    ]);
-    this.backgroundPolygon.updateBuffer();
+    const backgroundShader = new Shader(gl);
+    backgroundShader.setColor(this.background.color);
+    this.backgroundModel = new BackgroundModel(gl, backgroundShader);
 
     gl.clearColor(0, 0, 0, 0);
 
@@ -180,12 +173,7 @@ class Renderer extends TreeDisposable {
   }
 
   renderBackground() {
-    const shader = this.backgroundShader;
-    const polygon = this.backgroundPolygon;
-
-    shader.use();
-    shader.setTransforms(Transform.identity(), Transform.identity());
-    polygon.draw(shader);
+    this.backgroundModel.render(this.viewportTransform, this.transform);
   }
 
   render() {
@@ -195,24 +183,12 @@ class Renderer extends TreeDisposable {
 
     this.renderBackground();
 
-    const {transform} = this;
-
-    shader.use();
-    shader.setTransforms(this.viewportTransform, transform);
-
-    const draw = ({polygon, stroke}: StrokeModel) => {
-      if (polygon.vertices.length > 0) {
-        shader.setColor(stroke.color);
-        shader.setDisplayWidth(stroke.width * transform.m11);
-        polygon.draw(shader);
-      }
-    };
-
+    const {viewportTransform, transform} = this;
     for (const model of this.strokeModels.values) {
-      model.render(this.viewportTransform, transform);
+      model.render(viewportTransform, transform);
     }
     if (this.currentModel) {
-      this.currentModel.render(this.viewportTransform, transform);
+      this.currentModel.render(viewportTransform, transform);
     }
   }
 

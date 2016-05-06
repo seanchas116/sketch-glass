@@ -87,6 +87,8 @@ class StrokeModel extends TreeDisposable implements Model {
   render(viewportTransform: Transform, sceneTransform: Transform) {
     const {polygon, shader, stroke} = this;
     if (polygon.vertices.length > 0) {
+      shader.use();
+      shader.setTransforms(viewportTransform, sceneTransform);
       shader.setColor(stroke.color);
       shader.setDisplayWidth(stroke.width * sceneTransform.m11);
       polygon.draw(shader);
