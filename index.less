@@ -293,7 +293,8 @@
 }
 
 .sg-button {
-  @icon-size: 32px;
+  @button-size: 36px;
+  @icon-size: @button-size - 2 * @border-width;
   @border-width: 2px;
   @color: #7F7F7F;
   @hover-color: #5F5F5F;
@@ -307,14 +308,14 @@
     width: @icon-size;
     height: @icon-size;
     position: absolute;
-    top: -@border-width;
-    left: -@border-width;
+    top: 0;
+    left: 0;
   }
   position: relative;
-  width: @icon-size;
-  height: @icon-size;
+  width: @button-size;
+  height: @button-size;
   border: @border-width solid @color;
-  border-radius: @icon-size * 0.5;
+  border-radius: @button-size * 0.5;
   background-color: white;
   color: @color;
   outline: none;
