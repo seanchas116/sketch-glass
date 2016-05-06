@@ -2,7 +2,7 @@ import Shader from "./Shader";
 import Vec2 from "../lib/geometry/Vec2";
 
 export default
-class Model {
+class Polygon {
   buffer: WebGLBuffer;
 
   constructor(public gl: WebGLRenderingContext, public vertices: [Vec2, Vec2][]) {

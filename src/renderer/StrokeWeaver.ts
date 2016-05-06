@@ -1,5 +1,5 @@
 import Stroke from "../model/Stroke";
-import Model from "./Model";
+import Polygon from "./Polygon";
 import Vec2 from "../lib/geometry/Vec2";
 import Curve from "../lib/geometry/Curve";
 import TreeDisposable from "../lib/TreeDisposable";
@@ -7,7 +7,7 @@ import StrokeCollider from "./StrokeCollider";
 
 export default
 class StrokeWeaver extends TreeDisposable {
-  model = new Model(this.gl, []);
+  polygon = new Polygon(this.gl, []);
   lastSectionLength = 0;
   collider: StrokeCollider;
   vertices: Vec2[] = [];
@@ -15,17 +15,17 @@ class StrokeWeaver extends TreeDisposable {
 
   constructor(public gl: WebGLRenderingContext, public stroke: Stroke) {
     super();
-    this.disposables.add(this.model);
+    this.disposables.add(this.polygon);
     for (const pos of stroke.points) {
       this.drawPoint(pos);
     }
-    this.model.updateBuffer();
+    this.polygon.updateBuffer();
   }
 
   addPoint(pos: Vec2) {
     this.stroke.points.push(pos);
     this.drawPoint(pos);
-    this.model.updateBuffer();
+    this.polygon.updateBuffer();
   }
 
   drawPoint(pos: Vec2) {
@@ -53,7 +53,7 @@ class StrokeWeaver extends TreeDisposable {
   }
 
   drawSegment(last: Vec2, point: Vec2) {
-    const {vertices} = this.model;
+    const {vertices} = this.polygon;
     const {width} = this.stroke;
 
     const normal = point.sub(last).normal();
@@ -76,7 +76,7 @@ class StrokeWeaver extends TreeDisposable {
 
   rewindLastSection() {
     const count = this.lastSectionLength;
-    this.model.vertices.splice(-count * 4, count * 4);
+    this.polygon.vertices.splice(-count * 4, count * 4);
     this.vertices.splice(-count, count);
     this.lastSectionLength = 0;
   }

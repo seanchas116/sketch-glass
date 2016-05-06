@@ -5,7 +5,7 @@ import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
 import Background from "../lib/geometry/Background";
 import StrokeShader from "./StrokeShader";
-import Model from "./Model";
+import Polygon from "./Polygon";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
 import TreeDisposable from "../lib/TreeDisposable";
@@ -29,7 +29,7 @@ class Renderer extends TreeDisposable {
   transform = Transform.identity();
   viewportTransform = Transform.identity();
   shader: StrokeShader;
-  backgroundModel: Model;
+  backgroundPolygon: Polygon;
   backgroundShader: Shader;
 
   canvasDisposables = new DisposableBag();
@@ -59,13 +59,13 @@ class Renderer extends TreeDisposable {
     this.backgroundShader = new Shader(gl);
     this.backgroundShader.setColor(this.background.color);
 
-    this.backgroundModel = new Model(gl, [
+    this.backgroundPolygon = new Polygon(gl, [
       [new Vec2(-1, -1), new Vec2(0, 0)],
       [new Vec2(-1, 1), new Vec2(0, 0)],
       [new Vec2(1, -1), new Vec2(0, 0)],
       [new Vec2(1, 1), new Vec2(0, 0)],
     ]);
-    this.backgroundModel.updateBuffer();
+    this.backgroundPolygon.updateBuffer();
 
     gl.clearColor(0, 0, 0, 0);
 
@@ -181,11 +181,11 @@ class Renderer extends TreeDisposable {
 
   renderBackground() {
     const shader = this.backgroundShader;
-    const model = this.backgroundModel;
+    const polygon = this.backgroundPolygon;
 
     shader.use();
     shader.setTransforms(Transform.identity(), Transform.identity());
-    model.draw(shader);
+    polygon.draw(shader);
   }
 
   render() {
@@ -200,11 +200,11 @@ class Renderer extends TreeDisposable {
     shader.use();
     shader.setTransforms(this.viewportTransform, transform);
 
-    const draw = ({model, stroke}: StrokeWeaver) => {
-      if (model.vertices.length > 0) {
+    const draw = ({polygon, stroke}: StrokeWeaver) => {
+      if (polygon.vertices.length > 0) {
         shader.setColor(stroke.color);
         shader.setDisplayWidth(stroke.width * transform.m11);
-        model.draw(shader);
+        polygon.draw(shader);
       }
     };
 
