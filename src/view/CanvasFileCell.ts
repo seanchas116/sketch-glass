@@ -1,7 +1,7 @@
-import Component from "../../lib/ui/Component";
-import Variable from "../../lib/rx/Variable";
-import Slot from "../../lib/ui/Slot";
-import CanvasFile from "../../model/CanvasFile";
+import Component from "../lib/ui/Component";
+import Variable from "../lib/rx/Variable";
+import Slot from "../lib/ui/Slot";
+import CanvasFile from "../model/CanvasFile";
 import * as moment from "moment";
 
 export default
