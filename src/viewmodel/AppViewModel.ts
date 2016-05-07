@@ -55,6 +55,7 @@ class AppViewModel extends ObservableDestination {
   async logIn() {
     await Auth.popup();
     this.isAuthenticated.value = true;
+    this.isLoginNeeded.value = false;
   }
 
   async init() {
