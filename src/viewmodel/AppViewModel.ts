@@ -40,7 +40,8 @@ class AppViewModel extends ObservableDestination {
 
   async addFile() {
     const file = await CanvasFile.create();
-    this.files.unshift(file);
+    await this.fetchFiles();
+    this.currentFile.value = this.files.values[0];
   }
 
   async checkAuth() {
