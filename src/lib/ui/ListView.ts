@@ -17,13 +17,7 @@ class ListView<T> extends Component {
 
     this._insert(0, array.values);
 
-    this.subscribe(array.inserted, ({index, values}) => {
-      this._insert(index, values);
-    });
-    this.subscribe(array.removed, ({index, values}) => {
-      this._remove(index, values.length);
-    });
-    this.subscribe(array.replaced, ({index, newValues, oldValues}) => {
+    this.subscribe(array.spliced, ({index, newValues, oldValues}) => {
       this._remove(index, oldValues.length);
       this._insert(index, newValues);
     });

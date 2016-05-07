@@ -8,10 +8,7 @@ class AutoDisposeArray<T extends Disposable> extends ObservableArray<T> implemen
 
   constructor(values: T[] = []) {
     super(values);
-    this.removed.subscribe(({index, values}) => {
-      values.forEach(v => v.dispose());
-    });
-    this.replaced.subscribe(({index, newValues, oldValues}) => {
+    this.spliced.subscribe(({index, newValues, oldValues}) => {
       oldValues.forEach(v => v.dispose());
     });
   }

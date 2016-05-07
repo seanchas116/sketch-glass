@@ -64,7 +64,7 @@ class Renderer extends ObservableDestination {
     this.onResize();
 
     this.disposables.add(this.strokeModels);
-    this.subscribe(this.strokeModels.changed, () => this.render());
+    this.subscribe(this.strokeModels.spliced, () => this.render());
     this.subscribeWithDestination(this.canvas.changed, (canvas, destination) => {
       if (canvas != undefined) {
         destination.disposables.add(
