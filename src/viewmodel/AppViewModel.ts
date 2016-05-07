@@ -71,7 +71,7 @@ class AppViewModel extends ObservableDestination {
     });
 
     await GoogleAPI.init();
-    await GoogleAPI.load("auth:client,drive-realtime");
+    await GoogleAPI.load("drive-realtime");
     await this.checkAuth();
   }
 
