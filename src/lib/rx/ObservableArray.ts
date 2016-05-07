@@ -19,8 +19,7 @@ class ObservableArray<T> {
     return this._values;
   }
   set values(values: T[]) {
-    this.remove(0, this.length);
-    this.insert(0, values);
+    this.splice(0, this.length, ...values);
   }
   get spliced(): Rx.Observable<Splice<T>> {
     return this._spliced;
