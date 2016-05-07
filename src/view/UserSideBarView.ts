@@ -59,8 +59,15 @@ class UserSideBarView extends Component {
       this.avatarSlot.attribute("src")(user.photoLink);
     });
 
-    this.subscribe(this.addCanvasClicked, () => {
-      appViewModel.addFile();
-    })
+    this.subscribe(this.addCanvasClicked, () => appViewModel.addFile());
+    this.subscribe(this.open.changed, () => this.refreshFiles());
+  }
+
+  refreshFiles() {
+    if (this.open.value) {
+      console.log("refresh files");
+      appViewModel.fetchFiles();
+      setTimeout(() => this.refreshFiles(), 2000);
+    }
   }
 }
