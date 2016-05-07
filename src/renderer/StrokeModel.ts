@@ -2,14 +2,13 @@ import Stroke from "../model/Stroke";
 import Polygon from "./Polygon";
 import Vec2 from "../lib/geometry/Vec2";
 import Curve from "../lib/geometry/Curve";
-import TreeDisposable from "../lib/TreeDisposable";
 import StrokeCollider from "./StrokeCollider";
 import StrokeShader from "./StrokeShader";
 import Model from "./Model";
 import Transform from "../lib/geometry/Transform";
 
 export default
-class StrokeModel extends TreeDisposable implements Model {
+class StrokeModel implements Model {
   polygon = new Polygon(this.gl, []);
   lastSectionLength = 0;
   collider: StrokeCollider;
@@ -17,12 +16,14 @@ class StrokeModel extends TreeDisposable implements Model {
   points: Vec2[] = [];
 
   constructor(public gl: WebGLRenderingContext, public shader: StrokeShader, public stroke: Stroke) {
-    super();
-    this.disposables.add(this.polygon);
     for (const pos of stroke.points) {
       this.drawPoint(pos);
     }
     this.polygon.updateBuffer();
+  }
+
+  dispose() {
+    this.polygon.dispose();
   }
 
   addPoint(pos: Vec2) {

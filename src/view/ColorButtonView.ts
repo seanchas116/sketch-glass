@@ -20,9 +20,9 @@ class ColorButtonView extends Component {
 
   constructor(mountPoint: Element) {
     super(mountPoint);
-    this.isChecked.observable.subscribe(this.slot.toggleClass("checked"));
-    this.isDisabled.observable.subscribe(this.slot.toggleAttribute("disabled"));
-    this.color.observable.subscribe(color => {
+    this.subscribe(this.isChecked.changed, this.slot.toggleClass("checked"));
+    this.subscribe(this.isDisabled.changed, this.slot.toggleAttribute("disabled"));
+    this.subscribe(this.color.changed, color => {
       this.colorElem.style.backgroundColor = color.toString();
     });
   }

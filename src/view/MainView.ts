@@ -29,7 +29,7 @@ class MainView extends Component {
   constructor(mountPoint: Element) {
     super(mountPoint);
     const canvasVM = appViewModel.canvasViewModel;
-    canvasVM.observable.subscribe(this.canvasView.canvasViewModel);
-    appViewModel.isLoading.observable.map(x => !x).subscribe(this.loadingBar.isHidden());
+    this.subscribe(canvasVM.changed, this.canvasView.canvasViewModel);
+    this.subscribe(appViewModel.isLoading.changed.map(x => !x), this.loadingBar.isHidden());
   }
 }

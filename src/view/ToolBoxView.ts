@@ -3,7 +3,7 @@ import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 import ColorButtonView from "./ColorButtonView";
-import DisposableBag from "../lib/DisposableBag";
+import CanvasViewModel from "../viewmodel/CanvasViewModel";
 import {appViewModel} from "../viewmodel/AppViewModel";
 
 export default
@@ -24,49 +24,38 @@ class ToolBoxView extends Component {
   undoButton = new ButtonView(this.elementFor(".undo-button"), "undo");
   redoButton = new ButtonView(this.elementFor(".redo-button"), "redo");
   buttons = [this.penButton, this.eraserButton, this.undoButton, this.redoButton, this.colorButton];
-  canvasDisposables = new DisposableBag();
 
   constructor(mountPoint: Element) {
     super(mountPoint);
 
     const viewModel = appViewModel.toolBoxViewModel;
 
-    this.disposables.add(
-      this.canvasDisposables,
-      ...this.buttons.map(button =>
-        appViewModel.isLoading.observable.subscribe(button.isDisabled)
-      )
-    );
+    for (const button of this.buttons) {
+      this.subscribe(appViewModel.isLoading.changed, button.isDisabled);
+    }
 
-    this.disposables.add(
-      this.penButton.clicked.subscribe(() => {
-        viewModel.tool.value = Tool.Pen;
-      }),
-      this.eraserButton.clicked.subscribe(() => {
-        viewModel.tool.value = Tool.Eraser;
-      }),
-      viewModel.tool.observable
-        .map(tool => tool == Tool.Pen)
-        .subscribe(this.penButton.isChecked),
-      viewModel.tool.observable
-        .map(tool => tool == Tool.Eraser)
-        .subscribe(this.eraserButton.isChecked),
-      this.undoButton.clicked.subscribe(() => {
-        this.undo();
-      }),
-      this.redoButton.clicked.subscribe(() => {
-        this.redo();
-      }),
-      appViewModel.canvasViewModel.observable.subscribe(canvasVM => {
-        this.canvasDisposables.clear();
-        if (canvasVM != undefined) {
-          this.canvasDisposables.add(
-            canvasVM.canvas.canUndo.observable.map(x => !x).subscribe(this.undoButton.isDisabled),
-            canvasVM.canvas.canRedo.observable.map(x => !x).subscribe(this.redoButton.isDisabled)
-          );
-        }
-      })
-    );
+    this.subscribe(this.penButton.clicked, () => {
+      viewModel.tool.value = Tool.Pen;
+    });
+    this.subscribe(this.eraserButton.clicked, () => {
+      viewModel.tool.value = Tool.Eraser;
+    });
+
+    this.subscribe(viewModel.tool.changed.map(tool => tool == Tool.Pen), this.penButton.isChecked);
+    this.subscribe(viewModel.tool.changed.map(tool => tool == Tool.Eraser), this.eraserButton.isChecked);
+    this.subscribe(this.undoButton.clicked, () => {
+      this.undo();
+    });
+    this.subscribe(this.redoButton.clicked, () => {
+      this.redo();
+    });
+
+    this.subscribeWithDestination<CanvasViewModel|undefined>(appViewModel.canvasViewModel.changed, (canvasVM, dest) => {
+      if (canvasVM != undefined) {
+        dest.subscribe(canvasVM.canvas.canUndo.changed.map(x => !x), this.undoButton.isDisabled);
+        dest.subscribe(canvasVM.canvas.canRedo.changed.map(x => !x), this.redoButton.isDisabled);
+      }
+    });
   }
 
   undo() {

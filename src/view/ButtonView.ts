@@ -14,8 +14,8 @@ class ButtonView extends Component {
 
   constructor(mountPoint: Element, kind: string) {
     super(mountPoint);
-    this.isChecked.observable.subscribe(this.slot.toggleClass("checked"));
-    this.isDisabled.observable.subscribe(this.slot.toggleAttribute("disabled"));
+    this.subscribe(this.isChecked.changed, this.slot.toggleClass("checked"));
+    this.subscribe(this.isDisabled.changed, this.slot.toggleAttribute("disabled"));
     this.element.className += ` ${kind}`;
   }
 }

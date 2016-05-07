@@ -1,7 +1,6 @@
 import Component from "../lib/ui/Component";
 import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
-import DisposableBag from "../lib/DisposableBag";
 import Slot from "../lib/ui/Slot";
 import ListView from "../lib/ui/ListView";
 import {appViewModel} from "../viewmodel/AppViewModel";
@@ -32,12 +31,10 @@ class CanvasSideBarView extends Component {
   constructor(mountPoint: Element) {
     super(mountPoint);
 
-    this.disposables.add(
-      this.open.observable.subscribe(this.slot.toggleClass("open")),
-      this.open.observable.subscribe(this.sidebarButton.isChecked),
-      this.sidebarButton.clicked.subscribe(() => {
-        this.open.value = !this.open.value;
-      })
-    );
+    this.subscribe(this.open.changed, this.slot.toggleClass("open"));
+    this.subscribe(this.open.changed, this.sidebarButton.isChecked);
+    this.subscribe(this.sidebarButton.clicked, () => {
+      this.open.value = !this.open.value;
+    });
   }
 }

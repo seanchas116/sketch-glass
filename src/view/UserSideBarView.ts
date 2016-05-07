@@ -1,7 +1,6 @@
 import Component from "../lib/ui/Component";
 import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
-import DisposableBag from "../lib/DisposableBag";
 import Slot from "../lib/ui/Slot";
 import ListView from "../lib/ui/ListView";
 import CanvasFile from "../model/CanvasFile";
@@ -37,14 +36,10 @@ class UserSideBarView extends Component {
   userNameSlot = this.slotFor(".userName");
   canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), appViewModel.files, file => {
     const component = new CanvasFileCell(undefined, file);
-    component.disposables.add(
-      appViewModel.currentFile.observable
-        .map(current => current == file)
-        .subscribe(component.isSelected),
-      component.clicked.subscribe(() => {
-        appViewModel.currentFile.value = file;
-      })
-    );
+    component.subscribe(appViewModel.currentFile.changed.map(current => current == file), component.isSelected);
+    component.subscribe(component.clicked, () => {
+      appViewModel.currentFile.value = file;
+    });
     return component;
   });
   addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
@@ -52,23 +47,20 @@ class UserSideBarView extends Component {
   constructor(mountPoint: Element) {
     super(mountPoint);
 
-    this.disposables.add(
-      this.open.observable.subscribe(this.slot.toggleClass("open")),
+    this.subscribe(this.open.changed, this.slot.toggleClass("open"));
+    this.subscribe(this.open.changed, this.sidebarButton.isChecked);
 
-      this.open.observable.subscribe(this.sidebarButton.isChecked),
+    this.subscribe(this.sidebarButton.clicked, () => {
+      this.open.value = !this.open.value;
+    });
 
-      this.sidebarButton.clicked.subscribe(() => {
-        this.open.value = !this.open.value;
-      }),
+    this.subscribe(appViewModel.user.changed, user => {
+      this.userNameSlot.text()(user.displayName);
+      this.avatarSlot.attribute("src")(user.photoLink);
+    });
 
-      appViewModel.user.observable.subscribe(user => {
-        this.userNameSlot.text()(user.displayName);
-        this.avatarSlot.attribute("src")(user.photoLink);
-      }),
-
-      this.addCanvasClicked.subscribe(() => {
-        appViewModel.addFile();
-      })
-    );
+    this.subscribe(this.addCanvasClicked, () => {
+      appViewModel.addFile();
+    })
   }
 }

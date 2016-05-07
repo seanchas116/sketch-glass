@@ -1,5 +1,3 @@
-import Disposable from "../Disposable";
-import DisposableBag from "../DisposableBag";
 import * as Rx from "rx";
 
 interface Inserted<T> {
@@ -89,10 +87,9 @@ class ObservableArray<T> {
     this.replace(index, [value]);
   }
 
-  bindToOther<U>(other: ObservableArray<U>, transform: (value: T) => U): Disposable {
-    const bag = new DisposableBag();
+  bindToOther<U>(other: ObservableArray<U>, transform: (value: T) => U): Rx.Disposable {
     other.values = this.values.map(transform);
-    bag.add(
+    const disposables = [
       this.inserted.subscribe(({index, values}) => {
         other.insert(index, values.map(transform));
       }),
@@ -102,8 +99,8 @@ class ObservableArray<T> {
       this.replaced.subscribe(({index, newValues}) => {
         other.replace(index, newValues.map(transform));
       })
-    );
-    return bag;
+    ];
+    return new Rx.CompositeDisposable(disposables);
   }
 
   constructor(values: T[] = []) {

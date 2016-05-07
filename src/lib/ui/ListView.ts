@@ -17,18 +17,16 @@ class ListView<T> extends Component {
 
     this._insert(0, array.values);
 
-    this.disposables.add(
-      array.inserted.subscribe(({index, values}) => {
-        this._insert(index, values);
-      }),
-      array.removed.subscribe(({index, values}) => {
-        this._remove(index, values.length);
-      }),
-      array.replaced.subscribe(({index, newValues, oldValues}) => {
-        this._remove(index, oldValues.length);
-        this._insert(index, newValues);
-      })
-    );
+    this.subscribe(array.inserted, ({index, values}) => {
+      this._insert(index, values);
+    });
+    this.subscribe(array.removed, ({index, values}) => {
+      this._remove(index, values.length);
+    });
+    this.subscribe(array.replaced, ({index, newValues, oldValues}) => {
+      this._remove(index, oldValues.length);
+      this._insert(index, newValues);
+    });
   }
 
   private _insert(index: number, values: T[]) {

@@ -1,8 +1,10 @@
 import ObservableArray from "./ObservableArray";
-import Disposable from "../Disposable";
+import {Disposable} from "rx";
 
 export default
 class AutoDisposeArray<T extends Disposable> extends ObservableArray<T> implements Disposable {
+
+  isDisposed = false;
 
   constructor(values: T[] = []) {
     super(values);
@@ -16,5 +18,6 @@ class AutoDisposeArray<T extends Disposable> extends ObservableArray<T> implemen
 
   dispose() {
     this.values = [];
+    this.isDisposed = true;
   }
 }

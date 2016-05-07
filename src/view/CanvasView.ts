@@ -4,12 +4,11 @@ import Stroke from '../model/Stroke';
 import Vec2 from '../lib/geometry/Vec2';
 import Transform from '../lib/geometry/Transform';
 import Canvas from "../model/Canvas";
-import TreeDisposable from "../lib/TreeDisposable";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
-import DisposableBag from "../lib/DisposableBag";
 import {appViewModel} from "../viewmodel/AppViewModel";
+import ObservableDestination from "../lib/rx/ObservableDestination";
 
 const {toolBoxViewModel} = appViewModel;
 
@@ -21,7 +20,7 @@ enum InteractionState {
   None, Drawing, Erasing, Pinching, Dragging
 }
 
-class StrokeHandler extends TreeDisposable {
+class StrokeHandler extends ObservableDestination {
   interactionState = new Variable(InteractionState.None);
   startPoint: Vec2;
   pinchStartPoints: Vec2[];
@@ -32,21 +31,17 @@ class StrokeHandler extends TreeDisposable {
   currentStroke: Stroke;
   isStroking = false;
 
-  canvasDisposables = new DisposableBag();
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
 
   constructor(public renderer: Renderer) {
     super();
-    this.canvasViewModel.observable.subscribe(vm => {
-      this.canvasDisposables.clear();
+    this.subscribeWithDestination(this.canvasViewModel.changed, (vm, destination) => {
       if (vm != undefined) {
         renderer.canvas.value = vm.canvas;
-        this.canvasDisposables.add(
-          vm.transform.observable.subscribe(t => {
-            renderer.transform = t;
-            this.transform = t;
-          })
-        );
+        destination.subscribe(vm.transform.changed, t => {
+          renderer.transform = t;
+          this.transform = t;
+        });
       } else {
         renderer.canvas.value = undefined;
       }
@@ -240,11 +235,9 @@ class CanvasView extends Component {
     super(mountPoint);
     const renderer = new Renderer(this.element as HTMLCanvasElement);
     this.strokeHandler = new StrokeHandler(renderer);
-    this.disposables.add(
-      this.strokeHandler,
-      renderer,
-      this.canvasViewModel.observable.subscribe(this.strokeHandler.canvasViewModel)
-    );
+    this.disposables.add(this.strokeHandler);
+    this.disposables.add(renderer);
+    this.subscribe(this.canvasViewModel.changed, this.strokeHandler.canvasViewModel);
 
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
     this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
@@ -260,8 +253,9 @@ class CanvasView extends Component {
       ev.preventDefault();
     });
 
-    this.strokeHandler.interactionState.observable
-      .map(s => s == InteractionState.Dragging)
-      .subscribe(this.slot.toggleClass("dragging"));
+    this.subscribe(
+      this.strokeHandler.interactionState.changed.map(s => s == InteractionState.Dragging),
+      this.slot.toggleClass("dragging")
+    );
   }
 }

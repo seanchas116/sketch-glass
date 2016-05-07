@@ -1,5 +1,6 @@
 import Variable from "../lib/rx/Variable";
 import ObservableArray from "../lib/rx/ObservableArray";
+import ObservableDestination from "../lib/rx/ObservableDestination";
 import User from "../model/User";
 import Canvas from "../model/Canvas";
 import CanvasFile from "../model/CanvasFile";
@@ -9,7 +10,7 @@ import * as Auth from "../Auth";
 import * as GoogleAPI from "../lib/GoogleAPI";
 
 export default
-class AppViewModel {
+class AppViewModel extends ObservableDestination {
   user = new Variable<User>(User.empty());
   files = new ObservableArray<CanvasFile>();
   currentFile = new Variable<CanvasFile | undefined>(undefined);
@@ -56,11 +57,11 @@ class AppViewModel {
   }
 
   async init() {
-    this.isAuthenticated.observable.filter(a => a).subscribe(() => {
+    this.subscribe(this.isAuthenticated.changed.filter(a => a), () => {
       this.initData();
     });
 
-    this.currentFile.observable.subscribe(async (file) => {
+    this.subscribe(this.currentFile.changed, async (file) => {
       this.canvasViewModel.value = undefined;
       if (file == undefined) { return; }
       const canvas = await Canvas.fromFile(file);
@@ -73,8 +74,9 @@ class AppViewModel {
   }
 
   constructor() {
+    super();
     this.init();
-    this.canvasViewModel.observable.map(vm => vm == undefined).subscribe(this.isLoading);
+    this.subscribe(this.canvasViewModel.changed.map(vm => vm == undefined), this.isLoading);
   }
 }
 

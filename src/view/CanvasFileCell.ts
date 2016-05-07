@@ -23,7 +23,7 @@ class CanvasFileCell extends Component {
 
   constructor(mountPoint: Element | undefined, public canvasFile: CanvasFile) {
     super(mountPoint);
-    this.isSelected.observable.subscribe(this.slot.toggleClass("selected"));
+    this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
     this.titleSlot.text()(canvasFile.name);
     this.updatedAtSlot.text()(moment(canvasFile.modifiedTime).fromNow());
   }

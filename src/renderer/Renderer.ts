@@ -8,16 +8,15 @@ import StrokeShader from "./StrokeShader";
 import Polygon from "./Polygon";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
-import TreeDisposable from "../lib/TreeDisposable";
 import StrokeModel from "./StrokeModel";
 import BackgroundModel from "./BackgroundModel";
 import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
 import AutoDisposeArray from "../lib/rx/AutoDisposeArray";
-import DisposableBag from "../lib/DisposableBag";
+import ObservableDestination from "../lib/rx/ObservableDestination";
 
 export default
-class Renderer extends TreeDisposable {
+class Renderer extends ObservableDestination {
   strokeModels = new AutoDisposeArray<StrokeModel>();
   currentModel: StrokeModel | undefined;
   erasingWidth: number;
@@ -32,7 +31,6 @@ class Renderer extends TreeDisposable {
   shader: StrokeShader;
   backgroundModel: BackgroundModel;
 
-  canvasDisposables = new DisposableBag();
   canvas = new Variable<Canvas | undefined>(undefined);
 
   constructor(public element: HTMLCanvasElement) {
@@ -65,17 +63,11 @@ class Renderer extends TreeDisposable {
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
 
-    this.disposables.add(
-      this.strokeModels,
-      this.strokeModels.changed.subscribe(() => {
-        this.render();
-      })
-    );
-
-    this.canvas.observable.subscribe(canvas => {
-      this.canvasDisposables.clear();
+    this.disposables.add(this.strokeModels);
+    this.subscribe(this.strokeModels.changed, () => this.render());
+    this.subscribeWithDestination(this.canvas.changed, (canvas, destination) => {
       if (canvas != undefined) {
-        this.canvasDisposables.add(
+        destination.disposables.add(
           canvas.strokes.bindToOther(this.strokeModels, stroke => {
             const model = new StrokeModel(gl, this.shader, stroke);
             model.finalize();

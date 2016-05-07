@@ -1,10 +1,10 @@
 import Slot from "./Slot";
-import TreeDisposable from "../TreeDisposable";
+import ObservableDestination from "../rx/ObservableDestination";
 import Variable from "../rx/Variable";
 import * as Rx from "rx";
 
 export default
-class Component extends TreeDisposable {
+class Component extends ObservableDestination {
   static template = "";
   static templateElement: Element | null;
 

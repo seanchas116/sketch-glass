@@ -17,10 +17,8 @@ class LoginDialog extends Component {
 
   constructor(mountPoint: Element) {
     super(mountPoint);
-    this.disposables.add(
-      appViewModel.isLoginNeeded.observable.map(x => !x).subscribe(this.slot.isHidden()),
-      this.clicked.subscribe(() => this.auth())
-    );
+    this.subscribe(appViewModel.isLoginNeeded.changed.map(x => !x), this.slot.isHidden());
+    this.subscribe(this.clicked, () => this.auth());
   }
 
   auth() {
