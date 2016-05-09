@@ -31,4 +31,41 @@ class ObservableDestination implements Disposable {
       })
     );
   }
+
+  subscribeArrayWithTracking<TOriginal, TValue extends Disposable>(
+    observable: Rx.Observable<TOriginal[]>,
+    getKey: (original: TOriginal) => any, create: (original: TOriginal) => TValue, update: (value: TValue, original: TOriginal) => void,
+    observer: Rx.IObserver<TValue[]>
+  ) {
+    let valueMap: Map<any, TValue>|undefined;
+    const subscription = observable.subscribe(originals => {
+      if (valueMap == undefined) {
+        valueMap = new Map(originals.map(d => [getKey(d), create(d)] as [any, TValue]));
+        observer.onNext(Array.from(valueMap!.values()));
+      } else {
+        const values: TValue[] = [];
+        const unusedKeys = new Set(valueMap.keys());
+        for (const original of originals) {
+          const key = getKey(original);
+          const instance = valueMap.get(key);
+          if (instance != undefined) {
+            update(instance, original);
+            values.push(instance);
+            unusedKeys.delete(key);
+          } else {
+            values.push(create(original));
+          }
+        }
+        for (const key of unusedKeys) {
+          const value = valueMap.get(key);
+          if (value != undefined) {
+            value.dispose();
+          }
+          valueMap.delete(key);
+        }
+        observer.onNext(values);
+      }
+    });
+    this.disposables.add(subscription);
+  }
 }
