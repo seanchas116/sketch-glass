@@ -43,6 +43,7 @@ class CanvasSideBarView extends Component {
     this.subscribe(this.open.changed, this.sidebarButton.isChecked);
     this.subscribe(this.sidebarButton.clicked, () => {
       this.open.value = !this.open.value;
+      this.refreshUsers();
     });
     this.subscribeWithDestination(appViewModel.canvasViewModel.changed, (canvasVM, dest) => {
       if (canvasVM != undefined) {
@@ -54,6 +55,7 @@ class CanvasSideBarView extends Component {
         dest.subscribe(this.canvasNameClicked, () => {
           window.open(`https://drive.google.com/open?id=${canvasVM!.canvas.file.id}`, "_blank");
         });
+        this.refreshUsers();
       } else {
         this.users.value = [];
       }
@@ -69,5 +71,14 @@ class CanvasSideBarView extends Component {
         cell.user.value = user;
       }
     });
+  }
+
+  refreshUsers() {
+    const canvasVM = appViewModel.canvasViewModel.value;
+    if (this.open.value && canvasVM) {
+      console.log("refresh users");
+      canvasVM.fetchUsers();
+      setTimeout(() => this.refreshUsers(), 2000);
+    }
   }
 }
