@@ -7,14 +7,14 @@ dist/bundle.js.map
 dist/index.css
 dist/index.css.map
 dist/index.html
+dist/vendor/normalize.css
 dist/fonts/sg-icon.eot
 dist/fonts/sg-icon.svg
 dist/fonts/sg-icon.ttf
 dist/fonts/sg-icon.woff
 dist/fonts/sg-icon.woff2
-dist/vendor/normalize.css
 
 NETWORK:
 *
 
-# hash: 1d3b1136a808a66b5a754781db07c5b6e23c188f20e9f17dbc7118f080bfc974
+# hash: 6000868486661e2ee64070f2ebc52baa712fc0b2cda9e0a9f918df7dc4e1a37a
