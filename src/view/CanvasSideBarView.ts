@@ -32,9 +32,7 @@ class CanvasSideBarView extends Component {
   open = new Variable(false);
   users = new ObservableArray<User>();
   sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "info");
-  userListView = new ListView<User>(this.elementFor(".user-list"), this.users, user => {
-    return new UserCell(undefined, user);
-  });
+  userListView = new ListView<UserCell>(this.elementFor(".user-list"));
 
   constructor(mountPoint: Element) {
     super(mountPoint);

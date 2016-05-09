@@ -6,6 +6,14 @@ class CanvasFile {
   name: string;
   modifiedTime: Date;
 
+  static empty() {
+    const file = new CanvasFile();
+    file.id = "";
+    file.name = "";
+    file.modifiedTime = new Date();
+    return file;
+  }
+
   static async create() {
     const data = await GoogleAPI.post<any>("https://www.googleapis.com/drive/v3/files", {}, {
       appProperties: {

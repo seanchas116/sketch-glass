@@ -1,41 +1,36 @@
 import Component from "./Component";
-import ObservableArray from "../rx/ObservableArray";
+import Variable from "../rx/Variable";
 
 export default
-class ListView<T> extends Component {
+class ListView<TChild extends Component> extends Component {
   static template = `
     <div class="sg-list-view">
     </div>
   `;
 
+  children = new Variable<TChild[]>([])
+
   constructor(
-    mountPoint: Element,
-    public array: ObservableArray<T>,
-    public factory: (value: T) => Component
+    mountPoint: Element|undefined
   ) {
     super(mountPoint);
 
-    this._insert(0, array.values);
-
-    this.subscribe(array.spliced, ({index, newValues, oldValues}) => {
-      this._remove(index, oldValues.length);
-      this._insert(index, newValues);
-    });
+    this.subscribe(this.children.changed, () => this._reorder());
   }
 
-  private _insert(index: number, values: T[]) {
-    const {element, factory} = this;
-    const before = element.childNodes[index];
-    for (const value of values) {
-      const newElem = factory(value).element;
-      element.insertBefore(newElem, before);
+  dispose() {
+    if (!this.isDisposed) {
+      for (const child of this.children.value) {
+        child.dispose();
+      }
     }
+    super.dispose();
   }
 
-  private _remove(index: number, count: number) {
+  private _reorder() {
     const {element} = this;
-    for (let i = 0; i < count; ++i) {
-      element.removeChild(element.childNodes[index]);
+    for (const child of this.children.value) {
+      element.appendChild(child.element);
     }
   }
 }

@@ -29,6 +29,13 @@ class Component extends ObservableDestination {
     }
   }
 
+  dispose() {
+    if (!this.isDisposed) {
+      this.element.parentElement.removeChild(this.element);
+    }
+    super.dispose();
+  }
+
   mount(mountPoint: Element) {
     mountPoint.parentElement.insertBefore(this.element, mountPoint);
     mountPoint.parentElement.removeChild(mountPoint);

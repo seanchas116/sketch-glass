@@ -20,11 +20,12 @@ class CanvasFileCell extends Component {
   thumbnailSlot = this.slotFor(".thumbnail");
   titleSlot = this.slotFor(".title");
   updatedAtSlot = this.slotFor(".updated-at");
+  file = new Variable<CanvasFile>(CanvasFile.empty());
 
-  constructor(mountPoint: Element | undefined, public canvasFile: CanvasFile) {
+  constructor(mountPoint: Element | undefined) {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
-    this.titleSlot.text()(canvasFile.name);
-    this.updatedAtSlot.text()(moment(canvasFile.modifiedTime).fromNow());
+    this.file.changed.map(f => f.name).subscribe(this.titleSlot.text());
+    this.file.changed.map(f => moment(f.modifiedTime).fromNow()).subscribe(this.updatedAtSlot.text());
   }
 }

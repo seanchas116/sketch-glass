@@ -12,7 +12,7 @@ import * as GoogleAPI from "../lib/GoogleAPI";
 export default
 class AppViewModel extends ObservableDestination {
   user = new Variable<User>(User.empty());
-  files = new ObservableArray<CanvasFile>();
+  files = new Variable<CanvasFile[]>([]);
   currentFile = new Variable<CanvasFile | undefined>(undefined);
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
   toolBoxViewModel = new ToolBoxViewModel();
@@ -25,8 +25,8 @@ class AppViewModel extends ObservableDestination {
       this.fetchUser(),
       this.fetchFiles()
     ]);
-    if (this.files.length > 0) {
-      this.currentFile.value = this.files.values[0];
+    if (this.files.value.length > 0) {
+      this.currentFile.value = this.files.value[0];
     }
   }
 
@@ -35,13 +35,13 @@ class AppViewModel extends ObservableDestination {
   }
 
   async fetchFiles() {
-    this.files.values = await CanvasFile.list();
+    this.files.value = await CanvasFile.list();
   }
 
   async addFile() {
     const file = await CanvasFile.create();
     await this.fetchFiles();
-    this.currentFile.value = this.files.values[0];
+    this.currentFile.value = this.files.value[0];
   }
 
   async checkAuth() {

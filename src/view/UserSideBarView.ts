@@ -34,18 +34,28 @@ class UserSideBarView extends Component {
   sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
   avatarSlot = this.slotFor(".avatar")
   userNameSlot = this.slotFor(".userName");
-  canvasListView = new ListView<CanvasFile>(this.elementFor(".canvas-list"), appViewModel.files, file => {
-    const component = new CanvasFileCell(undefined, file);
-    component.subscribe(appViewModel.currentFile.changed.map(current => current == file), component.isSelected);
-    component.subscribe(component.clicked, () => {
-      appViewModel.currentFile.value = file;
-    });
-    return component;
-  });
+
+  canvasListView = new ListView<CanvasFileCell>(this.elementFor(".canvas-list"));
   addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
 
   constructor(mountPoint: Element) {
     super(mountPoint);
+
+    this.subscribeArrayWithTracking(appViewModel.files.changed, this.canvasListView.children, {
+      getKey: file => file.id,
+      create: file => {
+        const component = new CanvasFileCell(undefined);
+        component.subscribe(appViewModel.currentFile.changed.map(current => current == file), component.isSelected);
+        component.subscribe(component.clicked, () => {
+          appViewModel.currentFile.value = file;
+        });
+        component.file.value = file;
+        return component;
+      },
+      update: (component, file) => {
+        component.file.value = file;
+      }
+    })
 
     this.subscribe(this.open.changed, this.slot.toggleClass("open"));
     this.subscribe(this.open.changed, this.sidebarButton.isChecked);
