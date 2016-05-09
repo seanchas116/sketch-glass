@@ -19,7 +19,8 @@ class CanvasSideBarView extends Component {
           <h1 class="canvas-name">Untitled</h1>
         </div>
         <div class="users-header">
-          <h2>People</h2>
+          <h2>Users</h2>
+          <button class="add-user">+</button>
         </div>
         <div class="user-list"></div>
       </aside>
@@ -33,6 +34,7 @@ class CanvasSideBarView extends Component {
   users = new Variable<User[]>([]);
   sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
   userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
+  addUserClicked = Rx.Observable.fromEvent(this.elementFor(".add-user"), 'click');
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
