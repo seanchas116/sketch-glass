@@ -34,9 +34,12 @@ class ObservableDestination implements Disposable {
 
   subscribeArrayWithTracking<TOriginal, TValue extends Disposable>(
     observable: Rx.Observable<TOriginal[]>,
-    getKey: (original: TOriginal) => any, create: (original: TOriginal) => TValue, update: (value: TValue, original: TOriginal) => void,
-    observer: Rx.IObserver<TValue[]>
+    observer: Rx.IObserver<TValue[]>,
+    opts: SubscribeArrayWithTrackingOptions<TOriginal, TValue>
   ) {
+    const getKey = opts.getKey || (orig => orig);
+    const create = opts.create;
+    const update = opts.update || (() => {})
     let valueMap: Map<any, TValue>|undefined;
     const subscription = observable.subscribe(originals => {
       if (valueMap == undefined) {
@@ -53,7 +56,9 @@ class ObservableDestination implements Disposable {
             values.push(instance);
             unusedKeys.delete(key);
           } else {
-            values.push(create(original));
+            const instance = create(original);
+            valueMap.set(key, instance);
+            values.push(instance);
           }
         }
         for (const key of unusedKeys) {
@@ -68,4 +73,10 @@ class ObservableDestination implements Disposable {
     });
     this.disposables.add(subscription);
   }
+}
+
+interface SubscribeArrayWithTrackingOptions<TOriginal, TValue> {
+  getKey?: (original: TOriginal) => any;
+  create: (original: TOriginal) => TValue;
+  update?: (value: TValue, original: TOriginal) => void;
 }

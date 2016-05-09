@@ -23,6 +23,7 @@ class StrokeModel implements Model {
   }
 
   dispose() {
+    console.log("disposing stroke model");
     this.polygon.dispose();
   }
 

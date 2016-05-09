@@ -17,7 +17,8 @@ import ObservableDestination from "../lib/rx/ObservableDestination";
 
 export default
 class Renderer extends ObservableDestination {
-  strokeModels = new AutoDisposeArray<StrokeModel>();
+  strokes = new Variable<Stroke[]>([]);
+  strokeModels = new Variable<StrokeModel[]>([]);
   currentModel: StrokeModel | undefined;
   erasingWidth: number;
   erasingPoints: Vec2[] = [];
@@ -32,6 +33,7 @@ class Renderer extends ObservableDestination {
   backgroundModel: BackgroundModel;
 
   canvas = new Variable<Canvas | undefined>(undefined);
+
 
   constructor(public element: HTMLCanvasElement) {
     super();
@@ -63,19 +65,22 @@ class Renderer extends ObservableDestination {
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
 
-    this.disposables.add(this.strokeModels);
-    this.subscribe(this.strokeModels.spliced, () => this.render());
+    this.subscribe(this.strokeModels.changed, () => this.render());
+
     this.subscribeWithDestination(this.canvas.changed, (canvas, destination) => {
       if (canvas != undefined) {
-        destination.disposables.add(
-          canvas.strokes.bindToOther(this.strokeModels, stroke => {
-            const model = new StrokeModel(gl, this.shader, stroke);
-            model.finalize();
-            return model;
-          })
-        );
+        destination.subscribe(canvas.strokes.changed, this.strokes);
       } else {
-        this.strokeModels.values = [];
+        this.strokes.value = [];
+      }
+    });
+
+    this.subscribeArrayWithTracking(this.strokes.changed, this.strokeModels, {
+      getKey: stroke => stroke.id,
+      create: stroke => {
+        const model = new StrokeModel(gl, this.shader, stroke);
+        model.finalize();
+        return model;
       }
     });
   }
@@ -133,7 +138,7 @@ class Renderer extends ObservableDestination {
     const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
     const collider = new StrokeCollider(this.erasingWidth, vertices);
     const strokeToErase: Stroke[] = [];
-    for (const model of this.strokeModels.values) {
+    for (const model of this.strokeModels.value) {
       if (model.collider.collides(collider)) {
         strokeToErase.push(model.stroke);
       }
@@ -169,7 +174,7 @@ class Renderer extends ObservableDestination {
 
     this.backgroundModel.render(this.viewportTransform, this.transform);
 
-    for (const model of this.strokeModels.values) {
+    for (const model of this.strokeModels.value) {
       model.render(viewportTransform, transform);
     }
     if (this.currentModel) {

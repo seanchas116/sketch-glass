@@ -3,6 +3,7 @@ import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";
 import ObservableArray from "../lib/rx/ObservableArray";
 import CanvasFile from "./CanvasFile";
+import * as Rx from "rx";
 
 function initModel(model: gapi.drive.realtime.Model) {
   model.getRoot().set("shapes", model.createList());
@@ -14,34 +15,30 @@ function loadDocument(fileId: string) {
   });
 }
 
-function mapToObservableArray<TData, TValue>(
-  collaborativeList: gapi.drive.realtime.CollaborativeList<TData>,
-  observableArray: ObservableArray<TValue>,
-  mapper: (data: TData) => TValue
-) {
-  observableArray.values = collaborativeList.asArray().map(mapper);
-
-  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, ({index, values}) => {
-    observableArray.insert(index, values.map(mapper));
-  });
-  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, ({index, values}) => {
-    observableArray.remove(index, values.length);
-  });
-  collaborativeList.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, ({index, newValues}) => {
-    observableArray.replace(index, newValues.map(mapper));
+function observableFromCollaborativeList<T>(list: gapi.drive.realtime.CollaborativeList<T>) {
+  return Rx.Observable.create<T[]>(observer => {
+    const next = () => {
+      observer.onNext(list.asArray());
+    };
+    next();
+    list.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, next);
+    list.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, next);
+    list.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, next);
   });
 }
 
 export default
 class Canvas {
-  strokes = new ObservableArray<Stroke>([]);
+  strokes = new Variable<Stroke[]>([]);
   strokeDataList: gapi.drive.realtime.CollaborativeList<StrokeData>;
   canUndo = new Variable(false);
   canRedo = new Variable(false);
 
   constructor(public document: gapi.drive.realtime.Document) {
     this.strokeDataList = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeList<StrokeData>;
-    mapToObservableArray(this.strokeDataList, this.strokes, (data) => Stroke.fromData(data));
+    observableFromCollaborativeList(this.strokeDataList)
+      .map(list => list.map(data => Stroke.fromData(data)))
+      .subscribe(this.strokes);
     this.updateCanUndoRedo();
   }
 
