@@ -1,4 +1,5 @@
 import Slot from "./Slot";
+import MountPoint from "./MountPoint";
 import ObservableDestination from "../rx/ObservableDestination";
 import Variable from "../rx/Variable";
 import * as Rx from "rx";
@@ -22,10 +23,13 @@ class Component extends ObservableDestination {
 
   clicked = Rx.Observable.fromEvent(this.element, 'click');
 
-  constructor(mountPoint: Element | undefined) {
+  constructor(mountPoint: MountPoint) {
     super();
-    if (mountPoint != undefined) {
-      this.mount(mountPoint);
+    if (mountPoint.parent != undefined) {
+      mountPoint.parent.disposables.add(this);
+    }
+    if (mountPoint.element != undefined) {
+      this.mount(mountPoint.element);
     }
   }
 
@@ -46,5 +50,8 @@ class Component extends ObservableDestination {
   }
   slotFor(selector: string) {
     return new Slot(this.elementFor(selector));
+  }
+  mountPointFor(selector: string) {
+    return {parent: this, element: this.elementFor(selector)};
   }
 }

@@ -1,4 +1,5 @@
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import Renderer from '../renderer/Renderer';
 import Stroke from '../model/Stroke';
 import Vec2 from '../lib/geometry/Vec2';
@@ -231,7 +232,7 @@ class CanvasView extends Component {
 
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
 
-  constructor(mountPoint: Element) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
     const renderer = new Renderer(this.element as HTMLCanvasElement);
     this.strokeHandler = new StrokeHandler(renderer);

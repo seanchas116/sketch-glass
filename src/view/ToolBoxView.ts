@@ -1,4 +1,5 @@
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import ButtonView from "./ButtonView";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
@@ -18,14 +19,14 @@ class ToolBoxView extends Component {
     </div>
   `;
 
-  penButton = new ButtonView(this.elementFor(".pen-button"), "pen");
-  colorButton = new ColorButtonView(this.elementFor(".color-button"));
-  eraserButton = new ButtonView(this.elementFor(".eraser-button"), "eraser");
-  undoButton = new ButtonView(this.elementFor(".undo-button"), "undo");
-  redoButton = new ButtonView(this.elementFor(".redo-button"), "redo");
+  penButton = new ButtonView(this.mountPointFor(".pen-button"), "pen");
+  colorButton = new ColorButtonView(this.mountPointFor(".color-button"));
+  eraserButton = new ButtonView(this.mountPointFor(".eraser-button"), "eraser");
+  undoButton = new ButtonView(this.mountPointFor(".undo-button"), "undo");
+  redoButton = new ButtonView(this.mountPointFor(".redo-button"), "redo");
   buttons = [this.penButton, this.eraserButton, this.undoButton, this.redoButton, this.colorButton];
 
-  constructor(mountPoint: Element) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
 
     const viewModel = appViewModel.toolBoxViewModel;

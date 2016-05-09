@@ -1,4 +1,5 @@
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import Variable from "../lib/rx/Variable";
 import Slot from "../lib/ui/Slot";
 import CanvasFile from "../model/CanvasFile";
@@ -22,7 +23,7 @@ class CanvasFileCell extends Component {
   updatedAtSlot = this.slotFor(".updated-at");
   file = new Variable<CanvasFile>(CanvasFile.empty());
 
-  constructor(mountPoint: Element | undefined) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
     this.file.changed.map(f => f.name).subscribe(this.titleSlot.text());

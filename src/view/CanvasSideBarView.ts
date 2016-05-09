@@ -1,4 +1,5 @@
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
 import Slot from "../lib/ui/Slot";
@@ -31,12 +32,11 @@ class CanvasSideBarView extends Component {
 
   open = new Variable(false);
   users = new ObservableArray<User>();
-  sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "info");
-  userListView = new ListView<UserCell>(this.elementFor(".user-list"));
+  sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
+  userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
 
-  constructor(mountPoint: Element) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
-
     this.subscribe(this.open.changed, this.slot.toggleClass("open"));
     this.subscribe(this.open.changed, this.sidebarButton.isChecked);
     this.subscribe(this.sidebarButton.clicked, () => {

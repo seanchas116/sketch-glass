@@ -1,4 +1,5 @@
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
 import Slot from "../lib/ui/Slot";
@@ -31,20 +32,19 @@ class UserSideBarView extends Component {
   `;
 
   open = new Variable(false);
-  sidebarButton = new ButtonView(this.elementFor(".sidebar-button"), "sidebar");
+  sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "sidebar");
   avatarSlot = this.slotFor(".avatar")
   userNameSlot = this.slotFor(".userName");
 
-  canvasListView = new ListView<CanvasFileCell>(this.elementFor(".canvas-list"));
+  canvasListView = new ListView<CanvasFileCell>(this.mountPointFor(".canvas-list"));
   addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
 
-  constructor(mountPoint: Element) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
-
     this.subscribeArrayWithTracking(appViewModel.files.changed, this.canvasListView.children, {
       getKey: file => file.id,
       create: file => {
-        const component = new CanvasFileCell(undefined);
+        const component = new CanvasFileCell({parent: this.canvasListView});
         component.subscribe(appViewModel.currentFile.changed.map(current => current == file), component.isSelected);
         component.subscribe(component.clicked, () => {
           appViewModel.currentFile.value = file;

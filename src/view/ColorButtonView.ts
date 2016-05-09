@@ -1,5 +1,6 @@
 import Color from "../lib/geometry/Color";
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
 import * as Rx from "rx";
@@ -18,7 +19,7 @@ class ColorButtonView extends Component {
   clicked = Rx.Observable.fromEvent(this.element, 'click');
   colorElem = this.elementFor(".color") as HTMLElement;
 
-  constructor(mountPoint: Element) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
     this.subscribe(this.isChecked.changed, this.slot.toggleClass("checked"));
     this.subscribe(this.isDisabled.changed, this.slot.toggleAttribute("disabled"));

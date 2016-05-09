@@ -1,4 +1,5 @@
 import Component from "../lib/ui/Component";
+import MountPoint from "../lib/ui/MountPoint";
 import Variable from "../lib/rx/Variable";
 import Slot from "../lib/ui/Slot";
 import User from "../model/User";
@@ -16,9 +17,7 @@ class UserCell extends Component {
   avatarSlot = this.slotFor(".avatar");
   nameSlot = this.slotFor(".name");
 
-  constructor(mountPoint: Element | undefined, public user: User) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
-    this.nameSlot.text()(user.displayName);
-    this.avatarSlot.attribute("src")(user.photoLink);
   }
 }

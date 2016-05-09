@@ -1,4 +1,5 @@
 import Component from "./Component";
+import MountPoint from "./MountPoint";
 import Variable from "../rx/Variable";
 
 export default
@@ -8,13 +9,10 @@ class ListView<TChild extends Component> extends Component {
     </div>
   `;
 
-  children = new Variable<TChild[]>([])
+  children = new Variable<TChild[]>([]);
 
-  constructor(
-    mountPoint: Element|undefined
-  ) {
+  constructor(mountPoint: MountPoint) {
     super(mountPoint);
-
     this.subscribe(this.children.changed, () => this._reorder());
   }
 
