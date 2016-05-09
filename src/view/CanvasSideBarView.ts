@@ -44,11 +44,20 @@ class CanvasSideBarView extends Component {
     this.subscribe(this.sidebarButton.clicked, () => {
       this.open.value = !this.open.value;
     });
-    this.subscribe(appViewModel.currentFile.changed, async (current) => {
-      if (current != undefined) {
-        this.users.value = await current.fetchUsers();
+    this.subscribeWithDestination(appViewModel.canvasViewModel.changed, (canvasVM, dest) => {
+      if (canvasVM != undefined) {
+        dest.subscribe(canvasVM.users.changed, this.users);
+        dest.subscribe(this.addUserClicked, () => {
+          //      ↓ FIXME: possibly a TypeScript bug
+          canvasVM!.openShareDialog();
+        });
+        dest.subscribe(this.canvasNameClicked, () => {
+          window.open(`https://drive.google.com/open?id=${canvasVM!.canvas.file.id}`, "_blank");
+        });
+      } else {
+        this.users.value = [];
       }
-    });
+    })
     this.subscribeArrayWithTracking(this.users.changed, this.userListView.children, {
       getKey: (user) => user.permissionId,
       create: (user) => {
@@ -58,18 +67,6 @@ class CanvasSideBarView extends Component {
       },
       update: (cell, user) => {
         cell.user.value = user;
-      }
-    });
-    this.subscribe(this.addUserClicked, () => {
-      const canvasVM = appViewModel.canvasViewModel.value;
-      if (canvasVM) {
-        canvasVM.openShareDialog();
-      }
-    });
-    this.subscribe(this.canvasNameClicked, () => {
-      const canvasVM = appViewModel.canvasViewModel.value;
-      if (canvasVM) {
-        window.open(`https://drive.google.com/open?id=${canvasVM.canvas.file.id}`, "_blank");
       }
     });
   }
