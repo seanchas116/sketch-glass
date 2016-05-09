@@ -54,4 +54,10 @@ class Component extends ObservableDestination {
   mountPointFor(selector: string) {
     return {parent: this, element: this.elementFor(selector)};
   }
+
+  static newInRoot() {
+    const component = new this({});
+    document.body.appendChild(component.element);
+    return component;
+  }
 }

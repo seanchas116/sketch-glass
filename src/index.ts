@@ -5,7 +5,7 @@ require("babel-regenerator-runtime");
 import MainView from './view/MainView';
 
 async function initApp() {
-  new MainView({element: document.getElementById("root")});
+  MainView.newInRoot();
 }
 
 document.addEventListener("DOMContentLoaded", initApp);

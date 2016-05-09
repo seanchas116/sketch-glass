@@ -32,7 +32,7 @@ class MainView extends Component {
     this.subscribe(appViewModel.isLoading.changed.map(x => !x), this.loadingBar.isHidden());
 
     this.subscribe(appViewModel.isLoginNeeded.changed.filter(x => x), () => {
-      LoginDialog.open();
+      LoginDialog.newInRoot();
     });
   }
 }

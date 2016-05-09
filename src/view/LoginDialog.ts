@@ -25,10 +25,4 @@ class LoginDialog extends Component {
     await appViewModel.logIn();
     this.dispose();
   }
-
-  static open() {
-    const dialog = new LoginDialog({});
-    document.body.appendChild(dialog.element);
-    return dialog;
-  }
 }
