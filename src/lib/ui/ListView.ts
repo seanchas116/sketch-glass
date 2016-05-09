@@ -27,8 +27,8 @@ class ListView<TChild extends Component> extends Component {
 
   private _reorder() {
     const {element} = this;
-    for (const child of this.children.value) {
-      element.appendChild(child.element);
+    for (const [index, child] of this.children.value.entries()) {
+      element.insertBefore(child.element, element.childNodes[index]);
     }
   }
 }
