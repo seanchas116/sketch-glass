@@ -1,17 +1,27 @@
 import * as GoogleAPI from "../lib/GoogleAPI";
 
+interface CanvasFileInitData {
+  id: string;
+  name: string;
+  modifiedTime: Date;
+}
+
 export default
 class CanvasFile {
   id: string;
   name: string;
   modifiedTime: Date;
 
+  constructor(data: CanvasFileInitData) {
+    this.id = data.id;
+    this.name = data.name;
+    this.modifiedTime = data.modifiedTime;
+  }
+
   static empty() {
-    const file = new CanvasFile();
-    file.id = "";
-    file.name = "";
-    file.modifiedTime = new Date();
-    return file;
+    return new CanvasFile({
+      id: "", name: "", modifiedTime: new Date()
+    });
   }
 
   static async create() {
@@ -25,11 +35,11 @@ class CanvasFile {
   }
 
   static fromData(data: any) {
-    const file = new CanvasFile();
-    file.id = data.id;
-    file.name = data.name;
-    file.modifiedTime = new Date(data.modifiedTime);
-    return file;
+    return new CanvasFile({
+      id: data.id,
+      name: data.name,
+      modifiedTime: new Date(data.modifiedTime),
+    });
   }
 
   static async list() {
