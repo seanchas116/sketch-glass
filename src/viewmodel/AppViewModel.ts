@@ -7,6 +7,7 @@ import CanvasViewModel from "./CanvasViewModel";
 import ToolBoxViewModel from "./ToolBoxViewModel";
 import * as Auth from "../Auth";
 import * as GoogleAPI from "../lib/GoogleAPI";
+import * as Rx from "rx";
 
 export default
 class AppViewModel extends ObservableDestination {
@@ -83,7 +84,11 @@ class AppViewModel extends ObservableDestination {
   constructor() {
     super();
     this.init();
-    this.subscribe(this.canvasViewModel.changed.map(vm => vm == undefined), this.isLoading);
+    const loading = Rx.Observable.combineLatest(
+      [this.canvasViewModel.changed.map(vm => vm != undefined), this.isLoginNeeded.changed],
+      (hasCanvas, loginNeeded) => !hasCanvas && !loginNeeded
+    );
+    this.subscribe(loading, this.isLoading);
   }
 }
 
