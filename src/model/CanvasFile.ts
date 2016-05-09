@@ -1,4 +1,5 @@
 import * as GoogleAPI from "../lib/GoogleAPI";
+import User from "./User";
 
 interface CanvasFileInitData {
   id: string;
@@ -16,6 +17,19 @@ class CanvasFile {
     this.id = data.id;
     this.name = data.name;
     this.modifiedTime = data.modifiedTime;
+  }
+
+  async fetchUsers() {
+    const data = await GoogleAPI.get<any>(`https://www.googleapis.com/drive/v3/files/${this.id}/permissions`, {
+      fields: "permissions(displayName,id,photoLink)"
+    });
+    return (data.permissions as any[]).map(p => {
+      return new User({
+        permissionId: p.id,
+        displayName: p.displayName,
+        photoLink: p.photoLink,
+      });
+    });
   }
 
   static empty() {

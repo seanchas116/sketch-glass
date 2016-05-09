@@ -27,7 +27,7 @@ class User {
   }
 
   static async current() {
-    const {user} = await GoogleAPI.get<any>("https://www.googleapis.com/drive/v3/about", {fields: "user" });
+    const {user} = await GoogleAPI.get<any>("https://www.googleapis.com/drive/v3/about", {fields: "user"});
     return new User({
       permissionId: user.permissionId,
       displayName: user.displayName,

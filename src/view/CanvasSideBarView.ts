@@ -31,7 +31,7 @@ class CanvasSideBarView extends Component {
   `;
 
   open = new Variable(false);
-  users = new ObservableArray<User>();
+  users = new Variable<User[]>([]);
   sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
   userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
 
@@ -42,5 +42,21 @@ class CanvasSideBarView extends Component {
     this.subscribe(this.sidebarButton.clicked, () => {
       this.open.value = !this.open.value;
     });
+    this.subscribe(appViewModel.currentFile.changed, async (current) => {
+      if (current != undefined) {
+        this.users.value = await current.fetchUsers();
+      }
+    });
+    this.subscribeArrayWithTracking(this.users.changed, this.userListView.children, {
+      getKey: (user) => user.permissionId,
+      create: (user) => {
+        const cell = new UserCell({parent: this.userListView});
+        cell.user.value = user;
+        return cell;
+      },
+      update: (cell, user) => {
+        cell.user.value = user;
+      }
+    })
   }
 }
