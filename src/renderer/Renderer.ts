@@ -12,7 +12,6 @@ import StrokeModel from "./StrokeModel";
 import BackgroundModel from "./BackgroundModel";
 import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
-import AutoDisposeArray from "../lib/rx/AutoDisposeArray";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 
 export default

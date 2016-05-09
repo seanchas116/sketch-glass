@@ -1,7 +1,6 @@
 import Stroke, {StrokeData} from './Stroke';
 import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";
-import ObservableArray from "../lib/rx/ObservableArray";
 import CanvasFile from "./CanvasFile";
 import * as Rx from "rx";
 

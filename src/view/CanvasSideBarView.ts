@@ -4,7 +4,6 @@ import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
 import Slot from "../lib/ui/Slot";
 import ListView from "../lib/ui/ListView";
-import ObservableArray from "../lib/rx/ObservableArray";
 import User from "../model/User";
 import UserCell from "./UserCell";
 import {appViewModel} from "../viewmodel/AppViewModel";

@@ -1,5 +1,4 @@
 import Variable from "../lib/rx/Variable";
-import ObservableArray from "../lib/rx/ObservableArray";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 import User from "../model/User";
 import Canvas from "../model/Canvas";
