@@ -16,7 +16,6 @@ class MainView extends Component {
       <div class='palette-view'></div>
       <div class='user-sidebar-view'></div>
       <div class='canvas-sidebar-view'></div>
-      <div class='login-dialog'></div>
       <div class="sg-loading-bar"></div>
     </div>
   `;
@@ -25,12 +24,15 @@ class MainView extends Component {
   userSideBarView = new UserSideBarView(this.mountPointFor(".user-sidebar-view"));
   toolBoxView = new ToolBoxView(this.mountPointFor(".palette-view"));
   canvasSideBarView = new CanvasSideBarView(this.mountPointFor(".canvas-sidebar-view"));
-  loginDialog = new LoginDialog(this.mountPointFor(".login-dialog"));
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
     const canvasVM = appViewModel.canvasViewModel;
     this.subscribe(canvasVM.changed, this.canvasView.canvasViewModel);
     this.subscribe(appViewModel.isLoading.changed.map(x => !x), this.loadingBar.isHidden());
+
+    this.subscribe(appViewModel.isLoginNeeded.changed.filter(x => x), () => {
+      LoginDialog.open();
+    });
   }
 }

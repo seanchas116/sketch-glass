@@ -18,11 +18,17 @@ class LoginDialog extends Component {
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
-    this.subscribe(appViewModel.isLoginNeeded.changed.map(x => !x), this.slot.isHidden());
     this.subscribe(this.clicked, () => this.auth());
   }
 
-  auth() {
-    appViewModel.logIn();
+  async auth() {
+    await appViewModel.logIn();
+    this.dispose();
+  }
+
+  static open() {
+    const dialog = new LoginDialog({});
+    document.body.appendChild(dialog.element);
+    return dialog;
   }
 }
