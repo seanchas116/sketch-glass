@@ -70,7 +70,7 @@ class AppViewModel extends ObservableDestination {
 
     await GoogleAPI.init();
     await Promise.all([
-      GoogleAPI.load("drive-realtime"),
+      GoogleAPI.load("drive-realtime,drive-share"),
       this.checkAuth()
     ]);
     this.initData();

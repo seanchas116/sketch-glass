@@ -33,7 +33,7 @@ class Canvas {
   canUndo = new Variable(false);
   canRedo = new Variable(false);
 
-  constructor(public document: gapi.drive.realtime.Document) {
+  constructor(public file: CanvasFile, public document: gapi.drive.realtime.Document) {
     this.strokeDataList = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeList<StrokeData>;
     observableFromCollaborativeList(this.strokeDataList)
       .map(list => list.map(data => Stroke.fromData(data)))
@@ -77,6 +77,6 @@ class Canvas {
 
   static async fromFile(file: CanvasFile) {
     const document = await loadDocument(file.id);
-    return new Canvas(document);
+    return new Canvas(file, document);
   }
 }

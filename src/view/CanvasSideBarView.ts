@@ -34,6 +34,7 @@ class CanvasSideBarView extends Component {
   users = new Variable<User[]>([]);
   sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
   userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
+  canvasNameClicked = Rx.Observable.fromEvent(this.elementFor(".canvas-name"), 'click');
   addUserClicked = Rx.Observable.fromEvent(this.elementFor(".add-user"), 'click');
 
   constructor(mountPoint: MountPoint) {
@@ -58,6 +59,18 @@ class CanvasSideBarView extends Component {
       update: (cell, user) => {
         cell.user.value = user;
       }
-    })
+    });
+    this.subscribe(this.addUserClicked, () => {
+      const canvasVM = appViewModel.canvasViewModel.value;
+      if (canvasVM) {
+        canvasVM.openShareDialog();
+      }
+    });
+    this.subscribe(this.canvasNameClicked, () => {
+      const canvasVM = appViewModel.canvasViewModel.value;
+      if (canvasVM) {
+        window.open(`https://drive.google.com/open?id=${canvasVM.canvas.file.id}`, "_blank");
+      }
+    });
   }
 }

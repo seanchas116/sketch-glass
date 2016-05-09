@@ -2,6 +2,9 @@ import config from "./config";
 import Variable from "./lib/rx/Variable";
 import * as GoogleAPI from "./lib/GoogleAPI";
 
+export
+let accessToken = "";
+
 function wait(ms: number) {
   return new Promise(resolve => {
     setTimeout(resolve, ms);
@@ -22,6 +25,7 @@ export
 async function check() {
   try {
     const result = await GoogleAPI.authorize(config.google.clientID, {immediate: true});
+    accessToken = result.access_token;
     refetchToken(parseInt(result.expires_in));
     return true;
   } catch (error) {
@@ -32,4 +36,5 @@ async function check() {
 export
 async function popup() {
   const result = await GoogleAPI.authorize(config.google.clientID, {immediate: false});
+  accessToken = result.access_token;
 }
