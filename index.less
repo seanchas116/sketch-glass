@@ -446,25 +446,28 @@ button {
   position: absolute;
   top: 0; left: 0; width: 100vw; height: 100vh;
   background-color: rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .dialog {
     background-color: white;
-    position: absolute;
     width: 600px;
-    height: 300px;
-    top: 0; left: 0; bottom: 0; right: 0;
-    margin: auto;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     h1 {
       font-size: 24px;
+      line-height: 24px;
       color: #222325;
       font-weight: normal;
       width: 100%;
-      margin-top: 72px;
-      margin-bottom: 72px;
+      margin-bottom: 24px;
     }
     button {
-      display: inline-block;
       background-color: #FF4503;
       height: 40px;
       font-size: 18px;
