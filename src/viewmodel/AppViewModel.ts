@@ -31,14 +31,17 @@ class AppViewModel extends ObservableDestination {
   }
 
   async fetchUser() {
+    await this.waitForAuth();
     this.user.value = await User.current();
   }
 
   async fetchFiles() {
+    await this.waitForAuth();
     this.files.value = await CanvasFile.list();
   }
 
   async addFile() {
+    await this.waitForAuth();
     const file = await CanvasFile.create();
     await this.fetchFiles();
     this.currentFile.value = this.files.value[0];
@@ -59,10 +62,6 @@ class AppViewModel extends ObservableDestination {
   }
 
   async init() {
-    this.subscribe(this.isAuthenticated.changed.filter(a => a), () => {
-      this.initData();
-    });
-
     this.subscribe(this.currentFile.changed, async (file) => {
       this.canvasViewModel.value = undefined;
       if (file == undefined) { return; }
@@ -75,6 +74,11 @@ class AppViewModel extends ObservableDestination {
       GoogleAPI.load("drive-realtime"),
       this.checkAuth()
     ]);
+    this.initData();
+  }
+
+  waitForAuth() {
+    return this.isAuthenticated.changed.filter(a => a).first().toPromise();
   }
 
   constructor() {
