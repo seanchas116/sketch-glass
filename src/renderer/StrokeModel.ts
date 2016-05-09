@@ -9,6 +9,7 @@ import Transform from "../lib/geometry/Transform";
 
 export default
 class StrokeModel implements Model {
+  isDisposed = false;
   polygon = new Polygon(this.gl, []);
   lastSectionLength = 0;
   collider: StrokeCollider;
@@ -23,8 +24,11 @@ class StrokeModel implements Model {
   }
 
   dispose() {
-    console.log("disposing stroke model");
-    this.polygon.dispose();
+    if (!this.isDisposed) {
+      console.log("disposing stroke model");
+      this.polygon.dispose();
+      this.isDisposed = true;
+    }
   }
 
   addPoint(pos: Vec2) {

@@ -6,7 +6,9 @@ class ObservableDestination implements Disposable {
   isDisposed = false;
 
   dispose() {
-    this.disposables.dispose();
+    if (!this.isDisposed) {
+      this.disposables.dispose();
+    }
     this.isDisposed = true;
   }
 

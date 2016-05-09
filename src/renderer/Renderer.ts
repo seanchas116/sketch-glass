@@ -34,7 +34,6 @@ class Renderer extends ObservableDestination {
 
   canvas = new Variable<Canvas | undefined>(undefined);
 
-
   constructor(public element: HTMLCanvasElement) {
     super();
 
@@ -86,10 +85,15 @@ class Renderer extends ObservableDestination {
   }
 
   dispose() {
-    super.dispose();
-    if (this.currentModel) {
-      this.currentModel.dispose();
+    if (!this.isDisposed) {
+      if (this.currentModel) {
+        this.currentModel.dispose();
+      }
+      for (const model of this.strokeModels.value) {
+        model.dispose();
+      }
     }
+    super.dispose();
   }
 
   strokeBegin(width: number, color: Color) {
