@@ -36,8 +36,10 @@ class CanvasFileViewModel {
   }
 
   async rename(name: string) {
-    this.name.value = name;
-    await CanvasFile.rename(this.id, name);
+    if (this.name.value != name) {
+      this.name.value = name;
+      await CanvasFile.rename(this.id, name);
+    }
   }
 
   dispose() {
