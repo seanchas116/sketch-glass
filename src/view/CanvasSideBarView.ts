@@ -4,6 +4,7 @@ import Variable from "../lib/rx/Variable";
 import ButtonView from "./ButtonView";
 import Slot from "../lib/ui/Slot";
 import ListView from "../lib/ui/ListView";
+import ClickToEditView from "./ClickToEditView";
 import User from "../model/User";
 import UserCell from "./UserCell";
 import {appViewModel} from "../viewmodel/AppViewModel";
@@ -16,7 +17,7 @@ class CanvasSideBarView extends Component {
       <aside class="sg-sidebar-content">
         <div class="canvas-header">
           <img class="thumbnail">
-          <h1 class="canvas-name"></h1>
+          <div class="canvas-name"></div>
           <span class="oi reveal" data-glyph="external-link"></span>
         </div>
         <div class="users-header">
@@ -33,7 +34,7 @@ class CanvasSideBarView extends Component {
 
   open = new Variable(false);
   users = new Variable<User[]>([]);
-  nameSlot = this.slotFor(".canvas-name");
+  nameEdit = new ClickToEditView(this.mountPointFor(".canvas-name"));
   sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
   userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
   revealClicked = Rx.Observable.fromEvent(this.elementFor(".reveal"), 'click');
@@ -58,7 +59,8 @@ class CanvasSideBarView extends Component {
           const id = canvasVM!.canvas.file.id;
           window.open(`https://drive.google.com/drive/blank?action=locate&id=${id}`, "_blank");
         });
-        dest.subscribe(canvasVM.fileVM.name.changed, this.nameSlot.text());
+        dest.subscribe(canvasVM.fileVM.name.changed, this.nameEdit.text);
+        dest.subscribe(this.nameEdit.textEdited, text => canvasVM!.fileVM.rename(text));
         this.refreshUsers();
       } else {
         this.users.value = [];
