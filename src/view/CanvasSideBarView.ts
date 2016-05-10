@@ -54,7 +54,8 @@ class CanvasSideBarView extends Component {
           canvasVM!.fileVM.openShareDialog();
         });
         dest.subscribe(this.canvasNameClicked, () => {
-          window.open(`https://drive.google.com/open?id=${canvasVM!.canvas.file.id}`, "_blank");
+          const id = canvasVM!.canvas.file.id;
+          window.open(`https://drive.google.com/drive/blank?action=locate&id=${id}`, "_blank");
         });
         dest.subscribe(canvasVM.fileVM.name.changed, this.nameSlot.text());
         this.refreshUsers();
