@@ -37,6 +37,7 @@ class UserSideBarView extends Component {
   userNameSlot = this.slotFor(".userName");
 
   canvasListView = new ListView<CanvasFileCell>(this.mountPointFor(".canvas-list"));
+  currentCanvasCell = new Variable<CanvasFileCell|undefined>(undefined);
   addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
 
   constructor(mountPoint: MountPoint) {
@@ -46,6 +47,9 @@ class UserSideBarView extends Component {
       create: file => {
         const component = new CanvasFileCell({parent: this.canvasListView});
         component.subscribe(appViewModel.currentFile.changed.map(current => current == file), component.isSelected);
+        component.subscribe(component.isSelected.changed, () => {
+          this.currentCanvasCell.value = component;
+        });
         component.subscribe(component.clicked, () => {
           appViewModel.currentFile.value = file;
         });
@@ -69,8 +73,16 @@ class UserSideBarView extends Component {
       this.avatarSlot.attribute("src")(user.photoLink);
     });
 
-    this.subscribe(this.addCanvasClicked, () => appViewModel.addFile());
+    this.subscribe(this.addCanvasClicked, () => this.addFile());
     this.subscribe(this.open.changed, () => this.refreshFiles());
+  }
+
+  async addFile() {
+    await appViewModel.addFile();
+    const cell = this.currentCanvasCell.value;
+    if (cell != undefined) {
+      cell.titleEdit.startEditing();
+    }
   }
 
   refreshFiles() {
