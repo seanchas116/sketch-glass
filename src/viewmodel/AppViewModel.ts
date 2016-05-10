@@ -67,7 +67,7 @@ class AppViewModel extends ObservableDestination {
     this.subscribe(this.currentFileVM.changed, async (vm) => {
       this.canvasViewModel.value = undefined;
       if (vm == undefined) { return; }
-      const canvas = await Canvas.fromFile(vm.file.value);
+      const canvas = await Canvas.fromFile(vm.file);
       this.canvasViewModel.value = new CanvasViewModel(canvas, vm);
     });
 
@@ -97,7 +97,7 @@ class AppViewModel extends ObservableDestination {
         return new CanvasFileViewModel(file);
       },
       update: (vm, file) => {
-        vm.file.value = file;
+        vm.update(file);
       }
     });
   }

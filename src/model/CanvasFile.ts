@@ -19,14 +19,14 @@ class CanvasFile {
     this.modifiedTime = data.modifiedTime;
   }
 
-  async rename(newName: string) {
-    await GoogleAPI.patch(`https://www.googleapis.com/drive/v3/files/${this.id}`, {}, {
+  static async rename(id: string, newName: string) {
+    await GoogleAPI.patch(`https://www.googleapis.com/drive/v3/files/${id}`, {}, {
       name: newName
     });
   }
 
-  async fetchUsers() {
-    const data = await GoogleAPI.get<any>(`https://www.googleapis.com/drive/v3/files/${this.id}/permissions`, {
+  static async fetchUsers(id: string) {
+    const data = await GoogleAPI.get<any>(`https://www.googleapis.com/drive/v3/files/${id}/permissions`, {
       fields: "permissions(displayName,id,photoLink)"
     });
     return (data.permissions as any[]).map(p => {

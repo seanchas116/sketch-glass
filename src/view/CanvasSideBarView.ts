@@ -16,7 +16,7 @@ class CanvasSideBarView extends Component {
       <aside class="sg-sidebar-content">
         <div class="canvas-header">
           <img class="thumbnail">
-          <h1 class="canvas-name">Untitled</h1>
+          <h1 class="canvas-name"></h1>
         </div>
         <div class="users-header">
           <h2>Users</h2>
@@ -32,6 +32,7 @@ class CanvasSideBarView extends Component {
 
   open = new Variable(false);
   users = new Variable<User[]>([]);
+  nameSlot = this.slotFor(".canvas-name");
   sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
   userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
   canvasNameClicked = Rx.Observable.fromEvent(this.elementFor(".canvas-name"), 'click');
@@ -55,6 +56,7 @@ class CanvasSideBarView extends Component {
         dest.subscribe(this.canvasNameClicked, () => {
           window.open(`https://drive.google.com/open?id=${canvasVM!.canvas.file.id}`, "_blank");
         });
+        dest.subscribe(canvasVM.fileVM.name.changed, this.nameSlot.text());
         this.refreshUsers();
       } else {
         this.users.value = [];

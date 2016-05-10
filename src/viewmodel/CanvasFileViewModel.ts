@@ -10,10 +10,34 @@ declare module gapi.drive.share {
 
 export default
 class CanvasFileViewModel {
-  file: Variable<CanvasFile>;
+  id: string;
+  name = new Variable("");
+  modifiedTime = new Variable(new Date());
 
   constructor(file: CanvasFile) {
-    this.file = new Variable(file);
+    this.id = file.id;
+    this.update(file);
+  }
+
+  update(file: CanvasFile) {
+    if (this.id != file.id) {
+      throw new Error("wrong file ID");
+    }
+    this.name.value = file.name;
+    this.modifiedTime.value = file.modifiedTime;
+  }
+
+  get file() {
+    return new CanvasFile({
+      id: this.id,
+      name: this.name.value,
+      modifiedTime: this.modifiedTime.value
+    });
+  }
+
+  async rename(name: string) {
+    this.name.value = name;
+    await CanvasFile.rename(this.id, name);
   }
 
   dispose() {
@@ -22,8 +46,7 @@ class CanvasFileViewModel {
   async openShareDialog() {
     const shareClient = new gapi.drive.share.ShareClient();
     shareClient.setOAuthToken(Auth.accessToken);
-    shareClient.setItemIds([this.file.value.id]);
+    shareClient.setItemIds([this.id]);
     shareClient.showSettingsDialog();
   }
-
 }

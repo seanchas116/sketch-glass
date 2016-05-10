@@ -28,13 +28,12 @@ class CanvasFileCell extends Component {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
     this.subscribe(this.isSelected.changed, this.titleEdit.isEditingEnabled);
-    this.subscribe(fileVM.file.changed.map(f => f.name), this.titleEdit.text);
-    this.subscribe(fileVM.file.changed.map(f => moment(f.modifiedTime).fromNow()), this.updatedAtSlot.text());
+    this.subscribe(fileVM.name.changed, this.titleEdit.text);
+    this.subscribe(fileVM.modifiedTime.changed.map(t => moment(t).fromNow()), this.updatedAtSlot.text());
     this.subscribe(this.titleEdit.textEdited, name => this.updateName(name));
   }
 
   async updateName(name: string) {
-    this.titleEdit.text.value = name;
-    await this.fileVM.file.value.rename(name);
+    await this.fileVM.rename(name);
   }
 }

@@ -2,6 +2,7 @@ import Transform from '../lib/geometry/Transform';
 import Variable from "../lib/rx/Variable";
 import Canvas from "../model/Canvas";
 import User from "../model/User";
+import CanvasFile from "../model/CanvasFile";
 import CanvasFileViewModel from "./CanvasFileViewModel";
 import * as Auth from "../Auth";
 
@@ -19,6 +20,6 @@ class CanvasViewModel {
   }
 
   async fetchUsers() {
-    this.users.value = await this.canvas.file.fetchUsers();
+    this.users.value = await CanvasFile.fetchUsers(this.fileVM.id);
   }
 }
