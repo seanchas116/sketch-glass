@@ -19,7 +19,7 @@ class ClickToEditView extends Component {
   editSlot = this.slotFor(".edit");
   textSlot = this.slotFor(".text");
   textClicked = Rx.Observable.fromEvent(this.textSlot.element, 'click');
-  editEntered = Rx.Observable.fromEvent<KeyboardEvent>(this.editSlot.element, 'keyup').filter(e => e.keyCode == 13);
+  editEntered = Rx.Observable.fromEvent<KeyboardEvent>(this.editSlot.element, 'keypress').filter(e => e.keyCode == 13);
   textEdited = new Rx.Subject<string>();
 
   constructor(mountPoint: MountPoint) {
