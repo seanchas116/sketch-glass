@@ -42,6 +42,7 @@ gulp.task("tslint", shell.task([
 
 gulp.task("less", () => {
   return gulp.src("index.less")
+    .pipe(notifyError())
     .pipe(sourcemaps.init())
     .pipe(less())
     .pipe(sourcemaps.write())
