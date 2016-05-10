@@ -48,6 +48,7 @@
     "normalize.css": "^4.1.1",
     "open-iconic": "^1.1.1",
     "page": "^1.7.1",
+    "perfect-scrollbar": "^0.6.11",
     "rx": "^4.1.0",
     "sat": "^0.5.0",
     "setimmediate": "^1.0.4",

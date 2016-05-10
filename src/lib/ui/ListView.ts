@@ -1,6 +1,7 @@
 import Component from "./Component";
 import MountPoint from "./MountPoint";
 import Variable from "../rx/Variable";
+const Ps = require('perfect-scrollbar');
 
 export default
 class ListView<TChild extends Component> extends Component {
@@ -13,6 +14,7 @@ class ListView<TChild extends Component> extends Component {
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
+    Ps.initialize(this.element);
     this.subscribe(this.children.changed, () => this._reorder());
   }
 
