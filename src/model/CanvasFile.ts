@@ -19,6 +19,12 @@ class CanvasFile {
     this.modifiedTime = data.modifiedTime;
   }
 
+  async rename(newName: string) {
+    await GoogleAPI.patch(`https://www.googleapis.com/drive/v3/files/${this.id}`, {}, {
+      name: newName
+    });
+  }
+
   async fetchUsers() {
     const data = await GoogleAPI.get<any>(`https://www.googleapis.com/drive/v3/files/${this.id}/permissions`, {
       fields: "permissions(displayName,id,photoLink)"

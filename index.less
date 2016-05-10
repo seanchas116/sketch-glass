@@ -17,6 +17,34 @@ button {
   -webkit-overflow-scrolling: touch;
 }
 
+.sg-click-to-edit {
+  display: flex;
+  > * {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    color: white;
+  }
+
+  .edit {
+    display: none;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    width: 100%;
+  }
+  .text {
+  }
+  &.editing {
+    .edit {
+      display: block;
+    }
+    .text {
+      display: none;
+    }
+  }
+}
+
 .sg-loading-bar {
   @bar-width: 200px;
   @bar-height: 2px;
@@ -216,14 +244,18 @@ button {
     .thumbnail {
       width: 48px;
       height: 36px;
+      min-width: 48px;
+      min-height: 36px;
       margin: 0 18px;
       background-color: white;
       border: 1px solid #979797;
     }
     .info {
+      margin-right: 18px;
+      flex: 1;
       .title {
         margin: 0;
-        font-size: 16px;
+        font-size: 18px;
       }
       .updated-at {
         margin: 0;

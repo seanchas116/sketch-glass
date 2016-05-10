@@ -53,3 +53,8 @@ export
 function post<T>(path: string, params: any = {}, body: any = undefined) {
   return request<T>("POST", path, params, body);
 }
+
+export
+function patch<T>(path: string, params: any = {}, body: any = undefined) {
+  return request<T>("PATCH", path, params, body);
+}

@@ -4,6 +4,7 @@ import Variable from "../lib/rx/Variable";
 import Slot from "../lib/ui/Slot";
 import CanvasFile from "../model/CanvasFile";
 import * as moment from "moment";
+import ClickToEditView from "./ClickToEditView";
 
 export default
 class CanvasFileCell extends Component {
@@ -11,7 +12,7 @@ class CanvasFileCell extends Component {
     <div class="sg-canvas-cell">
       <div class="thumbnail"></div>
       <div class="info">
-        <p class="title">Design sketch</p>
+        <div class="title"></div>
         <p class="updated-at">2 days ago</p>
       </div>
     </div>
@@ -19,14 +20,21 @@ class CanvasFileCell extends Component {
 
   isSelected = new Variable(false);
   thumbnailSlot = this.slotFor(".thumbnail");
-  titleSlot = this.slotFor(".title");
   updatedAtSlot = this.slotFor(".updated-at");
+  titleEdit = new ClickToEditView(this.mountPointFor(".title"));
   file = new Variable<CanvasFile>(CanvasFile.empty());
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
-    this.file.changed.map(f => f.name).subscribe(this.titleSlot.text());
-    this.file.changed.map(f => moment(f.modifiedTime).fromNow()).subscribe(this.updatedAtSlot.text());
+    this.subscribe(this.isSelected.changed, this.titleEdit.isEditingEnabled);
+    this.subscribe(this.file.changed.map(f => f.name), this.titleEdit.text);
+    this.subscribe(this.file.changed.map(f => moment(f.modifiedTime).fromNow()), this.updatedAtSlot.text());
+    this.subscribe(this.titleEdit.textEdited, name => this.updateName(name));
+  }
+
+  async updateName(name: string) {
+    this.titleEdit.text.value = name;
+    await this.file.value.rename(name);
   }
 }
