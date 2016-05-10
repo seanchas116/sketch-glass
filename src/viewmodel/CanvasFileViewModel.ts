@@ -11,11 +11,9 @@ declare module gapi.drive.share {
 export default
 class CanvasFileViewModel {
   file: Variable<CanvasFile>;
-  users = new Variable<User[]>([]);
 
   constructor(file: CanvasFile) {
     this.file = new Variable(file);
-    this.fetchUsers();
   }
 
   dispose() {
@@ -28,7 +26,4 @@ class CanvasFileViewModel {
     shareClient.showSettingsDialog();
   }
 
-  async fetchUsers() {
-    this.users.value = await this.file.value.fetchUsers();
-  }
 }

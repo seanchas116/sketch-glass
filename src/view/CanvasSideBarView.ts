@@ -47,7 +47,7 @@ class CanvasSideBarView extends Component {
     });
     this.subscribeWithDestination(appViewModel.canvasViewModel.changed, (canvasVM, dest) => {
       if (canvasVM != undefined) {
-        dest.subscribe(canvasVM.fileVM.users.changed, this.users);
+        dest.subscribe(canvasVM.users.changed, this.users);
         dest.subscribe(this.addUserClicked, () => {
           //      ↓ FIXME: possibly a TypeScript bug
           canvasVM!.fileVM.openShareDialog();
@@ -77,7 +77,7 @@ class CanvasSideBarView extends Component {
     const canvasVM = appViewModel.canvasViewModel.value;
     if (this.open.value && canvasVM) {
       console.log("refresh users");
-      canvasVM.fileVM.fetchUsers();
+      canvasVM.fetchUsers();
       setTimeout(() => this.refreshUsers(), 2000);
     }
   }
