@@ -19,6 +19,7 @@ class ClickToEditView extends Component {
   editSlot = this.slotFor(".edit");
   textSlot = this.slotFor(".text");
   textClicked = Rx.Observable.fromEvent(this.textSlot.element, 'click');
+  editBlurred = Rx.Observable.fromEvent(this.editSlot.element, 'blur');
   editEntered = Rx.Observable.fromEvent<KeyboardEvent>(this.editSlot.element, 'keypress').filter(e => e.keyCode == 13);
   textEdited = new Rx.Subject<string>();
 
@@ -30,6 +31,7 @@ class ClickToEditView extends Component {
     this.subscribe(this.textClicked, () => this.startEditing());
     this.subscribe(this.editEntered, () => this.endEditing());
     this.subscribe(this.isEditingEnabled.changed.filter(x => !x), () => this.endEditing());
+    this.subscribe(this.editBlurred, () => this.endEditing());
   }
 
   startEditing() {
