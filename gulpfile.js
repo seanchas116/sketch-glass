@@ -19,6 +19,7 @@ const less = require("gulp-less")
 const iconfont = require("gulp-iconfont");
 const manifest = require("gulp-manifest");
 const envify = require('envify/custom');
+const mergeStream = require("merge-stream");
 
 const runTimestamp = Math.round(Date.now()/1000);
 
@@ -50,8 +51,12 @@ gulp.task("less", () => {
 });
 
 gulp.task("copy-vendor", () => {
-  return gulp.src("node_modules/normalize.css/normalize.css")
-    .pipe(gulp.dest("./dist/vendor"));
+  const files = gulp.src([
+    "node_modules/normalize.css/normalize.css",
+    "node_modules/open-iconic/font/css/open-iconic.css",
+    "node_modules/open-iconic/font/fonts/*",
+  ], {base: "node_modules"});
+  return files.pipe(gulp.dest("./dist/vendor"));
 });
 
 gulp.task("iconfont", () => {
