@@ -17,6 +17,7 @@ class CanvasSideBarView extends Component {
         <div class="canvas-header">
           <img class="thumbnail">
           <h1 class="canvas-name"></h1>
+          <span class="oi reveal" data-glyph="external-link"></span>
         </div>
         <div class="users-header">
           <h2>Users</h2>
@@ -35,7 +36,7 @@ class CanvasSideBarView extends Component {
   nameSlot = this.slotFor(".canvas-name");
   sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
   userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
-  canvasNameClicked = Rx.Observable.fromEvent(this.elementFor(".canvas-name"), 'click');
+  revealClicked = Rx.Observable.fromEvent(this.elementFor(".reveal"), 'click');
   addUserClicked = Rx.Observable.fromEvent(this.elementFor(".add-user"), 'click');
 
   constructor(mountPoint: MountPoint) {
@@ -53,7 +54,7 @@ class CanvasSideBarView extends Component {
           //      ↓ FIXME: possibly a TypeScript bug
           canvasVM!.fileVM.openShareDialog();
         });
-        dest.subscribe(this.canvasNameClicked, () => {
+        dest.subscribe(this.revealClicked, () => {
           const id = canvasVM!.canvas.file.id;
           window.open(`https://drive.google.com/drive/blank?action=locate&id=${id}`, "_blank");
         });
