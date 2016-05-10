@@ -5,6 +5,7 @@ import Slot from "../lib/ui/Slot";
 import CanvasFile from "../model/CanvasFile";
 import * as moment from "moment";
 import ClickToEditView from "./ClickToEditView";
+import CanvasFileViewModel from "../viewmodel/CanvasFileViewModel";
 
 export default
 class CanvasFileCell extends Component {
@@ -22,19 +23,18 @@ class CanvasFileCell extends Component {
   thumbnailSlot = this.slotFor(".thumbnail");
   updatedAtSlot = this.slotFor(".updated-at");
   titleEdit = new ClickToEditView(this.mountPointFor(".title"));
-  file = new Variable<CanvasFile>(CanvasFile.empty());
 
-  constructor(mountPoint: MountPoint) {
+  constructor(mountPoint: MountPoint, public fileVM: CanvasFileViewModel) {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
     this.subscribe(this.isSelected.changed, this.titleEdit.isEditingEnabled);
-    this.subscribe(this.file.changed.map(f => f.name), this.titleEdit.text);
-    this.subscribe(this.file.changed.map(f => moment(f.modifiedTime).fromNow()), this.updatedAtSlot.text());
+    this.subscribe(fileVM.file.changed.map(f => f.name), this.titleEdit.text);
+    this.subscribe(fileVM.file.changed.map(f => moment(f.modifiedTime).fromNow()), this.updatedAtSlot.text());
     this.subscribe(this.titleEdit.textEdited, name => this.updateName(name));
   }
 
   async updateName(name: string) {
     this.titleEdit.text.value = name;
-    await this.file.value.rename(name);
+    await this.fileVM.file.value.rename(name);
   }
 }

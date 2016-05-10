@@ -42,24 +42,19 @@ class UserSideBarView extends Component {
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
-    this.subscribeArrayWithTracking(appViewModel.files.changed, this.canvasListView.children, {
-      getKey: file => file.id,
-      create: file => {
-        const component = new CanvasFileCell({parent: this.canvasListView});
-        component.subscribe(appViewModel.currentFile.changed.map(current => current == file), component.isSelected);
+    this.subscribeArrayWithTracking(appViewModel.fileVMs.changed, this.canvasListView.children, {
+      create: fileVM => {
+        const component = new CanvasFileCell({parent: this.canvasListView}, fileVM);
+        component.subscribe(appViewModel.currentFileVM.changed.map(current => current == fileVM), component.isSelected);
         component.subscribe(component.isSelected.changed, () => {
           this.currentCanvasCell.value = component;
         });
         component.subscribe(component.clicked, () => {
-          appViewModel.currentFile.value = file;
+          appViewModel.currentFileVM.value = fileVM;
         });
-        component.file.value = file;
         return component;
       },
-      update: (component, file) => {
-        component.file.value = file;
-      }
-    })
+    });
 
     this.subscribe(this.open.changed, this.slot.toggleClass("open"));
     this.subscribe(this.open.changed, this.sidebarButton.isChecked);

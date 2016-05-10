@@ -3,6 +3,7 @@ import ObservableDestination from "../lib/rx/ObservableDestination";
 import User from "../model/User";
 import Canvas from "../model/Canvas";
 import CanvasFile from "../model/CanvasFile";
+import CanvasFileViewModel from "./CanvasFileViewModel";
 import CanvasViewModel from "./CanvasViewModel";
 import ToolBoxViewModel from "./ToolBoxViewModel";
 import * as Auth from "../Auth";
@@ -13,7 +14,8 @@ export default
 class AppViewModel extends ObservableDestination {
   user = new Variable<User>(User.empty());
   files = new Variable<CanvasFile[]>([]);
-  currentFile = new Variable<CanvasFile | undefined>(undefined);
+  fileVMs = new Variable<CanvasFileViewModel[]>([]);
+  currentFileVM = new Variable<CanvasFileViewModel | undefined>(undefined);
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
   toolBoxViewModel = new ToolBoxViewModel();
   isAuthenticated = new Variable(false);
@@ -25,8 +27,8 @@ class AppViewModel extends ObservableDestination {
       this.fetchUser(),
       this.fetchFiles()
     ]);
-    if (this.files.value.length > 0) {
-      this.currentFile.value = this.files.value[0];
+    if (this.fileVMs.value.length > 0) {
+      this.currentFileVM.value = this.fileVMs.value[0];
     }
   }
 
@@ -44,7 +46,7 @@ class AppViewModel extends ObservableDestination {
     await this.waitForAuth();
     const file = await CanvasFile.create();
     await this.fetchFiles();
-    this.currentFile.value = this.files.value[0];
+    this.currentFileVM.value = this.fileVMs.value[0];
   }
 
   async checkAuth() {
@@ -62,11 +64,11 @@ class AppViewModel extends ObservableDestination {
   }
 
   async init() {
-    this.subscribe(this.currentFile.changed, async (file) => {
+    this.subscribe(this.currentFileVM.changed, async (vm) => {
       this.canvasViewModel.value = undefined;
-      if (file == undefined) { return; }
-      const canvas = await Canvas.fromFile(file);
-      this.canvasViewModel.value = new CanvasViewModel(canvas);
+      if (vm == undefined) { return; }
+      const canvas = await Canvas.fromFile(vm.file.value);
+      this.canvasViewModel.value = new CanvasViewModel(canvas, vm);
     });
 
     await GoogleAPI.init();
@@ -89,6 +91,15 @@ class AppViewModel extends ObservableDestination {
       (hasCanvas, loginNeeded) => !hasCanvas && !loginNeeded
     );
     this.subscribe(loading, this.isLoading);
+    this.subscribeArrayWithTracking(this.files.changed, this.fileVMs, {
+      getKey: file => file.id,
+      create: file => {
+        return new CanvasFileViewModel(file);
+      },
+      update: (vm, file) => {
+        vm.file.value = file;
+      }
+    });
   }
 }
 
