@@ -5,7 +5,7 @@ import CanvasFile from "./CanvasFile";
 import * as Rx from "rx";
 
 function initModel(model: gapi.drive.realtime.Model) {
-  model.getRoot().set("shapes", model.createList());
+  model.getRoot().set("shapes", model.createMap());
 }
 
 function loadDocument(fileId: string) {
@@ -14,49 +14,33 @@ function loadDocument(fileId: string) {
   });
 }
 
-function observableFromCollaborativeList<T>(list: gapi.drive.realtime.CollaborativeList<T>) {
-  return Rx.Observable.create<T[]>(observer => {
-    const next = () => {
-      observer.onNext(list.asArray());
-    };
-    next();
-    list.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, next);
-    list.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, next);
-    list.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, next);
-  });
-}
-
 export default
 class Canvas {
   strokes = new Variable<Stroke[]>([]);
-  strokeDataList: gapi.drive.realtime.CollaborativeList<StrokeData>;
+  strokeDataMap: gapi.drive.realtime.CollaborativeMap<StrokeData>;
   canUndo = new Variable(false);
   canRedo = new Variable(false);
 
   constructor(public file: CanvasFile, public document: gapi.drive.realtime.Document) {
-    this.strokeDataList = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeList<StrokeData>;
-    observableFromCollaborativeList(this.strokeDataList)
-      .map(list => list.map(data => Stroke.fromData(data)))
-      .subscribe(this.strokes);
+    this.strokeDataMap = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeMap<StrokeData>;
+    this.strokeDataMap.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, () => this.updateStroke());
     this.updateCanUndoRedo();
   }
 
+  updateStroke() {
+    this.strokes.value = this.strokeDataMap.values()
+      .map(data => Stroke.fromData(data))
+      .sort((a, b) => a.createdAt.valueOf() - b.createdAt.valueOf());
+  }
+
   pushStroke(stroke: Stroke) {
-    this.strokeDataList.push(stroke.toData());
+    this.strokeDataMap.set(stroke.id, stroke.toData());
     this.updateCanUndoRedo();
   }
 
   deleteStroke(stroke: Stroke) {
     let index = -1;
-    for (let i = 0; i < this.strokeDataList.length; ++i) {
-      if (this.strokeDataList.get(i).id == stroke.id) {
-        index = i;
-        break;
-      }
-    }
-    if (index >= 0) {
-      this.strokeDataList.remove(index);
-    }
+    this.strokeDataMap.delete(stroke.id);
     this.updateCanUndoRedo();
   }
 
