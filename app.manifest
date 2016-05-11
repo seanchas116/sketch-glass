@@ -12,9 +12,15 @@ dist/fonts/sg-icon.svg
 dist/fonts/sg-icon.ttf
 dist/fonts/sg-icon.woff
 dist/fonts/sg-icon.woff2
-dist/vendor/normalize.css
+dist/vendor/normalize.css/normalize.css
+dist/vendor/open-iconic/font/css/open-iconic.css
+dist/vendor/open-iconic/font/fonts/open-iconic.eot
+dist/vendor/open-iconic/font/fonts/open-iconic.otf
+dist/vendor/open-iconic/font/fonts/open-iconic.svg
+dist/vendor/open-iconic/font/fonts/open-iconic.ttf
+dist/vendor/open-iconic/font/fonts/open-iconic.woff
 
 NETWORK:
 *
 
-# hash: bcc6c77790d65063175377eb37ed38dae80660e3a3390b6b2f4c6aab695b578c
+# hash: 1c4d0f21e4c49442cef4619f81c5030922881642032273136f292cbb943f1b67
