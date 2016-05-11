@@ -120,11 +120,12 @@ class StrokeHandler extends ObservableDestination {
     if (!viewModel) { return; }
 
     if (this.interactionState.value === InteractionState.Drawing) {
+      this.interactionState.value = InteractionState.None;
       this.renderer.strokeEnd();
     } else if (this.interactionState.value == InteractionState.Erasing) {
+      this.interactionState.value = InteractionState.None;
       this.renderer.eraseEnd();
     }
-    this.interactionState.value = InteractionState.None;
   }
 
   dragStart(pos: Vec2) {
@@ -151,8 +152,8 @@ class StrokeHandler extends ObservableDestination {
     if (!viewModel) { return; }
 
     if (this.interactionState.value == InteractionState.Dragging) {
-      viewModel.transform.value = this.transform;
       this.interactionState.value = InteractionState.None;
+      viewModel.transform.value = this.transform;
     }
   }
 
