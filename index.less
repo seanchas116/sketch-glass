@@ -520,6 +520,57 @@ button {
   }
 }
 
+.sg-new-canvas-dialog {
+  position: absolute;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(0,0,0,0.1);
+
+  .dialog {
+    background-color: white;
+    position: absolute;
+    width: 600px;
+    height: 200px;
+    top: 0; left: 0; bottom: 0; right: 0;
+    margin: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    h1 {
+      font-size: 24px;
+      color: #222325;
+      font-weight: normal;
+      width: 100%;
+      line-height: 24px;
+      margin-bottom: 32px;
+    }
+    .inputs {
+      display: flex;
+      justify-content: center;
+      input {
+        width: 200px;
+        background-color: #E8E8E8;
+        border: none;
+        outline: none;
+        margin-right: 16px;
+        padding: 0 12px;
+      }
+      button {
+        display: inline-block;
+        background-color: #FF4503;
+        height: 40px;
+        font-size: 18px;
+        padding-left: 20px;
+        padding-right: 20px;
+        color: white;
+        border: none;
+        outline: none;
+      }
+    }
+
+  }
+}
+
 html, body {
   margin: 0px;
   width: 100%;

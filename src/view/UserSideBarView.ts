@@ -6,6 +6,7 @@ import Slot from "../lib/ui/Slot";
 import ListView from "../lib/ui/ListView";
 import CanvasFile from "../model/CanvasFile";
 import CanvasFileCell from "./CanvasFileCell";
+import NewCanvasDialog from "./NewCanvasDialog";
 import {appViewModel} from "../viewmodel/AppViewModel";
 import * as Rx from "rx";
 
@@ -73,7 +74,8 @@ class UserSideBarView extends Component {
   }
 
   async addFile() {
-    await appViewModel.addFile();
+    const name = await NewCanvasDialog.open();
+    await appViewModel.addFile(name);
     const cell = this.currentCanvasCell.value;
     if (cell != undefined) {
       cell.titleEdit.startEditing();

@@ -44,12 +44,14 @@ class CanvasFile {
     });
   }
 
-  static async create() {
+  static async create(name: string) {
     const data = await GoogleAPI.post<any>("https://www.googleapis.com/drive/v3/files", {}, {
       appProperties: {
         showInList: true,
       },
-      mimeType: "application/vnd.google-apps.drive-sdk"
+      mimeType: "application/vnd.google-apps.drive-sdk",
+      name,
+      description: "Created by sketch-glass",
     });
     return this.fromData(data);
   }

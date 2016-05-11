@@ -42,9 +42,9 @@ class AppViewModel extends ObservableDestination {
     this.files.value = await CanvasFile.list();
   }
 
-  async addFile() {
+  async addFile(name: string) {
     await this.waitForAuth();
-    const file = await CanvasFile.create();
+    const file = await CanvasFile.create(name);
     await this.fetchFiles();
     this.currentFileVM.value = this.fileVMs.value[0];
   }
