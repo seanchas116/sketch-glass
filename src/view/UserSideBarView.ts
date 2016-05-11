@@ -76,10 +76,6 @@ class UserSideBarView extends Component {
   async addFile() {
     const name = await NewCanvasDialog.open();
     await appViewModel.addFile(name);
-    const cell = this.currentCanvasCell.value;
-    if (cell != undefined) {
-      cell.titleEdit.startEditing();
-    }
   }
 
   refreshFiles() {

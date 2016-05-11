@@ -13,7 +13,7 @@ class CanvasFileCell extends Component {
     <div class="sg-canvas-cell">
       <div class="thumbnail"></div>
       <div class="info">
-        <div class="title"></div>
+        <h2 class="title"></h2>
         <p class="updated-at">2 days ago</p>
       </div>
     </div>
@@ -22,18 +22,12 @@ class CanvasFileCell extends Component {
   isSelected = new Variable(false);
   thumbnailSlot = this.slotFor(".thumbnail");
   updatedAtSlot = this.slotFor(".updated-at");
-  titleEdit = new ClickToEditView(this.mountPointFor(".title"));
+  titleSlot = this.slotFor(".title");
 
   constructor(mountPoint: MountPoint, public fileVM: CanvasFileViewModel) {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
-    this.subscribe(this.isSelected.changed, this.titleEdit.isEditingEnabled);
-    this.subscribe(fileVM.name.changed, this.titleEdit.text);
+    this.subscribe(fileVM.name.changed, this.titleSlot.text());
     this.subscribe(fileVM.modifiedTime.changed.map(t => moment(t).fromNow()), this.updatedAtSlot.text());
-    this.subscribe(this.titleEdit.textEdited, name => this.updateName(name));
-  }
-
-  async updateName(name: string) {
-    await this.fileVM.rename(name);
   }
 }
