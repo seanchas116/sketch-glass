@@ -1,7 +1,5 @@
 {
-  "dependencies": {
-    "lodash": "registry:npm/lodash#4.0.0+20160305082308"
-  },
+  "dependencies": {},
   "ambientDependencies": {
     "gapi": "registry:dt/gapi#0.0.0+20160412153822",
     "node": "registry:dt/node#4.0.0+20160330064709",
