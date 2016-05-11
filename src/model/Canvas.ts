@@ -25,6 +25,7 @@ class Canvas {
     this.strokeDataMap = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeMap<StrokeData>;
     this.strokeDataMap.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, () => this.updateStroke());
     this.updateCanUndoRedo();
+    this.updateStroke();
   }
 
   updateStroke() {
