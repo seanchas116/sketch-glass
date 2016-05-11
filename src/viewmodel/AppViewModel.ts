@@ -22,6 +22,7 @@ class AppViewModel extends ObservableDestination {
   isLoginNeeded = new Variable(false);
   isNewCanvasNeeded = new Variable(false);
   isLoading = new Variable(false);
+  isInitialized = new Variable(false);
 
   async initData() {
     await Promise.all([
@@ -31,6 +32,7 @@ class AppViewModel extends ObservableDestination {
     if (this.fileVMs.value.length > 0) {
       this.currentFileVM.value = this.fileVMs.value[0];
     }
+    this.isInitialized.value = true;
   }
 
   async fetchUser() {
@@ -101,7 +103,12 @@ class AppViewModel extends ObservableDestination {
         vm.update(file);
       }
     });
-    this.subscribe(this.files.changed.map(files => files.length == 0), this.isNewCanvasNeeded);
+    this.subscribe(
+      Rx.Observable.combineLatest(
+        this.files.changed.map(files => files.length == 0),
+        this.isInitialized.changed,
+        (noFile, initialized) => noFile && initialized
+      ), this.isNewCanvasNeeded);
   }
 }
 
