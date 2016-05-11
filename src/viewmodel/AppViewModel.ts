@@ -20,6 +20,7 @@ class AppViewModel extends ObservableDestination {
   toolBoxViewModel = new ToolBoxViewModel();
   isAuthenticated = new Variable(false);
   isLoginNeeded = new Variable(false);
+  isNewCanvasNeeded = new Variable(false);
   isLoading = new Variable(false);
 
   async initData() {
@@ -100,6 +101,7 @@ class AppViewModel extends ObservableDestination {
         vm.update(file);
       }
     });
+    this.subscribe(this.files.changed.map(files => files.length == 0), this.isNewCanvasNeeded);
   }
 }
 

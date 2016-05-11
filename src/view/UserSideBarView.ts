@@ -73,9 +73,8 @@ class UserSideBarView extends Component {
     this.subscribe(this.open.changed, () => this.refreshFiles());
   }
 
-  async addFile() {
-    const name = await NewCanvasDialog.open();
-    await appViewModel.addFile(name);
+  addFile() {
+    NewCanvasDialog.newInRoot();
   }
 
   refreshFiles() {

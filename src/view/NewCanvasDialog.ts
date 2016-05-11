@@ -1,5 +1,6 @@
 import Component from "../lib/ui/Component";
 import MountPoint from "../lib/ui/MountPoint";
+import {appViewModel} from "../viewmodel/AppViewModel";
 import * as Rx from "rx";
 
 export default
@@ -17,23 +18,13 @@ class NewCanvasDialog extends Component {
   `;
 
   clicked = Rx.Observable.fromEvent(this.elementFor(".ok"), 'click');
-  onFinish: ((name: string) => void)|undefined;
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
-    this.subscribe(this.clicked, () => {
-      const {onFinish} = this;
-      if (onFinish) {
-        onFinish((this.elementFor(".name") as HTMLInputElement).value);
-      }
+    this.subscribe(this.clicked, async () => {
+      const name = (this.elementFor(".name") as HTMLInputElement).value;
+      await appViewModel.addFile(name);
       this.dispose();
-    });
-  }
-
-  static open() {
-    return new Promise<string>(resolve => {
-      const dialog = NewCanvasDialog.newInRoot() as NewCanvasDialog;
-      dialog.onFinish = resolve;
     });
   }
 }

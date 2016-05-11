@@ -6,7 +6,9 @@ import ToolBoxView from "./ToolBoxView";
 import LoginDialog from "./LoginDialog";
 import CanvasSideBarView from "./CanvasSideBarView";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
+import NewCanvasDialog from "./NewCanvasDialog";
 import {appViewModel} from "../viewmodel/AppViewModel";
+import * as Rx from "rx";
 
 export default
 class MainView extends Component {
@@ -33,6 +35,14 @@ class MainView extends Component {
 
     this.subscribe(appViewModel.isLoginNeeded.changed.filter(x => x), () => {
       LoginDialog.newInRoot();
+    });
+    const showNewCanvas = Rx.Observable.combineLatest(
+      appViewModel.isNewCanvasNeeded.changed,
+      appViewModel.isAuthenticated.changed,
+      (noCanvas, authenticated) => noCanvas && authenticated
+    );
+    this.subscribe(showNewCanvas.filter(x => x), () => {
+      NewCanvasDialog.newInRoot();
     });
   }
 }
