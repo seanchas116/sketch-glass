@@ -1,4 +1,5 @@
 import Vec2 from './Vec2';
+import Rect from "./Rect";
 
 export default
 class Transform {
@@ -76,5 +77,12 @@ class Transform {
       .merge(Transform.translation(d1));
 
     return result;
+  }
+
+  static fromRects(src: Rect, dest: Rect) {
+    return this.fromPoints(
+      src.bottomLeft, src.bottomRight, src.topLeft,
+      dest.bottomLeft, dest.bottomRight, dest.topLeft
+    );
   }
 }

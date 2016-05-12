@@ -21,6 +21,19 @@ class Rect {
     return this.max.y - this.min.y;
   }
 
+  get bottomLeft() {
+    return this.min;
+  }
+  get bottomRight() {
+    return new Vec2(this.max.x, this.min.y);
+  }
+  get topLeft() {
+    return new Vec2(this.min.x, this.max.y);
+  }
+  get topRight() {
+    return this.max;
+  }
+
   get isEmpty() {
     return this.max.x < this.min.x || this.max.y < this.min.y;
   }
