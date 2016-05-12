@@ -43,30 +43,16 @@ class Renderer extends ObservableDestination {
 
   constructor(public element: HTMLCanvasElement) {
     super();
+    this.initGL();
+    const {gl} = this;
 
     this.background = new Background(Color.white);
-
-    // TODO: check why explicit cast is required
-    const glOpts = {
-      alpha: false,
-      depth: false,
-      stencil: false,
-      antialias: false,
-      premultipliedAlpha: true,
-    };
-    const gl = this.gl = <WebGLRenderingContext>(
-      this.element.getContext("webgl", glOpts) || this.element.getContext("experimental-webgl", glOpts)
-    );
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     this.shader = new StrokeShader(gl);
 
     const backgroundShader = new Shader(gl);
     backgroundShader.setColor(this.background.color);
     this.backgroundModel = new BackgroundModel(gl, backgroundShader);
-
-    gl.clearColor(0, 0, 0, 0);
 
     window.addEventListener('resize', this.onResize.bind(this));
     this.onResize();
@@ -94,6 +80,24 @@ class Renderer extends ObservableDestination {
     });
 
     this.thumbnailUpdater = new ThumbnailUpdater(this);
+  }
+
+  private initGL() {
+    const glOpts = {
+      alpha: false,
+      depth: false,
+      stencil: false,
+      antialias: false,
+      premultipliedAlpha: true,
+    };
+
+    const gl = this.gl = <WebGLRenderingContext>(
+      this.element.getContext("webgl", glOpts) || this.element.getContext("experimental-webgl", glOpts)
+    );
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
   }
 
   dispose() {
