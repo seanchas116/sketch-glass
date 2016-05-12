@@ -137,7 +137,6 @@ class Renderer extends ObservableDestination {
     canvas.pushStroke(this.currentModel.stroke);
     this.currentModel.dispose();
     this.currentModel = undefined;
-    this.thumbnailUpdater.update();
   }
 
   eraseBegin(width: number) {

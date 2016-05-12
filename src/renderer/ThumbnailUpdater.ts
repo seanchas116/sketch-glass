@@ -6,20 +6,50 @@ import Framebuffer from "./Framebuffer";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 import dataToJpeg from "../lib/dataToJpeg";
 import CanvasFile from "../model/CanvasFile";
+import Variable from "../lib/rx/Variable";
+import * as Rx from "rx";
 
 const thumbSize = new Vec2(1600, 1200);
+
+function registerTimeout(ms: number, action: () => void) {
+  const id = setTimeout(action, ms);
+  let isDisposed = false;
+  return {
+    get isDisposed() {
+      return isDisposed;
+    },
+    dispose: () => {
+      clearTimeout(id);
+      isDisposed = true;
+    }
+  };
+}
 
 export default
 class ThumbnialUpdater extends ObservableDestination {
 
   gl = this.renderer.gl;
   framebuffer = new Framebuffer(this.gl, thumbSize);
+  dirty = new Variable(true);
+  timeout = new Rx.SerialDisposable();
 
   constructor(public renderer: Renderer) {
     super();
+    this.subscribe(renderer.strokeModels.changed, () => {
+      this.timeout.setDisposable(registerTimeout(2000, () => {
+        this.update();
+      }));
+    });
+  }
+
+  dispose() {
+    super.dispose();
+    this.timeout.dispose();
   }
 
   update() {
+    console.log("updating thumbnail...");
+
     const canvas = this.renderer.canvas.value;
     if (canvas == undefined) {
       return;
