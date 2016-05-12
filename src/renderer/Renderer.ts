@@ -228,5 +228,4 @@ class Renderer extends ObservableDestination {
 
     this.update();
   }
-
 }
