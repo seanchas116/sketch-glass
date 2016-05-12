@@ -188,6 +188,7 @@ class Renderer extends ObservableDestination {
 
   render() {
     const scene = new Scene(this.gl);
+    scene.flip = true;
     scene.devicePixelRatio = this.devicePixelRatio;
     scene.size = this.size;
     scene.transform = this.transform;
