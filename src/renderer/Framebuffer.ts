@@ -8,12 +8,18 @@ class Framebuffer {
   constructor(public gl: WebGLRenderingContext, public size: Vec2) {
     this.framebuffer = gl.createFramebuffer()!;
     this.renderbuffer = gl.createRenderbuffer()!;
+    this.resize(size);
+  }
+
+  resize(size: Vec2) {
+    const {gl} = this;
     gl.bindRenderbuffer(gl.RENDERBUFFER, this.renderbuffer);
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, size.width, size.height);
     this.using(() => {
       gl.viewport(0, 0, size.width, size.height);
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, this.renderbuffer);
     });
+    this.size = size;
   }
 
   using(f: () => void) {

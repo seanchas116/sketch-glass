@@ -18,6 +18,7 @@ import Scene from "./Scene";
 import Framebuffer from "./Framebuffer";
 import dataToJpeg from "../lib/dataToJpeg";
 import CanvasFile from "../model/CanvasFile";
+import ThumbnailUpdater from "./ThumbnailUpdater";
 
 export default
 class Renderer extends ObservableDestination {
@@ -28,7 +29,7 @@ class Renderer extends ObservableDestination {
   erasingPoints: Vec2[] = [];
   isUpdateQueued = false;
   devicePixelRatio = 1;
-  size = new Vec2(0, 0);
+  size = Vec2.origin;
   background: Background;
   gl: WebGLRenderingContext;
   transform = Transform.identity();
@@ -36,6 +37,7 @@ class Renderer extends ObservableDestination {
   shader: StrokeShader;
   backgroundModel: BackgroundModel;
   boundingRect = Rect.empty;
+  thumbnailUpdater: ThumbnailUpdater;
 
   canvas = new Variable<Canvas | undefined>(undefined);
 
@@ -90,6 +92,8 @@ class Renderer extends ObservableDestination {
         return model;
       }
     });
+
+    this.thumbnailUpdater = new ThumbnailUpdater(this);
   }
 
   dispose() {
@@ -101,6 +105,7 @@ class Renderer extends ObservableDestination {
         model.dispose();
       }
     }
+    this.thumbnailUpdater.dispose();
     super.dispose();
   }
 
@@ -128,7 +133,7 @@ class Renderer extends ObservableDestination {
     canvas.pushStroke(this.currentModel.stroke);
     this.currentModel.dispose();
     this.currentModel = undefined;
-    this.updateThumbnail();
+    this.thumbnailUpdater.update();
   }
 
   eraseBegin(width: number) {
@@ -198,35 +203,6 @@ class Renderer extends ObservableDestination {
     scene.transform = this.transform;
     scene.models = this.models();
     scene.render();
-  }
-
-  updateThumbnail() {
-    const canvas = this.canvas.value;
-    if (canvas == undefined) {
-      return;
-    }
-    if (this.boundingRect.isEmpty) {
-      return;
-    }
-
-    const size = new Vec2(1600, 1200);
-    const framebuffer = new Framebuffer(this.gl, size);
-    framebuffer.using(() => {
-      const scene = new Scene(this.gl);
-      scene.size = size;
-      scene.flip = true;
-
-      const scale = Math.min(size.width / this.boundingRect.width, size.height / this.boundingRect.height);
-
-      scene.transform = Transform.translation(this.boundingRect.center.negate())
-        .scale(new Vec2(scale, scale))
-        .translate(size.mul(0.5));
-      scene.models = this.models();
-      scene.render();
-    });
-    const data = framebuffer.readPixels();
-    const jpeg = dataToJpeg(data, size);
-    CanvasFile.updateThumbnail(canvas.file.id, jpeg);
   }
 
   onResize() {
