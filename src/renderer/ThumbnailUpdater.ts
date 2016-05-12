@@ -10,6 +10,7 @@ import Variable from "../lib/rx/Variable";
 import * as Rx from "rx";
 
 const thumbSize = new Vec2(1600, 1200);
+const updateInterval = 2000;
 
 function registerTimeout(ms: number, action: () => void) {
   const id = setTimeout(action, ms);
@@ -38,7 +39,7 @@ class ThumbnialUpdater extends ObservableDestination {
     this.subscribeWithDestination(renderer.canvas.changed, (canvas, dest) => {
       if (canvas != undefined) {
         dest.subscribe(canvas.editedInLocal, () => {
-          this.timeout.setDisposable(registerTimeout(2000, () => {
+          this.timeout.setDisposable(registerTimeout(updateInterval, () => {
             this.update();
           }));
         });
