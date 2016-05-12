@@ -6,6 +6,7 @@ import StrokeCollider from "./StrokeCollider";
 import StrokeShader from "./StrokeShader";
 import Model from "./Model";
 import Transform from "../lib/geometry/Transform";
+import Rect from "../lib/geometry/Rect";
 
 export default
 class StrokeModel implements Model {
@@ -15,6 +16,7 @@ class StrokeModel implements Model {
   collider: StrokeCollider;
   vertices: Vec2[] = [];
   points: Vec2[] = [];
+  boundingRect = Rect.empty;
 
   constructor(public gl: WebGLRenderingContext, public shader: StrokeShader, public stroke: Stroke) {
     for (const pos of stroke.points) {
@@ -59,6 +61,7 @@ class StrokeModel implements Model {
 
   finalize() {
     this.collider = new StrokeCollider(this.stroke.width, this.vertices);
+    this.boundingRect = Rect.boundingRect(this.polygon.vertices.map(([xy, uv]) => xy));
   }
 
   drawSegment(last: Vec2, point: Vec2) {

@@ -85,7 +85,13 @@ class Rect {
     return new Rect(new Vec2(x, y), new Vec2(x + width, y + height));
   }
 
-  static get empty() {
-    return new Rect(new Vec2(0,0), new Vec2(-1,-1));
+  static empty = new Rect(new Vec2(0,0), new Vec2(-1,-1));
+
+  static boundingRect(points: Vec2[]) {
+    let rect = Rect.empty;
+    for (let i = 1; i < points.length; ++i) {
+      rect = rect.union(Rect.fromPoints(points[i - 1], points[i]));
+    }
+    return rect;
   }
 }
