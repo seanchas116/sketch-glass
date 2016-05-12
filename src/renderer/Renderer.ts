@@ -1,5 +1,6 @@
 import Color from '../lib/geometry/Color';
 import Vec2 from '../lib/geometry/Vec2';
+import Rect from '../lib/geometry/Rect';
 import Curve from "../lib/geometry/Curve";
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
@@ -34,6 +35,7 @@ class Renderer extends ObservableDestination {
   viewportTransform = Transform.identity();
   shader: StrokeShader;
   backgroundModel: BackgroundModel;
+  boundingRect = Rect.empty;
 
   canvas = new Variable<Canvas | undefined>(undefined);
 
@@ -68,6 +70,9 @@ class Renderer extends ObservableDestination {
     this.onResize();
 
     this.subscribe(this.strokeModels.changed, () => this.render());
+    this.subscribe(this.strokeModels.changed, models => {
+      this.boundingRect = models.reduce((a, x) => a.union(x.boundingRect), Rect.empty);
+    });
 
     this.subscribeWithDestination(this.canvas.changed, (canvas, destination) => {
       if (canvas != undefined) {
