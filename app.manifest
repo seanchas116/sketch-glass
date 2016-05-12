@@ -4,6 +4,7 @@ CACHE:
 dist/app.manifest
 dist/bundle.js
 dist/bundle.js.map
+dist/favicon.png
 dist/index.css
 dist/index.css.map
 dist/index.html
@@ -23,4 +24,4 @@ dist/vendor/open-iconic/font/fonts/open-iconic.woff
 NETWORK:
 *
 
-# hash: 38b5b4fa37d1837f2db27dd0d2a80e636b8cc1bd2337ebf753903d651a7cefe3
+# hash: 9ddbf3926847ce7a27be9c7c1de9c7c49a7663d2b126ded5d143b2dca63d9827
