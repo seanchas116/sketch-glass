@@ -205,6 +205,9 @@ class Renderer extends ObservableDestination {
     if (canvas == undefined) {
       return;
     }
+    if (this.boundingRect.isEmpty) {
+      return;
+    }
 
     const size = new Vec2(1600, 1200);
     const framebuffer = new Framebuffer(this.gl, size);
@@ -212,7 +215,12 @@ class Renderer extends ObservableDestination {
       const scene = new Scene(this.gl);
       scene.size = size;
       scene.flip = true;
-      scene.transform = this.transform;
+
+      const scale = Math.min(size.width / this.boundingRect.width, size.height / this.boundingRect.height);
+
+      scene.transform = Transform.translation(this.boundingRect.center.negate())
+        .scale(new Vec2(scale, scale))
+        .translate(size.mul(0.5));
       scene.models = this.models();
       scene.render();
     });

@@ -33,6 +33,12 @@ class Rect {
   get topRight() {
     return this.max;
   }
+  get size() {
+    return this.max.sub(this.min);
+  }
+  get center() {
+    return this.min.add(this.max).mul(0.5);
+  }
 
   get isEmpty() {
     return this.max.x < this.min.x || this.max.y < this.min.y;
