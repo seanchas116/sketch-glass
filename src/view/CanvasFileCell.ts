@@ -11,7 +11,7 @@ export default
 class CanvasFileCell extends Component {
   static template = `
     <div class="sg-canvas-cell">
-      <div class="thumbnail"></div>
+      <img class="thumbnail">
       <div class="info">
         <h2 class="title"></h2>
         <p class="updated-at">2 days ago</p>
@@ -28,6 +28,7 @@ class CanvasFileCell extends Component {
     super(mountPoint);
     this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
     this.subscribe(fileVM.name.changed, this.titleSlot.text());
+    this.subscribe(fileVM.thumbnailLink.changed, this.thumbnailSlot.attribute("src"));
     this.subscribe(fileVM.modifiedTime.changed.map(t => moment(t).fromNow()), this.updatedAtSlot.text());
   }
 }

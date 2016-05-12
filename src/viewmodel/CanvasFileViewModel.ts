@@ -13,6 +13,7 @@ class CanvasFileViewModel {
   id: string;
   name = new Variable("");
   modifiedTime = new Variable(new Date());
+  thumbnailLink = new Variable("");
 
   constructor(file: CanvasFile) {
     this.id = file.id;
@@ -25,13 +26,15 @@ class CanvasFileViewModel {
     }
     this.name.value = file.name;
     this.modifiedTime.value = file.modifiedTime;
+    this.thumbnailLink.value = file.thumbnailLink;
   }
 
   get file() {
     return new CanvasFile({
       id: this.id,
       name: this.name.value,
-      modifiedTime: this.modifiedTime.value
+      modifiedTime: this.modifiedTime.value,
+      thumbnailLink: this.thumbnailLink.value
     });
   }
 
