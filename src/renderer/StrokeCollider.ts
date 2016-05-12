@@ -11,7 +11,7 @@ class StrokeCollider {
       const p1 = vertices[i];
       const p2 = vertices[i+1];
       const normal = p2.sub(p1).normal();
-      if (normal == undefined) { return; }
+      if (normal == undefined) { continue; }
       const toLeft = normal.mul(width / 2);
       const toRight = normal.mul(-width / 2);
       const points = [
