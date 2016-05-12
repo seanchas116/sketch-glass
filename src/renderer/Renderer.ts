@@ -14,6 +14,9 @@ import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 import Scene from "./Scene";
+import Framebuffer from "./Framebuffer";
+import dataToJpeg from "../lib/dataToJpeg";
+import CanvasFile from "../model/CanvasFile";
 
 export default
 class Renderer extends ObservableDestination {
@@ -120,6 +123,7 @@ class Renderer extends ObservableDestination {
     canvas.pushStroke(this.currentModel.stroke);
     this.currentModel.dispose();
     this.currentModel = undefined;
+    this.updateThumbnail();
   }
 
   eraseBegin(width: number) {
@@ -173,17 +177,42 @@ class Renderer extends ObservableDestination {
     }
   }
 
-  render() {
-    const scene = new Scene(this.gl);
-    scene.size = this.size;
-    scene.transform = this.transform;
+  models() {
     const models = [this.backgroundModel, ...this.strokeModels.value];
     if (this.currentModel) {
       models.push(this.currentModel);
     }
 
-    scene.models = models;
+    return models;
+  }
+
+  render() {
+    const scene = new Scene(this.gl);
+    scene.devicePixelRatio = this.devicePixelRatio;
+    scene.size = this.size;
+    scene.transform = this.transform;
+    scene.models = this.models();
     scene.render();
+  }
+
+  updateThumbnail() {
+    const canvas = this.canvas.value;
+    if (canvas == undefined) {
+      return;
+    }
+
+    const size = new Vec2(1600, 1200);
+    const framebuffer = new Framebuffer(this.gl, size);
+    framebuffer.using(() => {
+      const scene = new Scene(this.gl);
+      scene.size = size;
+      scene.transform = this.transform;
+      scene.models = this.models();
+      scene.render();
+    });
+    const data = framebuffer.readPixels();
+    const jpeg = dataToJpeg(data, size);
+    CanvasFile.updateThumbnail(canvas.file.id, jpeg);
   }
 
   onResize() {
@@ -194,10 +223,9 @@ class Renderer extends ObservableDestination {
     this.element.height = height * dpr;
     this.element.style.transform = `scale(${1 / dpr})`;
 
-    this.gl.viewport(0, 0, width * dpr, height * dpr);
-
     console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
 
     this.update();
   }
+
 }

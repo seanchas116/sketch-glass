@@ -1,5 +1,6 @@
 import * as GoogleAPI from "../lib/GoogleAPI";
 import User from "./User";
+const base64url = require("base64url");
 
 interface CanvasFileInitData {
   id: string;
@@ -22,6 +23,17 @@ class CanvasFile {
   static async rename(id: string, newName: string) {
     await GoogleAPI.patch(`https://www.googleapis.com/drive/v3/files/${id}`, {}, {
       name: newName
+    });
+  }
+
+  static async updateThumbnail(id: string, base64: string) {
+    await GoogleAPI.patch(`https://www.googleapis.com/drive/v3/files/${id}`, {}, {
+      contentHints: {
+        thumbnail: {
+          image: base64url.fromBase64(base64),
+          mimeType: "image/jpeg"
+        }
+      }
     });
   }
 

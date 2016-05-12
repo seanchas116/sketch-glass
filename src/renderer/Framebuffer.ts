@@ -1,21 +1,18 @@
 import Vec2 from "../lib/geometry/Vec2";
-import Texture from "./Texture";
 
 export default
 class Framebuffer {
   framebuffer: WebGLFramebuffer;
-  texture: Texture;
+  renderbuffer: WebGLRenderbuffer;
 
-  constructor(public gl: WebGLRenderingContext) {
+  constructor(public gl: WebGLRenderingContext, public size: Vec2) {
     this.framebuffer = gl.createFramebuffer()!;
-    this.texture = new Texture(gl)
-  }
-
-  resize(size: Vec2) {
-    const {gl} = this;
-    this.texture.resize(size);
+    this.renderbuffer = gl.createRenderbuffer()!;
+    gl.bindRenderbuffer(gl.RENDERBUFFER, this.renderbuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, size.width, size.height);
     this.using(() => {
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texture.texture, 0);
+      gl.viewport(0, 0, size.width, size.height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, this.renderbuffer);
     });
   }
 
@@ -24,5 +21,15 @@ class Framebuffer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     f();
     gl.bindFramebuffer(gl.FRAMEBUFFER, null as any);
+  }
+
+  readPixels() {
+    const {gl} = this;
+    const {width, height} = this.size;
+    const data = new Uint8Array(width * height * 4);
+    this.using(() => {
+      gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    });
+    return data;
   }
 }
