@@ -13,6 +13,7 @@ import BackgroundModel from "./BackgroundModel";
 import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
 import ObservableDestination from "../lib/rx/ObservableDestination";
+import Scene from "./Scene";
 
 export default
 class Renderer extends ObservableDestination {
@@ -173,25 +174,22 @@ class Renderer extends ObservableDestination {
   }
 
   render() {
-    const {viewportTransform, transform} = this;
-
-    this.backgroundModel.render(this.viewportTransform, this.transform);
-
-    for (const model of this.strokeModels.value) {
-      model.render(viewportTransform, transform);
-    }
+    const scene = new Scene(this.gl);
+    scene.size = this.size;
+    scene.transform = this.transform;
+    const models = [this.backgroundModel, ...this.strokeModels.value];
     if (this.currentModel) {
-      this.currentModel.render(viewportTransform, transform);
+      models.push(this.currentModel);
     }
+
+    scene.models = models;
+    scene.render();
   }
 
   onResize() {
     const {width, height} = this.size = new Vec2(window.innerWidth, window.innerHeight);
     const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
-    this.viewportTransform = Transform.scale(new Vec2(2 / width, 2 / height))
-      .translate(new Vec2(-1, -1))
-      .scale(new Vec2(1, -1));
     this.element.width = width * dpr;
     this.element.height = height * dpr;
     this.element.style.transform = `scale(${1 / dpr})`;
