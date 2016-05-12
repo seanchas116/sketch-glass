@@ -168,9 +168,7 @@ class CanvasView extends Component {
   strokeHandler: StrokeHandler;
 
   private eventPos(ev: {clientX: number, clientY: number}) {
-    const pos = new Vec2(ev.clientX, this.renderer.size.height - ev.clientY);
-    console.log(pos.toString());
-    return pos;
+    return new Vec2(ev.clientX, this.renderer.size.height - ev.clientY);
   }
 
   private onMouseMove(ev: MouseEvent) {
