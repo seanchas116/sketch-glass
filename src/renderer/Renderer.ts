@@ -97,7 +97,7 @@ class Renderer extends ObservableDestination {
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clearColor(0, 0, 0, 0);
+    gl.clearColor(255, 255, 255, 255);
   }
 
   dispose() {
@@ -191,7 +191,7 @@ class Renderer extends ObservableDestination {
   }
 
   models() {
-    const models = [this.backgroundModel, ...this.strokeModels.value];
+    const models = [...this.strokeModels.value];
     if (this.currentModel) {
       models.push(this.currentModel);
     }

@@ -23,6 +23,7 @@ class Scene {
       viewportTransform = viewportTransform.scale(new Vec2(1, -1));
     }
     gl.viewport(0, 0, width * devicePixelRatio, height * devicePixelRatio);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
     for (const model of this.models) {
       model.render(viewportTransform, transform);
