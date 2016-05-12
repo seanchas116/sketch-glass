@@ -13,10 +13,6 @@ import ObservableDestination from "../lib/rx/ObservableDestination";
 
 const {toolBoxViewModel} = appViewModel;
 
-function touchPoint(touch: Touch) {
-  return new Vec2(touch.clientX, touch.clientY);
-}
-
 enum InteractionState {
   None, Drawing, Erasing, Pinching, Dragging
 }
@@ -171,8 +167,14 @@ export default
 class CanvasView extends Component {
   strokeHandler: StrokeHandler;
 
+  private eventPos(ev: {clientX: number, clientY: number}) {
+    const pos = new Vec2(ev.clientX, this.renderer.size.height - ev.clientY);
+    console.log(pos.toString());
+    return pos;
+  }
+
   private onMouseMove(ev: MouseEvent) {
-    const pos = new Vec2(ev.clientX, ev.clientY)
+    const pos = this.eventPos(ev);
     if (ev.button == 0) {
       this.strokeHandler.pressMove(pos);
     } else if (ev.button == 2) {
@@ -180,7 +182,7 @@ class CanvasView extends Component {
     }
   }
   private onMouseDown(ev: MouseEvent) {
-    const pos = new Vec2(ev.clientX, ev.clientY)
+    const pos = this.eventPos(ev);
     if (ev.button == 0) {
       this.strokeHandler.pressStart(pos);
     } else if (ev.button == 2) {
@@ -199,20 +201,20 @@ class CanvasView extends Component {
   private onTouchMove(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       const touch = ev.touches[0];
-      this.strokeHandler.pressMove(touchPoint(touch));
+      this.strokeHandler.pressMove(this.eventPos(touch));
     }
     else if (ev.touches.length === 2) {
-      this.strokeHandler.pinchMove([0,1].map(i => touchPoint(ev.touches[i])));
+      this.strokeHandler.pinchMove([0,1].map(i => this.eventPos(ev.touches[i])));
     }
     ev.preventDefault();
   }
   private onTouchStart(ev: TouchEvent) {
     if (ev.touches.length === 1) {
       const touch = ev.touches[0];
-      this.strokeHandler.pressStart(touchPoint(touch));
+      this.strokeHandler.pressStart(this.eventPos(touch));
     }
     else if (ev.touches.length === 2) {
-      this.strokeHandler.pinchStart([0,1].map(i => touchPoint(ev.touches[i])));
+      this.strokeHandler.pinchStart([0,1].map(i => this.eventPos(ev.touches[i])));
     }
     ev.preventDefault();
   }
@@ -223,7 +225,7 @@ class CanvasView extends Component {
   }
 
   private onWheel(ev: WheelEvent) {
-    this.strokeHandler.scale(new Vec2(ev.clientX, ev.clientY), Math.pow(0.5, ev.deltaY / 256));
+    this.strokeHandler.scale(this.eventPos(ev), Math.pow(0.5, ev.deltaY / 256));
     ev.preventDefault();
   }
 
@@ -232,13 +234,13 @@ class CanvasView extends Component {
   `;
 
   canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
+  renderer = new Renderer(this.element as HTMLCanvasElement);
 
   constructor(mountPoint: MountPoint) {
     super(mountPoint);
-    const renderer = new Renderer(this.element as HTMLCanvasElement);
-    this.strokeHandler = new StrokeHandler(renderer);
+    this.strokeHandler = new StrokeHandler(this.renderer);
     this.disposables.add(this.strokeHandler);
-    this.disposables.add(renderer);
+    this.disposables.add(this.renderer);
     this.subscribe(this.canvasViewModel.changed, this.strokeHandler.canvasViewModel);
 
     this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
