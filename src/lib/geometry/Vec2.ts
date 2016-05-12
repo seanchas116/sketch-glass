@@ -48,7 +48,10 @@ class Vec2 {
   }
 
   normalize() {
-    return this.div(this.length);
+    const {length} = this;
+    if (length > 0) {
+      return this.div(this.length);
+    }
   }
 
   midpoint(a: Vec2) {
@@ -76,7 +79,10 @@ class Vec2 {
   }
 
   normal() {
-    return this.normalize().rotate90();
+    const normalized = this.normalize();
+    if (normalized != undefined) {
+      return normalized.rotate90();
+    }
   }
 
   transform(t: Transform) {

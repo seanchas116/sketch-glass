@@ -69,6 +69,8 @@ class StrokeModel implements Model {
     const {width} = this.stroke;
 
     const normal = point.sub(last).normal();
+    if (normal == undefined) { return; }
+
     const toLeft = normal.mul(width / 2);
     const toRight = normal.mul(-width / 2);
     vertices.push([last.add(toLeft), new Vec2(-1, 0)]);
