@@ -38,4 +38,5 @@ npm-debug.log
 /build
 /dist/*
 !/dist/index.html
+!/dist/favicon.png
 /.publish
