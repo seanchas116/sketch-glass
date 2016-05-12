@@ -35,10 +35,14 @@ class ThumbnialUpdater extends ObservableDestination {
 
   constructor(public renderer: Renderer) {
     super();
-    this.subscribe(renderer.strokeModels.changed, () => {
-      this.timeout.setDisposable(registerTimeout(2000, () => {
-        this.update();
-      }));
+    this.subscribeWithDestination(renderer.canvas.changed, (canvas, dest) => {
+      if (canvas != undefined) {
+        dest.subscribe(canvas.editedInLocal, () => {
+          this.timeout.setDisposable(registerTimeout(2000, () => {
+            this.update();
+          }));
+        });
+      }
     });
   }
 

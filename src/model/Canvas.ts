@@ -20,10 +20,16 @@ class Canvas {
   strokeDataMap: gapi.drive.realtime.CollaborativeMap<StrokeData>;
   canUndo = new Variable(false);
   canRedo = new Variable(false);
+  editedInLocal = new Rx.Subject<void>();
 
   constructor(public file: CanvasFile, public document: gapi.drive.realtime.Document) {
     this.strokeDataMap = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeMap<StrokeData>;
-    this.strokeDataMap.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, () => this.updateStroke());
+    this.strokeDataMap.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, (event) => {
+      this.updateStroke();
+      if (event.isLocal) {
+        this.editedInLocal.onNext(undefined);
+      }
+    });
     this.updateCanUndoRedo();
     this.updateStroke();
   }
