@@ -26,7 +26,7 @@ export default
     erasingPoints: Vec2[] = [];
     isUpdateQueued = false;
     devicePixelRatio = 1;
-    size = Vec2.origin;
+    size = Vec2.zero;
     background: Background;
     gl: WebGLRenderingContext;
     transform = Transform.identity();

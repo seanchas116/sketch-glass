@@ -3,7 +3,7 @@ import {FLOAT_EPSILON} from "./util";
 
 export default
     class Vec2 {
-    static origin = new Vec2(0, 0);
+    static zero = new Vec2(0, 0);
 
     constructor(public x: number, public y: number) {
     }
