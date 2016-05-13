@@ -29,10 +29,9 @@ export default
         gl.bindFramebuffer(gl.FRAMEBUFFER, null as any);
     }
 
-    readPixels() {
+    readPixels(data: Uint8Array) {
         const {gl} = this;
         const {width, height} = this.size;
-        const data = new Uint8Array(width * height * 4);
         this.using(() => {
             gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, data);
         });

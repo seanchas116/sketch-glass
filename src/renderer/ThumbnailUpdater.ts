@@ -32,6 +32,7 @@ export default
     framebuffer = new Framebuffer(this.gl, thumbSize);
     canvas = document.createElement("canvas") as HTMLCanvasElement;
     context = this.canvas.getContext("2d");
+    imageData = this.context.createImageData(thumbSize.width, thumbSize.height);
     dirty = new Variable(true);
     timeout = new Rx.SerialDisposable();
 
@@ -80,11 +81,8 @@ export default
             scene.models = this.renderer.models();
             scene.render();
         });
-        const data = this.framebuffer.readPixels();
-
-        const imageData = this.context.createImageData(thumbSize.width, thumbSize.height);
-        imageData.data.set(new Uint8ClampedArray(data), 0);
-        this.context.putImageData(imageData, 0, 0);
+        this.framebuffer.readPixels(new Uint8Array(this.imageData.data.buffer));
+        this.context.putImageData(this.imageData, 0, 0);
         const jpeg = this.canvas.toDataURL("image/jpeg").replace(/^data:image\/jpeg;base64,/, "");
 
         CanvasFile.updateThumbnail(canvas.file.id, jpeg);
