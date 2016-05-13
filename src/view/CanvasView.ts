@@ -228,8 +228,8 @@ export default
     }
 
     static template = `
-    <canvas class="sg-canvas"></canvas>
-  `;
+        <canvas class="sg-canvas" touch-action="none"></canvas>
+    `;
 
     canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
     renderer = new Renderer(this.element as HTMLCanvasElement);
