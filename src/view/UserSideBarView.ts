@@ -19,11 +19,8 @@ export default
           <img class="avatar">
           <h1 class="userName"></h1>
         </div>
-        <div class="canvases-header">
-          <h2>Canvases</h2>
-          <button class="add-canvas">+</button>
-        </div>
         <input placeholder="Search" class="sg-search">
+        <button class="add-canvas">+</button>
         <div class="canvas-list"></div>
       </aside>
       <div class="sg-icon-array">

@@ -157,6 +157,19 @@ button {
   }
 }
 
+.sg-add-bar {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-size: 24px;
+  height: 48px;
+  vertical-align: middle;
+  &:hover {
+    background-color: #2D2E30;
+  }
+}
+
 .sg-user-sidebar {
   .sg-sidebar();
   .sg-sidebar-left();
@@ -182,42 +195,21 @@ button {
     }
   }
 
-  .canvases-header {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    width: 100%;
-    h2 {
-      justify-content: flex-start;
-      margin: 0 16px;
-      flex: 1;
-      color: white;
-      text-transform: uppercase;
-      font-size: 18px;
-      font-weight: normal;
-    }
-    button {
-      justify-content: flex-end;
-      margin: 0 8px;
-      border: none;
-      outline: none;
-      background: none;
-      color: white;
-      font-size: 24px;
-    }
+  .add-canvas {
+    .sg-add-bar();
   }
 
   .sg-search {
-    @margin: 16px;
+    @margin-h: 16px;
     @padding-h: 16px;
     @padding-v: 8px;
     @whole-height: 32px;
-    width: @sidebar-width - @margin * 2 - @padding-h * 2;
+    width: @sidebar-width - @margin-h * 2 - @padding-h * 2;
     height: @whole-height - @padding-v * 2;
     border-radius: @whole-height * 0.5;
     border-style: none;
     background-color: #F0F0F0;
-    margin: @margin;
+    margin: 12px @margin-h;
     padding: @padding-v @padding-h;
     outline: none;
     font-size: 14px;
@@ -309,31 +301,9 @@ button {
     }
   }
 
-  .users-header {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    width: 100%;
-    h2 {
-      justify-content: flex-start;
-      margin: 0 16px;
-      flex: 1;
-      color: white;
-      text-transform: uppercase;
-      font-size: 18px;
-      font-weight: normal;
-    }
-    button {
-      justify-content: flex-end;
-      margin: 0 8px;
-      border: none;
-      outline: none;
-      background: none;
-      color: white;
-      font-size: 24px;
-    }
+  .add-user {
+    .sg-add-bar();
   }
-
 
   .sg-user-cell {
     color: white;

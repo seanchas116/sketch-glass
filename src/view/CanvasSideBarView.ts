@@ -20,10 +20,7 @@ export default
           <div class="canvas-name"></div>
           <span class="oi reveal" data-glyph="external-link"></span>
         </div>
-        <div class="users-header">
-          <h2>Users</h2>
-          <button class="add-user">+</button>
-        </div>
+         <button class="add-user">+</button>
         <div class="user-list"></div>
       </aside>
       <div class="sg-icon-array">
@@ -34,6 +31,7 @@ export default
 
     open = new Variable(false);
     users = new Variable<User[]>([]);
+    thumbnailSlot = this.slotFor(".thumbnail");
     nameEdit = new ClickToEditView(this.mountPointFor(".canvas-name"));
     sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
     userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
@@ -60,6 +58,7 @@ export default
                     window.open(`https://drive.google.com/drive/blank?action=locate&id=${id}`, "_blank");
                 });
                 dest.subscribe(canvasVM.fileVM.name.changed, this.nameEdit.text);
+                dest.subscribe(canvasVM.fileVM.thumbnailLink.changed, this.thumbnailSlot.attribute("src"));
                 dest.subscribe(this.nameEdit.textEdited, text => canvasVM!.fileVM.rename(text));
                 this.refreshUsers();
             } else {
