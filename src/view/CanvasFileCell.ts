@@ -34,6 +34,6 @@ export default
 
     thumbnailLink() {
         const dpr = window.devicePixelRatio || 1;
-        return this.fileVM.thumbnailLinkForSize(dpr * 200);
+        return this.fileVM.thumbnailLinkForSize(dpr * this.thumbnailSlot.element.clientWidth);
     }
 }
