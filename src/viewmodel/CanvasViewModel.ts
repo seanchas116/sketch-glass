@@ -7,19 +7,19 @@ import CanvasFileViewModel from "./CanvasFileViewModel";
 import * as Auth from "../Auth";
 
 declare module gapi.drive.share {
-  export var ShareClient: any;
+    export var ShareClient: any;
 }
 
 export default
-class CanvasViewModel {
-  transform = new Variable(Transform.identity());
-  users = new Variable<User[]>([]);
+    class CanvasViewModel {
+    transform = new Variable(Transform.identity());
+    users = new Variable<User[]>([]);
 
-  constructor(public canvas: Canvas, public fileVM: CanvasFileViewModel) {
-    this.fetchUsers();
-  }
+    constructor(public canvas: Canvas, public fileVM: CanvasFileViewModel) {
+        this.fetchUsers();
+    }
 
-  async fetchUsers() {
-    this.users.value = await CanvasFile.fetchUsers(this.fileVM.id);
-  }
+    async fetchUsers() {
+        this.users.value = await CanvasFile.fetchUsers(this.fileVM.id);
+    }
 }

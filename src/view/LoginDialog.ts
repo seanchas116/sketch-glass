@@ -4,8 +4,8 @@ import * as Rx from "rx";
 import {appViewModel} from "../viewmodel/AppViewModel";
 
 export default
-class LoginDialog extends Component {
-  static template = `
+    class LoginDialog extends Component {
+    static template = `
     <div class='sg-login-dialog'>
       <section class='dialog'>
         <h1>Sign in</h1>
@@ -14,15 +14,15 @@ class LoginDialog extends Component {
     </div>
   `;
 
-  clicked = Rx.Observable.fromEvent(this.elementFor(".login-google"), 'click');
+    clicked = Rx.Observable.fromEvent(this.elementFor(".login-google"), 'click');
 
-  constructor(mountPoint: MountPoint) {
-    super(mountPoint);
-    this.subscribe(this.clicked, () => this.auth());
-  }
+    constructor(mountPoint: MountPoint) {
+        super(mountPoint);
+        this.subscribe(this.clicked, () => this.auth());
+    }
 
-  async auth() {
-    await appViewModel.logIn();
-    this.dispose();
-  }
+    async auth() {
+        await appViewModel.logIn();
+        this.dispose();
+    }
 }

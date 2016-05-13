@@ -1,12 +1,12 @@
 import Shader from './shader';
 
 export default
-class StrokeShader extends Shader {
+    class StrokeShader extends Shader {
 
-  uHalfWidth = this.gl.getUniformLocation(this.program, 'uHalfWidth')!;
+    uHalfWidth = this.gl.getUniformLocation(this.program, 'uHalfWidth') !;
 
-  get fragmentShader() {
-    return `
+    get fragmentShader() {
+        return `
       precision lowp float;
       uniform vec4 uColor;
       uniform float uHalfWidth;
@@ -17,13 +17,13 @@ class StrokeShader extends Shader {
         gl_FragColor = uColor * alpha;
       }
     `;
-  }
+    }
 
-  constructor(gl: WebGLRenderingContext) {
-    super(gl);
-  }
+    constructor(gl: WebGLRenderingContext) {
+        super(gl);
+    }
 
-  setDisplayWidth(width: number) {
-    this.gl.uniform1f(this.uHalfWidth, width * 0.5);
-  }
+    setDisplayWidth(width: number) {
+        this.gl.uniform1f(this.uHalfWidth, width * 0.5);
+    }
 }

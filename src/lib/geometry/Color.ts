@@ -1,33 +1,33 @@
 const tinycolor = require("tinycolor2");
 
 export default
-class Color {
+    class Color {
 
-  constructor(public r: number, public g: number, public b: number, public a: number) {
-  }
+    constructor(public r: number, public g: number, public b: number, public a: number) {
+    }
 
-  toString() {
-    return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
-  }
+    toString() {
+        return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
+    }
 
-  toData() {
-    return new Float32Array([this.r, this.g, this.b, this.a]);
-  }
+    toData() {
+        return new Float32Array([this.r, this.g, this.b, this.a]);
+    }
 
-  static black = new Color(0,0,0,1);
-  static white = new Color(255,255,255,1);
-  static transparent = new Color(0,0,0,0);
+    static black = new Color(0, 0, 0, 1);
+    static white = new Color(255, 255, 255, 1);
+    static transparent = new Color(0, 0, 0, 0);
 
-  static fromTinycolor(color: any) {
-    const {r, g, b, a} = color.toRgb();
-    return new Color(r, g, b, a);
-  }
+    static fromTinycolor(color: any) {
+        const {r, g, b, a} = color.toRgb();
+        return new Color(r, g, b, a);
+    }
 
-  static fromString(str: string) {
-    return this.fromTinycolor(tinycolor(str));
-  }
+    static fromString(str: string) {
+        return this.fromTinycolor(tinycolor(str));
+    }
 
-  static fromHSV(h: number, s: number, v: number) {
-    return this.fromTinycolor(tinycolor({h, s, v}));
-  }
+    static fromHSV(h: number, s: number, v: number) {
+        return this.fromTinycolor(tinycolor({ h, s, v }));
+    }
 }

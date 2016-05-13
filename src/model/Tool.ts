@@ -1,4 +1,4 @@
 enum Tool {
-  Pen, Eraser
+    Pen, Eraser
 }
 export default Tool;

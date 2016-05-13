@@ -4,33 +4,33 @@ import Variable from "../rx/Variable";
 const Ps = require('perfect-scrollbar');
 
 export default
-class ListView<TChild extends Component> extends Component {
-  static template = `
+    class ListView<TChild extends Component> extends Component {
+    static template = `
     <div class="sg-list-view">
     </div>
   `;
 
-  children = new Variable<TChild[]>([]);
+    children = new Variable<TChild[]>([]);
 
-  constructor(mountPoint: MountPoint) {
-    super(mountPoint);
-    Ps.initialize(this.element);
-    this.subscribe(this.children.changed, () => this._reorder());
-  }
-
-  dispose() {
-    if (!this.isDisposed) {
-      for (const child of this.children.value) {
-        child.dispose();
-      }
+    constructor(mountPoint: MountPoint) {
+        super(mountPoint);
+        Ps.initialize(this.element);
+        this.subscribe(this.children.changed, () => this._reorder());
     }
-    super.dispose();
-  }
 
-  private _reorder() {
-    const {element} = this;
-    for (const [index, child] of this.children.value.entries()) {
-      element.insertBefore(child.element, element.childNodes[index]);
+    dispose() {
+        if (!this.isDisposed) {
+            for (const child of this.children.value) {
+                child.dispose();
+            }
+        }
+        super.dispose();
     }
-  }
+
+    private _reorder() {
+        const {element} = this;
+        for (const [index, child] of this.children.value.entries()) {
+            element.insertBefore(child.element, element.childNodes[index]);
+        }
+    }
 }

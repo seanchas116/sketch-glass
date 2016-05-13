@@ -5,59 +5,59 @@ import Variable from "../rx/Variable";
 import * as Rx from "rx";
 
 export default
-class Component extends ObservableDestination {
-  static template = "";
-  static templateElement: Element | null;
+    class Component extends ObservableDestination {
+    static template = "";
+    static templateElement: Element | null;
 
-  static getTemplateElement(): Element {
-    if (this.templateElement != null) {
-      return this.templateElement;
+    static getTemplateElement(): Element {
+        if (this.templateElement != null) {
+            return this.templateElement;
+        }
+        const parent = document.createElement("div");
+        parent.innerHTML = this.template;
+        return this.templateElement = parent.firstElementChild;
     }
-    const parent = document.createElement("div");
-    parent.innerHTML = this.template;
-    return this.templateElement = parent.firstElementChild;
-  }
 
-  element = (this.constructor as typeof Component).getTemplateElement().cloneNode(true) as Element;
-  slot = new Slot(this.element);
+    element = (this.constructor as typeof Component).getTemplateElement().cloneNode(true) as Element;
+    slot = new Slot(this.element);
 
-  clicked = Rx.Observable.fromEvent(this.element, 'click');
+    clicked = Rx.Observable.fromEvent(this.element, 'click');
 
-  constructor(mountPoint: MountPoint) {
-    super();
-    if (mountPoint.parent != undefined) {
-      mountPoint.parent.disposables.add(this);
+    constructor(mountPoint: MountPoint) {
+        super();
+        if (mountPoint.parent != undefined) {
+            mountPoint.parent.disposables.add(this);
+        }
+        if (mountPoint.element != undefined) {
+            this.mount(mountPoint.element);
+        }
     }
-    if (mountPoint.element != undefined) {
-      this.mount(mountPoint.element);
+
+    dispose() {
+        if (!this.isDisposed) {
+            this.element.parentElement.removeChild(this.element);
+        }
+        super.dispose();
     }
-  }
 
-  dispose() {
-    if (!this.isDisposed) {
-      this.element.parentElement.removeChild(this.element);
+    mount(mountPoint: Element) {
+        mountPoint.parentElement.insertBefore(this.element, mountPoint);
+        mountPoint.parentElement.removeChild(mountPoint);
     }
-    super.dispose();
-  }
 
-  mount(mountPoint: Element) {
-    mountPoint.parentElement.insertBefore(this.element, mountPoint);
-    mountPoint.parentElement.removeChild(mountPoint);
-  }
+    elementFor(selector: string) {
+        return this.element.querySelector(selector);
+    }
+    slotFor(selector: string) {
+        return new Slot(this.elementFor(selector));
+    }
+    mountPointFor(selector: string) {
+        return { parent: this, element: this.elementFor(selector) };
+    }
 
-  elementFor(selector: string) {
-    return this.element.querySelector(selector);
-  }
-  slotFor(selector: string) {
-    return new Slot(this.elementFor(selector));
-  }
-  mountPointFor(selector: string) {
-    return {parent: this, element: this.elementFor(selector)};
-  }
-
-  static newInRoot() {
-    const component = new this({});
-    document.body.appendChild(component.element);
-    return component;
-  }
+    static newInRoot() {
+        const component = new this({});
+        document.body.appendChild(component.element);
+        return component;
+    }
 }
