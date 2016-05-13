@@ -1,6 +1,7 @@
 CACHE MANIFEST
 
 CACHE:
+dist/CNAME
 dist/app.manifest
 dist/bundle.js
 dist/bundle.js.map
@@ -24,4 +25,4 @@ dist/vendor/open-iconic/font/fonts/open-iconic.woff
 NETWORK:
 *
 
-# hash: 687cfe7281692c907785ad8ab01f6720b73b855ace3303aabb46a15e70e3bbce
+# hash: 3c9a1d44e25b83322e6bdc58a7e741f4e2e440358e1c1b94c6ccb4af0f5bdbb9
