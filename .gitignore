@@ -39,4 +39,5 @@ npm-debug.log
 /dist/*
 !/dist/index.html
 !/dist/favicon.png
+!/dist/CNAME
 /.publish
