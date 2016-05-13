@@ -15,14 +15,14 @@ dist/fonts/sg-icon.ttf
 dist/fonts/sg-icon.woff
 dist/fonts/sg-icon.woff2
 dist/vendor/normalize.css/normalize.css
+dist/vendor/open-iconic/font/css/open-iconic.css
 dist/vendor/open-iconic/font/fonts/open-iconic.eot
 dist/vendor/open-iconic/font/fonts/open-iconic.otf
 dist/vendor/open-iconic/font/fonts/open-iconic.svg
 dist/vendor/open-iconic/font/fonts/open-iconic.ttf
 dist/vendor/open-iconic/font/fonts/open-iconic.woff
-dist/vendor/open-iconic/font/css/open-iconic.css
 
 NETWORK:
 *
 
-# hash: 722bd4fdc0af5d9aee67858ed2432f201d2c8d42deb029ad44148c2ac437ba88
+# hash: 647b2a613d6bf3cd5fda2500d689b3e3d05cea32ae1be97651b1bca456be9790
