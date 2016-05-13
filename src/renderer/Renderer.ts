@@ -15,9 +15,6 @@ import StrokeCollider from "./StrokeCollider";
 import Variable from "../lib/rx/Variable";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 import Scene from "./Scene";
-import Framebuffer from "./Framebuffer";
-import dataToJpeg from "../lib/dataToJpeg";
-import CanvasFile from "../model/CanvasFile";
 import ThumbnailUpdater from "./ThumbnailUpdater";
 
 export default

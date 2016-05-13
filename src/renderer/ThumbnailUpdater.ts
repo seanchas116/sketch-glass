@@ -4,7 +4,6 @@ import Scene from "./Scene";
 import Renderer from "./Renderer";
 import Framebuffer from "./Framebuffer";
 import ObservableDestination from "../lib/rx/ObservableDestination";
-import dataToJpeg from "../lib/dataToJpeg";
 import CanvasFile from "../model/CanvasFile";
 import Variable from "../lib/rx/Variable";
 import * as Rx from "rx";
@@ -31,11 +30,15 @@ export default
 
     gl = this.renderer.gl;
     framebuffer = new Framebuffer(this.gl, thumbSize);
+    canvas = document.createElement("canvas") as HTMLCanvasElement;
+    context = this.canvas.getContext("2d");
     dirty = new Variable(true);
     timeout = new Rx.SerialDisposable();
 
     constructor(public renderer: Renderer) {
         super();
+        this.canvas.width = thumbSize.width;
+        this.canvas.height = thumbSize.height;
         this.subscribeWithDestination(renderer.canvas.changed, (canvas, dest) => {
             if (canvas != undefined) {
                 dest.subscribe(canvas.editedInLocal, () => {
@@ -78,7 +81,12 @@ export default
             scene.render();
         });
         const data = this.framebuffer.readPixels();
-        const jpeg = dataToJpeg(data, thumbSize);
+
+        const imageData = this.context.createImageData(thumbSize.width, thumbSize.height);
+        imageData.data.set(new Uint8ClampedArray(data), 0);
+        this.context.putImageData(imageData, 0, 0);
+        const jpeg = this.canvas.toDataURL("image/jpeg").replace(/^data:image\/jpeg;base64,/, "");
+
         CanvasFile.updateThumbnail(canvas.file.id, jpeg);
     }
 }
