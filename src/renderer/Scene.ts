@@ -8,7 +8,7 @@ export default
     size = new Vec2(300, 150);
     devicePixelRatio = 1;
     flip = false;
-    transform = Transform.identity();
+    transform = Transform.identity;
     models: Iterable<Model> = [];
 
     constructor(public gl: WebGLRenderingContext) {

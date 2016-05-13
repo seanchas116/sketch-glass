@@ -12,7 +12,7 @@ declare module gapi.drive.share {
 
 export default
     class CanvasViewModel {
-    transform = new Variable(Transform.identity());
+    transform = new Variable(Transform.identity);
     users = new Variable<User[]>([]);
 
     constructor(public canvas: Canvas, public fileVM: CanvasFileViewModel) {

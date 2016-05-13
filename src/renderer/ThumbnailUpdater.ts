@@ -75,7 +75,7 @@ export default
 
             const scale = Math.min(thumbSize.width / boundingRect.width, thumbSize.height / boundingRect.height);
 
-            scene.transform = Transform.translation(boundingRect.center.negate())
+            scene.transform = Transform.translate(boundingRect.center.negate())
                 .scale(new Vec2(scale, scale))
                 .translate(thumbSize.mul(0.5));
             scene.models = this.renderer.models();

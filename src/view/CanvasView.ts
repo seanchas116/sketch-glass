@@ -23,7 +23,7 @@ class StrokeHandler extends ObservableDestination {
     pinchStartPoints: Vec2[];
 
     transform: Transform;
-    initialTransform = Transform.identity();
+    initialTransform = Transform.identity;
 
     currentStroke: Stroke;
     isStroking = false;
@@ -69,7 +69,7 @@ class StrokeHandler extends ObservableDestination {
 
         const diff = center.sub(centerStart.mul(scale));
 
-        let transform = Transform.scale(new Vec2(scale, scale)).merge(Transform.translation(diff));
+        let transform = Transform.scale(new Vec2(scale, scale)).merge(Transform.translate(diff));
 
         this.renderer.transform = this.transform = this.initialTransform.merge(transform);
         this.renderer.update();
@@ -157,7 +157,7 @@ class StrokeHandler extends ObservableDestination {
         const viewModel = this.canvasViewModel.value;
         if (!viewModel) { return; }
 
-        const transform = Transform.translation(center.negate()).scale(new Vec2(scale, scale)).translate(center);
+        const transform = Transform.translate(center.negate()).scale(new Vec2(scale, scale)).translate(center);
         viewModel.transform.value = viewModel.transform.value.merge(transform);
         this.renderer.update();
     }

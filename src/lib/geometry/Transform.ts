@@ -53,15 +53,13 @@ export default
         return `Transform([${this.m11},${this.m12}],[${this.m21},${this.m22}],[${this.dx},${this.dy}])`;
     }
 
-    static identity() {
-        return new Transform(1, 0, 0, 1, 0, 0);
-    }
+    static identity = new Transform(1, 0, 0, 1, 0, 0);
 
     static scale(scale: Vec2) {
         return new Transform(scale.x, 0, 0, scale.y, 0, 0);
     }
 
-    static translation(translation: Vec2) {
+    static translate(translation: Vec2) {
         return new Transform(1, 0, 0, 1, translation.x, translation.y);
     }
 
@@ -71,10 +69,10 @@ export default
         const d1d2 = d2.sub(d1);
         const d1d3 = d3.sub(d1);
 
-        const result = Transform.translation(s1.negate())
+        const result = Transform.translate(s1.negate())
             .merge(new Transform(s1s2.x, s1s2.y, s1s3.x, s1s3.y, 0, 0).invert())
             .merge(new Transform(d1d2.x, d1d2.y, d1d3.x, d1d3.y, 0, 0))
-            .merge(Transform.translation(d1));
+            .merge(Transform.translate(d1));
 
         return result;
     }

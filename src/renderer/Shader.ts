@@ -10,8 +10,8 @@ export default
     uColor: WebGLUniformLocation;
 
     program: WebGLProgram;
-    viewportTransform = Transform.identity();
-    sceneTransform = Transform.identity();
+    viewportTransform = Transform.identity;
+    sceneTransform = Transform.identity;
 
     get vertexShader(): string {
         return `

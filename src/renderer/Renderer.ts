@@ -29,8 +29,8 @@ export default
     size = Vec2.zero;
     background: Background;
     gl: WebGLRenderingContext;
-    transform = Transform.identity();
-    viewportTransform = Transform.identity();
+    transform = Transform.identity;
+    viewportTransform = Transform.identity;
     shader: StrokeShader;
     backgroundModel: BackgroundModel;
     boundingRect = Rect.empty;
