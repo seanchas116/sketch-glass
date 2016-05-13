@@ -94,7 +94,7 @@ export default
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        gl.clearColor(255, 255, 255, 255);
+        gl.clearColor(1, 1, 1, 1);
     }
 
     dispose() {
