@@ -13,7 +13,13 @@ export default
     id: string;
     name = new Variable("");
     modifiedTime = new Variable(new Date());
-    thumbnailLink = new Variable("");
+    thumbnailLink = new Variable<string|undefined>(undefined);
+
+    thumbnailLinkForSize(size: number) {
+        if (this.thumbnailLink.value) {
+            return this.thumbnailLink.value.replace(/\d+$/, size.toString());
+        }
+    }
 
     constructor(file: CanvasFile) {
         this.id = file.id;
@@ -34,7 +40,7 @@ export default
             id: this.id,
             name: this.name.value,
             modifiedTime: this.modifiedTime.value,
-            thumbnailLink: this.thumbnailLink.value
+            thumbnailLink: this.thumbnailLink.value || ""
         });
     }
 

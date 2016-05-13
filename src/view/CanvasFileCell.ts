@@ -28,7 +28,12 @@ export default
         super(mountPoint);
         this.subscribe(this.isSelected.changed, this.slot.toggleClass("selected"));
         this.subscribe(fileVM.name.changed, this.titleSlot.text());
-        this.subscribe(fileVM.thumbnailLink.changed, this.thumbnailSlot.attribute("src"));
+        this.subscribe(fileVM.thumbnailLink.changed.map(() => this.thumbnailLink()), this.thumbnailSlot.attribute("src"));
         this.subscribe(fileVM.modifiedTime.changed.map(t => moment(t).fromNow()), this.updatedAtSlot.text());
+    }
+
+    thumbnailLink() {
+        const dpr = window.devicePixelRatio || 1;
+        return this.fileVM.thumbnailLinkForSize(dpr * 200);
     }
 }
