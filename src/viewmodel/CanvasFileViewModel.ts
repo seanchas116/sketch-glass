@@ -15,9 +15,9 @@ export default
     modifiedTime = new Variable(new Date());
     thumbnailLink = new Variable<string|undefined>(undefined);
 
-    thumbnailLinkForSize(size: number) {
+    thumbnailLinkForWidth(width: number) {
         if (this.thumbnailLink.value) {
-            return this.thumbnailLink.value.replace(/\d+$/, size.toString());
+            return this.thumbnailLink.value.replace(/\d+$/, width.toString());
         }
     }
 
