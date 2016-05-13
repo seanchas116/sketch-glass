@@ -30,8 +30,12 @@ export default
     }
 
     attribute(name: string) {
-        return (value: string) => {
-            this.element.setAttribute(name, value);
+        return (value: string|undefined) => {
+            if (value != undefined) {
+                this.element.setAttribute(name, value);
+            } else {
+                this.element.removeAttribute(name);
+            }
         };
     }
 

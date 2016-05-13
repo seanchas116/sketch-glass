@@ -6,7 +6,7 @@ interface CanvasFileInitData {
     id: string;
     name: string;
     modifiedTime: Date;
-    thumbnailLink: string;
+    thumbnailLink: string|undefined;
 }
 
 export default
@@ -14,7 +14,7 @@ export default
     id: string;
     name: string;
     modifiedTime: Date;
-    thumbnailLink: string;
+    thumbnailLink: string|undefined;
 
     constructor(data: CanvasFileInitData) {
         this.id = data.id;
@@ -55,7 +55,7 @@ export default
 
     static empty() {
         return new CanvasFile({
-            id: "", name: "", modifiedTime: new Date(), thumbnailLink: ""
+            id: "", name: "", modifiedTime: new Date(), thumbnailLink: undefined
         });
     }
 
