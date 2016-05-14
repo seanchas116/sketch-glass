@@ -79,7 +79,7 @@ export default
                 .scale(new Vec2(scale, scale))
                 .translate(thumbSize.mul(0.5));
 
-            const models = [...this.renderer.strokeModels.value];
+            const models = [this.renderer.backgroundModel, ...this.renderer.strokeModels.value];
             if (this.renderer.currentModel) {
                 models.push(this.renderer.currentModel);
             }
