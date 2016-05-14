@@ -107,7 +107,7 @@ class PinchingInteraction extends Interaction {
 
         let transform = Transform.scale(new Vec2(scale, scale)).merge(Transform.translate(diff));
 
-        this.renderer.transform = this.transform = this.initTransform.merge(transform);
+        this.renderer.transform.value = this.transform = this.initTransform.merge(transform);
         this.renderer.update();
     }
 
@@ -131,7 +131,7 @@ class DraggingInteraction extends Interaction {
 
     next(points: Vec2[]) {
         const pos = points[0];
-        this.transform = this.renderer.transform = this.initTransform.translate(pos.sub(this.startPoint));
+        this.transform = this.renderer.transform.value = this.initTransform.translate(pos.sub(this.startPoint));
         this.renderer.update();
     }
 
@@ -158,7 +158,7 @@ export default
 class CanvasView extends Component {
 
     eventPos(ev: { clientX: number, clientY: number }) {
-        return new Vec2(ev.clientX, this.renderer.size.height - ev.clientY);
+        return new Vec2(ev.clientX, this.renderer.size.value.height - ev.clientY);
     }
 
     pointers = new Map<number, PointerEvent>();
@@ -279,7 +279,7 @@ class CanvasView extends Component {
         if (!viewModel) { return; }
 
         const transform = Transform.translate(center.negate()).scale(new Vec2(scale, scale)).translate(center);
-        this.renderer.transform = viewModel.transform.value = viewModel.transform.value.merge(transform);
+        this.renderer.transform.value = viewModel.transform.value = viewModel.transform.value.merge(transform);
         this.renderer.update();
     }
 

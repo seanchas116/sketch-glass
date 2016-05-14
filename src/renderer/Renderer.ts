@@ -22,15 +22,16 @@ export default
     class Renderer extends ObservableDestination {
     strokes = new Variable<Stroke[]>([]);
     strokeModels = new Variable<StrokeModel[]>([]);
+    visibleStrokeModels = new Variable<StrokeModel[]>([]);
     currentModel: StrokeModel | undefined;
     erasingWidth: number;
     erasingPoints: Vec2[] = [];
     isUpdateQueued = false;
     devicePixelRatio = 1;
-    size = Vec2.zero;
+    size = new Variable(Vec2.zero);
     background: Background;
     gl: WebGLRenderingContext;
-    transform = Transform.identity;
+    transform = new Variable(Transform.identity);
     viewportTransform = Transform.identity;
     shader: StrokeShader;
     backgroundModel: BackgroundModel;
@@ -189,7 +190,7 @@ export default
     }
 
     models() {
-        const sceneRect = new Rect(Vec2.zero, this.size).transform(this.transform.invert());
+        const sceneRect = new Rect(Vec2.zero, this.size.value).transform(this.transform.value.invert());
         const models: Model[] = [];
 
         for (const model of this.strokeModels.value) {
@@ -209,14 +210,14 @@ export default
     render() {
         const scene = new Scene(this.gl);
         scene.devicePixelRatio = this.devicePixelRatio;
-        scene.size = this.size;
-        scene.transform = this.transform;
+        scene.size = this.size.value;
+        scene.transform = this.transform.value;
         scene.models = this.models();
         scene.render();
     }
 
     onResize() {
-        const {width, height} = this.size = new Vec2(window.innerWidth, window.innerHeight);
+        const {width, height} = this.size.value = new Vec2(window.innerWidth, window.innerHeight);
         const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
 
         this.element.width = width * dpr;
