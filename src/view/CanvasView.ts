@@ -18,10 +18,10 @@ class Interaction {
     constructor(public canvasVM: CanvasViewModel, public renderer: Renderer) {
     }
 
-    begin(events: PointerEvent[]) {
+    begin(points: Vec2[], pointerId: number) {
     }
 
-    next(events: PointerEvent[]) {
+    next(points: Vec2[]) {
     }
 
     dispose() {
@@ -30,17 +30,13 @@ class Interaction {
     finish() {
     }
 
-    viewPos(ev: PointerEvent) {
-        return new Vec2(ev.clientX, this.renderer.size.height - ev.clientY);
-    }
-
-    scenePos(ev: PointerEvent) {
-        return this.viewPos(ev).transform(this.canvasVM.transform.value.invert());
+    scenePos(pos: Vec2) {
+        return pos.transform(this.canvasVM.transform.value.invert());
     }
 
     static pointerCount = 1;
 
-    static canInitiate(canvasVM: CanvasViewModel, events: PointerEvent[]) {
+    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
         return true;
     }
 }
@@ -48,15 +44,15 @@ class Interaction {
 class DrawingInteraction extends Interaction {
     isDisposed = false;
 
-    begin(events: PointerEvent[]) {
-        const pos = this.scenePos(events[0]);
+    begin(points: Vec2[], pointerId: number) {
+        const pos = this.scenePos(points[0]);
         if (!pos) { return; }
         this.renderer.strokeBegin(toolBoxViewModel.penWidth.value, toolBoxViewModel.color.value);
         this.renderer.strokeNext(pos);
     }
 
-    next(events: PointerEvent[]) {
-        const pos = this.scenePos(events[0]);
+    next(points: Vec2[]) {
+        const pos = this.scenePos(points[0]);
         if (!pos) { return; }
         this.renderer.strokeNext(pos);
     }
@@ -66,27 +62,25 @@ class DrawingInteraction extends Interaction {
         this.isDisposed = true;
     }
 
-    static canInitiate(canvasVM: CanvasViewModel, events: PointerEvent[]) {
+    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
         return toolBoxViewModel.tool.value == Tool.Pen;
     }
 }
 
 class ErasingInteraction extends Interaction {
 
-    begin(events: PointerEvent[]) {
-        const pos = this.scenePos(events[0]);
-        if (!pos) { return; }
+    begin(points: Vec2[], pointerId: number) {
+        const pos = this.scenePos(points[0]);
         this.renderer.eraseBegin(toolBoxViewModel.penWidth.value);
         this.renderer.eraseNext(pos);
     }
 
-    next(events: PointerEvent[]) {
-        const pos = this.scenePos(events[0]);
-        if (!pos) { return; }
+    next(points: Vec2[]) {
+        const pos = this.scenePos(points[0]);
         this.renderer.eraseNext(pos);
     }
 
-    static canInitiate(canvasVM: CanvasViewModel, events: PointerEvent[]) {
+    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
         return toolBoxViewModel.tool.value == Tool.Eraser;
     }
 }
@@ -96,14 +90,12 @@ class PinchingInteraction extends Interaction {
     initTransform: Transform;
     transform: Transform;
 
-    begin(events: PointerEvent[]) {
-        this.startPoints = events.map(e => this.viewPos(e));
+    begin(points: Vec2[], pointerId: number) {
+        this.startPoints = points;
         this.initTransform = this.canvasVM.transform.value;
     }
 
-    next(events: PointerEvent[]) {
-        const points = events.map(e => this.viewPos(e));
-
+    next(points: Vec2[]) {
         const scale = points[0].sub(points[1]).length / this.startPoints[0].sub(this.startPoints[1]).length;
 
         const centerStart = this.startPoints[0].add(this.startPoints[1]).mul(0.5);
@@ -130,13 +122,13 @@ class DraggingInteraction extends Interaction {
     initTransform: Transform;
     transform: Transform;
 
-    begin(events: PointerEvent[]) {
-        this.startPoint = this.viewPos(events[0]);
+    begin(points: Vec2[], pointerId: number) {
+        this.startPoint = points[0];
         this.initTransform = this.canvasVM.transform.value;
     }
 
-    next(events: PointerEvent[]) {
-        const pos = this.viewPos(events[0]);
+    next(points: Vec2[]) {
+        const pos = points[0];
         this.transform = this.renderer.transform = this.initTransform.translate(pos.sub(this.startPoint));
         this.renderer.update();
     }
@@ -145,12 +137,17 @@ class DraggingInteraction extends Interaction {
         this.canvasVM.transform.value = this.transform;
     }
 
-    static canInitiate(canvasVM: CanvasViewModel, events: PointerEvent[]) {
-        return events[0].button == 2;
+    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
+        const event = events[0];
+        if (event instanceof MouseEvent) {
+            return event.button == 2;
+        } else {
+            return false;
+        }
     }
 }
 
-const interactionClasses = [DraggingInteraction, DrawingInteraction, ErasingInteraction, PinchingInteraction];
+const interactionClasses: (typeof Interaction)[] = [DraggingInteraction, DrawingInteraction, ErasingInteraction, PinchingInteraction];
 
 export default
 class CanvasView extends Component {
@@ -168,13 +165,13 @@ class CanvasView extends Component {
         if (!canvasVM) { return; }
 
         const events = Array.from(this.pointers.values());
+        const points = events.map(e => this.eventPos(e));
 
         for (const klass of interactionClasses) {
-            if (events.length == klass.pointerCount && klass.canInitiate(canvasVM, events)) {
+            if (events.length == klass.pointerCount && klass.canInitiate(canvasVM, points, events)) {
                 const interaction = new klass(canvasVM, this.renderer);
-                interaction.begin(events);
+                interaction.begin(points, ev.pointerId);
                 this.interaction.value = interaction;
-                console.log(interaction, this.interaction.value);
                 return;
             }
         }
@@ -184,7 +181,9 @@ class CanvasView extends Component {
         this.pointers.set(ev.pointerId, ev);
         const interaction = this.interaction.value;
         if (interaction) {
-            interaction.next(Array.from(this.pointers.values()));
+            const events = Array.from(this.pointers.values());
+            const points = events.map(e => this.eventPos(e));
+            interaction.next(points);
         }
     }
 
@@ -195,6 +194,71 @@ class CanvasView extends Component {
             interaction.finish();
             this.interaction.value = undefined;
         }
+    }
+
+    private onMouseDown(ev: MouseEvent) {
+        const canvasVM = this.canvasViewModel.value;
+        if (!canvasVM) { return; }
+        const point = this.eventPos(ev);
+
+        for (const klass of interactionClasses) {
+            if (klass.pointerCount == 1 && klass.canInitiate(canvasVM, [point], [ev])) {
+                const interaction = new klass(canvasVM, this.renderer);
+                interaction.begin([point], 0);
+                this.interaction.value = interaction;
+                return;
+            }
+        }
+    }
+
+    private onMouseMove(ev: MouseEvent) {
+        const interaction = this.interaction.value;
+        if (interaction) {
+            const point = this.eventPos(ev);
+            interaction.next([point]);
+        }
+    }
+
+    private onMouseUp(ev: MouseEvent) {
+        const interaction = this.interaction.value;
+        if (interaction) {
+            interaction.finish();
+            this.interaction.value = undefined;
+        }
+    }
+
+    private onTouchStart(ev: TouchEvent) {
+        const canvasVM = this.canvasViewModel.value;
+        if (!canvasVM) { return; }
+        const points = Array.from(ev.touches).map(t => this.eventPos(t));
+
+        for (const klass of interactionClasses) {
+            if (klass.pointerCount == ev.touches.length && klass.canInitiate(canvasVM, points, [ev])) {
+                const interaction = new klass(canvasVM, this.renderer);
+                interaction.begin(points, 0);
+                this.interaction.value = interaction;
+                return;
+            }
+        }
+        ev.preventDefault();
+    }
+
+    private onTouchMove(ev: TouchEvent) {
+        const interaction = this.interaction.value;
+        if (interaction) {
+            const points = Array.from(ev.touches).map(t => this.eventPos(t));
+            interaction.next(points);
+        }
+        ev.preventDefault();
+    }
+
+    private onTouchEnd(ev: TouchEvent) {
+        const interaction = this.interaction.value;
+        if (interaction) {
+            interaction.finish();
+            this.interaction.value = undefined;
+        }
+        ev.preventDefault();
     }
 
     private onWheel(ev: WheelEvent) {
@@ -212,7 +276,7 @@ class CanvasView extends Component {
     }
 
     static template = `
-        <canvas class="sg-canvas" touch-action="none"></canvas>
+        <canvas class="sg-canvas"></canvas>
     `;
 
     canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
@@ -227,6 +291,12 @@ class CanvasView extends Component {
         this.element.addEventListener('pointermove', (ev) => this.onPointerMove(ev));
         this.element.addEventListener('pointerup', (ev) => this.onPointerUp(ev));
         this.element.addEventListener('pointerdown', (ev) => this.onPointerDown(ev));
+        this.element.addEventListener('mousemove', (ev) => this.onMouseMove(ev as MouseEvent));
+        this.element.addEventListener('mouseup', (ev) => this.onMouseUp(ev as MouseEvent));
+        this.element.addEventListener('mousedown', (ev) => this.onMouseDown(ev as MouseEvent));
+        this.element.addEventListener('touchstart', (ev) => this.onTouchStart(ev));
+        this.element.addEventListener('touchmove', (ev) => this.onTouchMove(ev));
+        this.element.addEventListener('touchend', (ev) => this.onTouchEnd(ev));
 
         this.element.addEventListener('wheel', this.onWheel.bind(this));
 

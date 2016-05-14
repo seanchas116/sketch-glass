@@ -1,4 +1,3 @@
-require("pepjs");
 require("setimmediate");
 require("whatwg-fetch");
 require("babel-regenerator-runtime");
