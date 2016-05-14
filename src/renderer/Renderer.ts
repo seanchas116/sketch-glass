@@ -64,6 +64,7 @@ export default
         this.subscribeWithDestination(this.canvas.changed, (canvas, destination) => {
             if (canvas != undefined) {
                 destination.subscribe(canvas.strokes.changed, this.strokes);
+                destination.subscribe(canvas.editedInRemote, () => this.update());
             } else {
                 this.strokes.value = [];
             }
@@ -89,8 +90,6 @@ export default
                 }
             ), this.visibleStrokeModels
         )
-
-        this.subscribe(this.strokeModels.changed, () => this.render());
 
         this.thumbnailUpdater = new ThumbnailUpdater(this);
     }

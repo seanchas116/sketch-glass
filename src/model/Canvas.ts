@@ -21,6 +21,7 @@ export default
     canUndo = new Variable(false);
     canRedo = new Variable(false);
     editedInLocal = new Rx.Subject<void>();
+    editedInRemote = new Rx.Subject<void>();
 
     constructor(public file: CanvasFile, public document: gapi.drive.realtime.Document) {
         this.strokeDataMap = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeMap<StrokeData>;
@@ -28,6 +29,8 @@ export default
             this.updateStroke();
             if (event.isLocal) {
                 this.editedInLocal.onNext(undefined);
+            } else {
+                this.editedInRemote.onNext(undefined);
             }
         });
         this.updateCanUndoRedo();
