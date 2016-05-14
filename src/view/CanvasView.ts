@@ -94,7 +94,7 @@ class PinchingInteraction extends Interaction {
 
     begin(points: Vec2[], pointerId: number) {
         this.startPoints = points;
-        this.initTransform = this.canvasVM.transform.value;
+        this.transform = this.initTransform = this.canvasVM.transform.value;
     }
 
     next(points: Vec2[]) {
@@ -126,7 +126,7 @@ class DraggingInteraction extends Interaction {
 
     begin(points: Vec2[], pointerId: number) {
         this.startPoint = points[0];
-        this.initTransform = this.canvasVM.transform.value;
+        this.transform = this.initTransform = this.canvasVM.transform.value;
     }
 
     next(points: Vec2[]) {
