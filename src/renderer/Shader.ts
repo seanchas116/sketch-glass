@@ -2,7 +2,8 @@ import Color from "../lib/geometry/Color";
 import Transform from "../lib/geometry/Transform";
 
 export default
-    class Shader {
+class Shader {
+    static current: Shader|undefined;
 
     aPosition: number;
     aUVCoord: number;
@@ -10,8 +11,9 @@ export default
     uColor: WebGLUniformLocation;
 
     program: WebGLProgram;
-    viewportTransform = Transform.identity;
-    sceneTransform = Transform.identity;
+
+    _transform = Transform.identity;
+    _color = Color.transparent;
 
     get vertexShader(): string {
         return `
@@ -48,29 +50,33 @@ export default
 
         gl.enableVertexAttribArray(this.aPosition);
         gl.enableVertexAttribArray(this.aUVCoord);
-
-        this.updateTransforms();
     }
 
-    setColor(color: Color) {
-        this.gl.uniform4fv(this.uColor, color.toData());
+    get color() {
+        return this._color;
     }
-
-    use() {
-        this.gl.useProgram(this.program);
-    }
-
-    setTransforms(viewportTransform: Transform, sceneTransform: Transform) {
-        if (this.viewportTransform != viewportTransform || this.sceneTransform != sceneTransform) {
-            this.viewportTransform = viewportTransform;
-            this.sceneTransform = sceneTransform;
-            this.updateTransforms();
+    set color(color: Color) {
+        if (!this._color.equals(color)) {
+            this.gl.uniform4fv(this.uColor, color.toData());
+            this._color = color;
         }
     }
 
-    private updateTransforms() {
-        const transform = this.sceneTransform.merge(this.viewportTransform);
-        this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
+    get transform() {
+        return this._transform;
+    }
+    set transform(transform: Transform) {
+        if (!this._transform.equals(transform)) {
+            this.gl.uniformMatrix3fv(this.uTransform, false, transform.toData());
+            this._transform = transform;
+        }
+    }
+
+    use() {
+        if (Shader.current != this) {
+            this.gl.useProgram(this.program);
+            Shader.current = this;
+        }
     }
 
     private compile(script: string, type: number) {

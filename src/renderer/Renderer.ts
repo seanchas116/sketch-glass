@@ -48,7 +48,7 @@ export default
         this.shader = new StrokeShader(gl);
 
         const backgroundShader = new Shader(gl);
-        backgroundShader.setColor(this.background.color);
+        backgroundShader.color = this.background.color;
         this.backgroundModel = new BackgroundModel(gl, backgroundShader);
 
         window.addEventListener('resize', this.onResize.bind(this));

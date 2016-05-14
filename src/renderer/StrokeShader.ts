@@ -4,6 +4,7 @@ export default
     class StrokeShader extends Shader {
 
     uHalfWidth = this.gl.getUniformLocation(this.program, 'uHalfWidth') !;
+    _displayWidth = 0;
 
     get fragmentShader() {
         return `
@@ -23,7 +24,13 @@ export default
         super(gl);
     }
 
-    setDisplayWidth(width: number) {
-        this.gl.uniform1f(this.uHalfWidth, width * 0.5);
+    set displayWidth(width: number) {
+        if (this._displayWidth != width) {
+            this.gl.uniform1f(this.uHalfWidth, width * 0.5);
+            this._displayWidth = width;
+        }
+    }
+    get displayWidth() {
+        return this._displayWidth;
     }
 }

@@ -99,9 +99,9 @@ export default
         const {polygon, shader, stroke} = this;
         if (polygon.vertices.length > 0) {
             shader.use();
-            shader.setTransforms(viewportTransform, sceneTransform);
-            shader.setColor(stroke.color);
-            shader.setDisplayWidth(stroke.width * sceneTransform.m11);
+            shader.transform = sceneTransform.merge(viewportTransform);
+            shader.color = stroke.color;
+            shader.displayWidth = stroke.width * sceneTransform.m11;
             polygon.draw();
         }
     }

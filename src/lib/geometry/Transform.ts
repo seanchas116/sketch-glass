@@ -7,6 +7,17 @@ export default
     constructor(public m11: number, public m12: number, public m21: number, public m22: number, public dx: number, public dy: number) {
     }
 
+    equals(other: Transform) {
+        return (
+            this.m11 == other.m11 &&
+            this.m12 == other.m12 &&
+            this.m21 == other.m21 &&
+            this.m22 == other.m22 &&
+            this.dx == other.dx &&
+            this.dy == other.dy
+        );
+    }
+
     merge(other: Transform) {
         // other * this
         // [P u] [Q v]   [PQ Pv + u]

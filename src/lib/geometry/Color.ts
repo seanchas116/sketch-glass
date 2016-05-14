@@ -6,6 +6,10 @@ export default
     constructor(public r: number, public g: number, public b: number, public a: number) {
     }
 
+    equals(other: Color) {
+        return this.r == other.r && this.g == other.g && this.b == other.b && this.a == other.a;
+    }
+
     toString() {
         return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
     }
