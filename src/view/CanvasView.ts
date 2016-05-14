@@ -295,7 +295,12 @@ class CanvasView extends Component {
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
         this.disposables.add(this.renderer);
-        this.subscribe(this.canvasViewModel.changed.map(vm => vm ? vm.canvas : undefined), this.renderer.canvas);
+        this.subscribeWithDestination(this.canvasViewModel.changed, (vm, dest) => {
+            if (vm) {
+                this.renderer.canvas.value = vm.canvas;
+                dest.subscribe(vm.transform.changed, t => this.renderer.transform.value = t);
+            }
+        });
 
         if (window["PointerEvent"]) {
             this.element.addEventListener('pointermove', (ev) => this.onPointerMove(ev));
