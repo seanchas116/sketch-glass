@@ -16,6 +16,7 @@ import Variable from "../lib/rx/Variable";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 import Scene from "./Scene";
 import ThumbnailUpdater from "./ThumbnailUpdater";
+import Model  from "./Model";
 
 export default
     class Renderer extends ObservableDestination {
@@ -192,7 +193,16 @@ export default
     }
 
     models() {
-        const models = [...this.strokeModels.value];
+        const sceneRect = new Rect(Vec2.zero, this.size).transform(this.transform.invert());
+        const models: Model[] = [];
+
+        for (const model of this.strokeModels.value) {
+            if (model.boundingRect.intersection(sceneRect).isEmpty) {
+                continue;
+            }
+            models.push(model);
+        }
+
         if (this.currentModel) {
             models.push(this.currentModel);
         }
