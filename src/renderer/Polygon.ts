@@ -11,7 +11,6 @@ class Polygon {
         this.buffer = gl.createBuffer() !;
         const ext = this.vertexArrayExt;
         if (ext != null) {
-            console.log("vao supported");
             this.vertexArray = ext.createVertexArrayOES();
             ext.bindVertexArrayOES(this.vertexArray);
 
