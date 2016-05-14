@@ -11,7 +11,7 @@ import Rect from "../lib/geometry/Rect";
 export default
     class StrokeModel implements Model {
     isDisposed = false;
-    polygon = new Polygon(this.gl, []);
+    polygon = new Polygon(this.gl, this.shader, []);
     lastSectionLength = 0;
     collider: StrokeCollider;
     vertices: Vec2[] = [];
@@ -102,7 +102,7 @@ export default
             shader.setTransforms(viewportTransform, sceneTransform);
             shader.setColor(stroke.color);
             shader.setDisplayWidth(stroke.width * sceneTransform.m11);
-            polygon.draw(shader);
+            polygon.draw();
         }
     }
 }

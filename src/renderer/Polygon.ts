@@ -2,10 +2,10 @@ import Shader from "./Shader";
 import Vec2 from "../lib/geometry/Vec2";
 
 export default
-    class Polygon {
+class Polygon {
     buffer: WebGLBuffer;
 
-    constructor(public gl: WebGLRenderingContext, public vertices: [Vec2, Vec2][]) {
+    constructor(public gl: WebGLRenderingContext, public shader: Shader, public vertices: [Vec2, Vec2][]) {
         this.buffer = gl.createBuffer() !;
     }
 
@@ -20,12 +20,12 @@ export default
         gl.bufferData(gl.ARRAY_BUFFER, data, gl.STREAM_DRAW);
     }
 
-    draw(shader: Shader) {
+    draw() {
         const gl = this.gl;
-
+        this.shader.use();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-        gl.vertexAttribPointer(shader.aPosition, 2, gl.FLOAT, false, 16, 0);
-        gl.vertexAttribPointer(shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
+        gl.vertexAttribPointer(this.shader.aPosition, 2, gl.FLOAT, false, 16, 0);
+        gl.vertexAttribPointer(this.shader.aUVCoord, 2, gl.FLOAT, false, 16, 8);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertices.length);
     }
 

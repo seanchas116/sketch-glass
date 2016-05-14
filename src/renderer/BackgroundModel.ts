@@ -6,7 +6,7 @@ import Polygon from "./Polygon";
 
 export default
     class BackgroundModel implements Model {
-    polygon = new Polygon(this.gl, [
+    polygon = new Polygon(this.gl, this.shader, [
         [new Vec2(-1, -1), new Vec2(0, 0)],
         [new Vec2(-1, 1), new Vec2(0, 0)],
         [new Vec2(1, -1), new Vec2(0, 0)],
@@ -18,7 +18,6 @@ export default
     }
 
     render(viewportTransform: Transform, sceneTransform: Transform) {
-        this.shader.use();
-        this.polygon.draw(this.shader);
+        this.polygon.draw();
     }
 }
