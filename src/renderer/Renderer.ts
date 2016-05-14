@@ -221,10 +221,10 @@ export default
 
         if (rect) {
             models = this.visibleStrokeModels.value.filter(m => !m.boundingRect.intersection(rect!).isEmpty);
+            models.unshift(this.backgroundModel);
         } else {
             models = Array.from(this.visibleStrokeModels.value);
         }
-        models.unshift(this.backgroundModel);
         if (this.currentModel) {
             models.push(this.currentModel);
         }

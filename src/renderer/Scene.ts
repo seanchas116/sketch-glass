@@ -36,6 +36,7 @@ export default
             gl.scissor(min.x, min.y, max.x - min.x, max.y - min.y);
         } else {
             gl.scissor(0, 0, width * dpr, height * dpr);
+            gl.clear(gl.COLOR_BUFFER_BIT);
         }
 
         for (const model of this.models) {
