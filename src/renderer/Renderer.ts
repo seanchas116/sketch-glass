@@ -177,18 +177,14 @@ export default
     eraseEnd() {
     }
 
-    update(immediate = false) {
+    update() {
         if (!this.isUpdateQueued) {
             this.isUpdateQueued = true;
             const callback = () => {
                 this.render();
                 this.isUpdateQueued = false;
             };
-            if (immediate) {
-                setImmediate(callback);
-            } else {
-                requestAnimationFrame(callback);
-            }
+            requestAnimationFrame(callback);
         }
     }
 
