@@ -202,20 +202,17 @@ export default
         }
     }
 
-    models() {
-        const models: Model[] = [...this.visibleStrokeModels.value];
-        if (this.currentModel) {
-            models.push(this.currentModel);
-        }
-        return models;
-    }
-
     render() {
         const scene = new Scene(this.gl);
         scene.devicePixelRatio = this.devicePixelRatio;
         scene.size = this.size.value;
         scene.transform = this.transform.value;
-        scene.models = this.models();
+
+        const models = [...this.visibleStrokeModels.value];
+        if (this.currentModel) {
+            models.push(this.currentModel);
+        }
+        scene.models = models;
         scene.render();
     }
 

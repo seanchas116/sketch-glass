@@ -78,7 +78,14 @@ export default
             scene.transform = Transform.translate(boundingRect.center.negate())
                 .scale(new Vec2(scale, scale))
                 .translate(thumbSize.mul(0.5));
-            scene.models = this.renderer.models();
+
+            const models = [...this.renderer.strokeModels.value];
+            if (this.renderer.currentModel) {
+                models.push(this.renderer.currentModel);
+            }
+
+            scene.models = models;
+
             scene.render();
         });
         this.framebuffer.readPixels(new Uint8Array(this.imageData.data.buffer));
