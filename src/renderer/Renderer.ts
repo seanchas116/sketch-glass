@@ -68,6 +68,7 @@ export default
             } else {
                 this.strokes.value = [];
             }
+            this.update();
         });
 
         this.subscribeArrayWithTracking(this.strokes.changed, this.strokeModels, {
