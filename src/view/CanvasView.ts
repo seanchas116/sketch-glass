@@ -178,6 +178,9 @@ class CanvasView extends Component {
     }
 
     private onPointerMove(ev: PointerEvent) {
+        if (!this.pointers.has(ev.pointerId)) {
+            return;
+        }
         this.pointers.set(ev.pointerId, ev);
         const interaction = this.interaction.value;
         if (interaction) {
@@ -288,15 +291,18 @@ class CanvasView extends Component {
         this.disposables.add(this.renderer);
         this.subscribe(this.canvasViewModel.changed.map(vm => vm ? vm.canvas : undefined), this.renderer.canvas);
 
-        this.element.addEventListener('pointermove', (ev) => this.onPointerMove(ev));
-        this.element.addEventListener('pointerup', (ev) => this.onPointerUp(ev));
-        this.element.addEventListener('pointerdown', (ev) => this.onPointerDown(ev));
-        this.element.addEventListener('mousemove', (ev) => this.onMouseMove(ev as MouseEvent));
-        this.element.addEventListener('mouseup', (ev) => this.onMouseUp(ev as MouseEvent));
-        this.element.addEventListener('mousedown', (ev) => this.onMouseDown(ev as MouseEvent));
-        this.element.addEventListener('touchstart', (ev) => this.onTouchStart(ev));
-        this.element.addEventListener('touchmove', (ev) => this.onTouchMove(ev));
-        this.element.addEventListener('touchend', (ev) => this.onTouchEnd(ev));
+        if (window["PointerEvent"]) {
+            this.element.addEventListener('pointermove', (ev) => this.onPointerMove(ev));
+            this.element.addEventListener('pointerup', (ev) => this.onPointerUp(ev));
+            this.element.addEventListener('pointerdown', (ev) => this.onPointerDown(ev));
+        } else {
+            this.element.addEventListener('mousemove', (ev) => this.onMouseMove(ev as MouseEvent));
+            this.element.addEventListener('mouseup', (ev) => this.onMouseUp(ev as MouseEvent));
+            this.element.addEventListener('mousedown', (ev) => this.onMouseDown(ev as MouseEvent));
+            this.element.addEventListener('touchstart', (ev) => this.onTouchStart(ev));
+            this.element.addEventListener('touchmove', (ev) => this.onTouchMove(ev));
+            this.element.addEventListener('touchend', (ev) => this.onTouchEnd(ev));
+        }
 
         this.element.addEventListener('wheel', this.onWheel.bind(this));
 
