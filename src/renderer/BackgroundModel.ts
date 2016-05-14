@@ -19,7 +19,6 @@ class BackgroundModel implements Model {
     }
 
     render(viewportTransform: Transform, sceneTransform: Transform) {
-        console.log("rendering background");
         this.shader.transform = Transform.identity;
         this.shader.color = Color.white;
         this.polygon.draw();
