@@ -57,7 +57,6 @@ export default
         window.addEventListener('resize', this.onResize.bind(this));
         this.onResize();
 
-        this.subscribe(this.strokeModels.changed, () => this.render());
         this.subscribe(this.strokeModels.changed, models => {
             this.boundingRect = models.reduce((a, x) => a.union(x.boundingRect), Rect.empty);
         });
@@ -90,6 +89,8 @@ export default
                 }
             ), this.visibleStrokeModels
         )
+
+        this.subscribe(this.strokeModels.changed, () => this.render());
 
         this.thumbnailUpdater = new ThumbnailUpdater(this);
     }
