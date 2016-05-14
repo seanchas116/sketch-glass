@@ -332,6 +332,18 @@ class CanvasView extends Component {
         mousetrap.bind("space", () => {
             this.isDragMode.value = false;
         }, "keyup");
+        mousetrap.bind("mod+z", () => {
+            const canvasVM = this.canvasViewModel.value;
+            if (canvasVM && canvasVM.canvas.canUndo.value) {
+                canvasVM.canvas.undo();
+            }
+        });
+        mousetrap.bind(["mod+shift+z", "mod+y"], () => {
+            const canvasVM = this.canvasViewModel.value;
+            if (canvasVM && canvasVM.canvas.canRedo.value) {
+                canvasVM.canvas.redo();
+            }
+        });
         this.disposables.add({
             dispose: () => mousetrap.reset()
         });
