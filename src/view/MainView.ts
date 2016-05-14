@@ -34,7 +34,7 @@ export default
         this.subscribe(appViewModel.isLoading.changed.map(x => !x), this.loadingBar.isHidden());
 
         this.subscribe(appViewModel.isLoginNeeded.changed.filter(x => x), () => {
-            LoginDialog.newInRoot();
+            new LoginDialog({}).showInRoot();
         });
         const showNewCanvas = Rx.Observable.combineLatest(
             appViewModel.isNewCanvasNeeded.changed,
@@ -42,7 +42,9 @@ export default
             (noCanvas, authenticated) => noCanvas && authenticated
         );
         this.subscribe(showNewCanvas.filter(x => x), () => {
-            NewCanvasDialog.newInRoot();
+            const dialog = new NewCanvasDialog({});
+            dialog.isCancellable = false;
+            dialog.showInRoot();
         });
     }
 }

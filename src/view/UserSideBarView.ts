@@ -71,7 +71,7 @@ export default
     }
 
     addFile() {
-        NewCanvasDialog.newInRoot();
+        new NewCanvasDialog({}).showInRoot();
     }
 
     refreshFiles() {

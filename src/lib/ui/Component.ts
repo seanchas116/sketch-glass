@@ -55,9 +55,7 @@ export default
         return { parent: this, element: this.elementFor(selector) };
     }
 
-    static newInRoot() {
-        const component = new this({});
-        document.body.appendChild(component.element);
-        return component;
+    showInRoot() {
+        document.body.appendChild(this.element);
     }
 }

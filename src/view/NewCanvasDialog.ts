@@ -4,7 +4,7 @@ import {appViewModel} from "../viewmodel/AppViewModel";
 import * as Rx from "rx";
 
 export default
-    class NewCanvasDialog extends Component {
+class NewCanvasDialog extends Component {
     static template = `
     <div class='sg-new-canvas-dialog'>
       <section class='dialog'>
@@ -18,13 +18,21 @@ export default
   `;
 
     clicked = Rx.Observable.fromEvent(this.elementFor(".ok"), 'click');
+    isCancellable = true;
+    backgroundClicked = Rx.Observable.fromEvent(this.element, 'click');
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
+        this.elementFor(".dialog").addEventListener("click", e => e.stopPropagation());
         this.subscribe(this.clicked, async () => {
             const name = (this.elementFor(".name") as HTMLInputElement).value;
             await appViewModel.addFile(name);
             this.dispose();
+        });
+        this.subscribe(this.backgroundClicked, () => {
+            if (this.isCancellable) {
+                this.dispose();
+            }
         });
     }
 }
