@@ -11,6 +11,8 @@ import AutoDisposeVariable from "../lib/rx/AutoDisposeVariable";
 import CanvasViewModel from "../viewmodel/CanvasViewModel";
 import {appViewModel} from "../viewmodel/AppViewModel";
 import ObservableDestination from "../lib/rx/ObservableDestination";
+import * as Rx from "rx";
+const Mousetrap = require("mousetrap");
 
 const {toolBoxViewModel} = appViewModel;
 
@@ -36,7 +38,7 @@ class Interaction {
 
     static pointerCount = 1;
 
-    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
+    static canInitiate(canvasView: CanvasView, points: Vec2[], events: UIEvent[]) {
         return true;
     }
 }
@@ -62,7 +64,7 @@ class DrawingInteraction extends Interaction {
         this.isDisposed = true;
     }
 
-    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
+    static canInitiate(canvasView: CanvasView, points: Vec2[], events: UIEvent[]) {
         return toolBoxViewModel.tool.value == Tool.Pen;
     }
 }
@@ -80,7 +82,7 @@ class ErasingInteraction extends Interaction {
         this.renderer.eraseNext(pos);
     }
 
-    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
+    static canInitiate(canvasView: CanvasView, points: Vec2[], events: UIEvent[]) {
         return toolBoxViewModel.tool.value == Tool.Eraser;
     }
 }
@@ -137,7 +139,10 @@ class DraggingInteraction extends Interaction {
         this.canvasVM.transform.value = this.transform;
     }
 
-    static canInitiate(canvasVM: CanvasViewModel, points: Vec2[], events: UIEvent[]) {
+    static canInitiate(canvasView: CanvasView, points: Vec2[], events: UIEvent[]) {
+        if (canvasView.isDragMode.value) {
+            return true;
+        }
         const event = events[0];
         if (event instanceof MouseEvent) {
             return event.button == 2;
@@ -168,7 +173,7 @@ class CanvasView extends Component {
         const points = events.map(e => this.eventPos(e));
 
         for (const klass of interactionClasses) {
-            if (events.length == klass.pointerCount && klass.canInitiate(canvasVM, points, events)) {
+            if (events.length == klass.pointerCount && klass.canInitiate(this, points, events)) {
                 const interaction = new klass(canvasVM, this.renderer);
                 interaction.begin(points, ev.pointerId);
                 this.interaction.value = interaction;
@@ -205,7 +210,7 @@ class CanvasView extends Component {
         const point = this.eventPos(ev);
 
         for (const klass of interactionClasses) {
-            if (klass.pointerCount == 1 && klass.canInitiate(canvasVM, [point], [ev])) {
+            if (klass.pointerCount == 1 && klass.canInitiate(this, [point], [ev])) {
                 const interaction = new klass(canvasVM, this.renderer);
                 interaction.begin([point], 0);
                 this.interaction.value = interaction;
@@ -236,7 +241,7 @@ class CanvasView extends Component {
         const points = Array.from(ev.touches).map(t => this.eventPos(t));
 
         for (const klass of interactionClasses) {
-            if (klass.pointerCount == ev.touches.length && klass.canInitiate(canvasVM, points, [ev])) {
+            if (klass.pointerCount == ev.touches.length && klass.canInitiate(this, points, [ev])) {
                 const interaction = new klass(canvasVM, this.renderer);
                 interaction.begin(points, 0);
                 this.interaction.value = interaction;
@@ -285,6 +290,7 @@ class CanvasView extends Component {
     canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
     renderer = new Renderer(this.element as HTMLCanvasElement);
     interaction = new AutoDisposeVariable<Interaction>(undefined);
+    isDragMode = new Variable(false);
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -311,8 +317,23 @@ class CanvasView extends Component {
         });
 
         this.subscribe(
-            this.interaction.changed.map(i => i instanceof DraggingInteraction),
+            Rx.Observable.combineLatest(
+                this.interaction.changed.map(i => i instanceof DraggingInteraction),
+                this.isDragMode.changed,
+                (dragging, mode) => dragging || mode
+            ),
             this.slot.toggleClass("dragging")
         );
+
+        const mousetrap = Mousetrap(document);
+        mousetrap.bind("space", () => {
+            this.isDragMode.value = true;
+        }, "keydown");
+        mousetrap.bind("space", () => {
+            this.isDragMode.value = false;
+        }, "keyup");
+        this.disposables.add({
+            dispose: () => mousetrap.reset()
+        });
     }
 }
