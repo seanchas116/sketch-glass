@@ -97,6 +97,7 @@ export default
 
     private initGL() {
         const glOpts = {
+            preserveDrawingBuffer: true,
             alpha: false,
             depth: false,
             stencil: false,
@@ -111,6 +112,7 @@ export default
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.clearColor(1, 1, 1, 1);
+        gl.enable(gl.SCISSOR_TEST);
     }
 
     dispose() {
@@ -135,8 +137,8 @@ export default
         if (this.currentModel == undefined) {
             return;
         }
-        this.currentModel.addPoint(pos);
-        this.render();
+        const rect = this.currentModel.addPoint(pos);
+        this.render(rect);
     }
 
     strokeEnd() {
@@ -203,17 +205,24 @@ export default
         }
     }
 
-    render() {
+    render(rect?: Rect) {
         const scene = new Scene(this.gl);
         scene.devicePixelRatio = this.devicePixelRatio;
         scene.size = this.size.value;
         scene.transform = this.transform.value;
 
-        const models = [...this.visibleStrokeModels.value];
+        let models: Model[] = [...this.visibleStrokeModels.value];
+        if (rect) {
+            models = models.filter(m => !m.boundingRect.intersection(rect!).isEmpty);
+        }
+        models.unshift(this.backgroundModel);
         if (this.currentModel) {
             models.push(this.currentModel);
         }
         scene.models = models;
+        if (rect) {
+            scene.region = rect;
+        }
         scene.render();
     }
 

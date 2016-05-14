@@ -5,7 +5,7 @@ import Shader from "./Shader";
 import Polygon from "./Polygon";
 
 export default
-    class BackgroundModel implements Model {
+class BackgroundModel implements Model {
     polygon = new Polygon(this.gl, this.shader, [
         [new Vec2(-1, -1), 0],
         [new Vec2(-1, 1), 0],

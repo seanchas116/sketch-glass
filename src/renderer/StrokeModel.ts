@@ -13,6 +13,7 @@ export default
     isDisposed = false;
     polygon = new Polygon(this.gl, this.shader, []);
     lastSectionLength = 0;
+    lastBoundingRect = Rect.empty;
     collider: StrokeCollider;
     vertices: Vec2[] = [];
     points: Vec2[] = [];
@@ -34,28 +35,29 @@ export default
 
     addPoint(pos: Vec2) {
         this.stroke.points.push(pos);
-        this.drawPoint(pos);
+        const bounding = this.drawPoint(pos);
         this.polygon.updateBuffer(false);
+        return bounding;
     }
 
     drawPoint(pos: Vec2) {
         const {points} = this;
         points.push(pos);
         const nPoints = points.length;
+        let bounding = this.lastBoundingRect;
 
         if (nPoints === 2) {
-            this.drawSection(points);
+            bounding = bounding.union(this.drawSection(points));
         } else if (nPoints === 3) {
             this.rewindLastSection();
-            this.drawSection(Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide());
-            this.drawSection(Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide());
+            bounding = bounding.union(this.drawSection(Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide()));
+            bounding = bounding.union(this.drawSection(Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide()));
         } else if (nPoints > 3) {
             this.rewindLastSection();
-            this.drawSection(Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide());
-            this.drawSection(Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide());
-        } else {
-            return;
+            bounding = bounding.union(this.drawSection(Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide()));
+            bounding = bounding.union(this.drawSection(Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide()));
         }
+        return bounding;
     }
 
     finalize() {
@@ -65,27 +67,33 @@ export default
     }
 
     drawSegment(last: Vec2, point: Vec2) {
-        const {vertices} = this.polygon;
         const {width} = this.stroke;
 
         const normal = point.sub(last).normal();
-        if (normal == undefined) { return; }
+        if (normal == undefined) { return Rect.empty; }
 
         const toLeft = normal.mul(width / 2);
         const toRight = normal.mul(-width / 2);
-        vertices.push([last.add(toLeft), -1]);
-        vertices.push([last.add(toRight), 1]);
-        vertices.push([point.add(toLeft), -1]);
-        vertices.push([point.add(toRight), 1]);
+        const vertices: [Vec2, number][] = [
+            [last.add(toLeft), -1],
+            [last.add(toRight), 1],
+            [point.add(toLeft), -1],
+            [point.add(toRight), 1],
+        ];
+        this.polygon.vertices.push(...vertices);
+        return Rect.boundingRect(vertices.map(v => v[0]));
     }
 
     drawSection(vertices: Vec2[]) {
+        let bounding = Rect.empty;
         for (let i = 0; i < vertices.length - 1; ++i) {
-            this.drawSegment(vertices[i], vertices[i + 1]);
+            bounding = bounding.union(this.drawSegment(vertices[i], vertices[i + 1]));
         }
         this.vertices.pop();
         this.vertices.push(...vertices);
         this.lastSectionLength = vertices.length - 1;
+        this.lastBoundingRect = bounding;
+        return bounding;
     }
 
     rewindLastSection() {
