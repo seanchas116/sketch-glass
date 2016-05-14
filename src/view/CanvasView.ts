@@ -193,6 +193,7 @@ class CanvasView extends Component {
         const interaction = this.interaction.value;
         if (interaction && this.pointers.size < (interaction.constructor as typeof Interaction).pointerCount) {
             interaction.finish();
+            this.interaction.value = undefined;
         }
     }
 
@@ -206,7 +207,7 @@ class CanvasView extends Component {
         if (!viewModel) { return; }
 
         const transform = Transform.translate(center.negate()).scale(new Vec2(scale, scale)).translate(center);
-        viewModel.transform.value = viewModel.transform.value.merge(transform);
+        this.renderer.transform = viewModel.transform.value = viewModel.transform.value.merge(transform);
         this.renderer.update();
     }
 
@@ -221,6 +222,7 @@ class CanvasView extends Component {
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
         this.disposables.add(this.renderer);
+        this.subscribe(this.canvasViewModel.changed.map(vm => vm ? vm.canvas : undefined), this.renderer.canvas);
 
         this.element.addEventListener('pointermove', (ev) => this.onPointerMove(ev));
         this.element.addEventListener('pointerup', (ev) => this.onPointerUp(ev));

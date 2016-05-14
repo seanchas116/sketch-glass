@@ -9,6 +9,10 @@ class AutoDisposeVariable<T extends Rx.Disposable> extends Variable<T|undefined>
         super.value = newValue;
     }
 
+    get value() {
+        return super.value;
+    }
+
     constructor(value: T|undefined) {
         super(value);
     }
