@@ -26,7 +26,7 @@ class Polygon {
         }
     }
 
-    updateBuffer() {
+    updateBuffer(staticDraw: boolean) {
         const data = new Float32Array(this.vertices.length * 3);
         for (let i = 0; i < this.vertices.length; ++i) {
             const [xy, t] = this.vertices[i];
@@ -34,7 +34,7 @@ class Polygon {
         }
         const gl = this.gl;
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STREAM_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, data, staticDraw ? gl.STATIC_DRAW : gl.STREAM_DRAW);
     }
 
     draw() {

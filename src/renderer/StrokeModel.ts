@@ -22,7 +22,6 @@ export default
         for (const pos of stroke.points) {
             this.drawPoint(pos);
         }
-        this.polygon.updateBuffer();
     }
 
     dispose() {
@@ -36,7 +35,7 @@ export default
     addPoint(pos: Vec2) {
         this.stroke.points.push(pos);
         this.drawPoint(pos);
-        this.polygon.updateBuffer();
+        this.polygon.updateBuffer(false);
     }
 
     drawPoint(pos: Vec2) {
@@ -62,6 +61,7 @@ export default
     finalize() {
         this.collider = new StrokeCollider(this.stroke.width, this.vertices);
         this.boundingRect = Rect.boundingRect(this.polygon.vertices.map(([xy, uv]) => xy));
+        this.polygon.updateBuffer(true);
     }
 
     drawSegment(last: Vec2, point: Vec2) {

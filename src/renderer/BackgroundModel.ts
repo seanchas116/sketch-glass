@@ -14,7 +14,7 @@ export default
     ]);
 
     constructor(public gl: WebGLRenderingContext, public shader: Shader) {
-        this.polygon.updateBuffer();
+        this.polygon.updateBuffer(true);
     }
 
     render(viewportTransform: Transform, sceneTransform: Transform) {
