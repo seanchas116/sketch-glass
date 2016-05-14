@@ -209,9 +209,12 @@ export default
         scene.size = this.size.value;
         scene.transform = this.transform.value;
 
-        let models: Model[] = [...this.visibleStrokeModels.value];
+        let models: Model[];
+
         if (rect) {
-            models = models.filter(m => !m.boundingRect.intersection(rect!).isEmpty);
+            models = this.visibleStrokeModels.value.filter(m => !m.boundingRect.intersection(rect!).isEmpty);
+        } else {
+            models = Array.from(this.visibleStrokeModels.value);
         }
         models.unshift(this.backgroundModel);
         if (this.currentModel) {
