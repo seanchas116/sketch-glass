@@ -230,10 +230,15 @@ export default
     onResize() {
         const {width, height} = this.size.value = new Vec2(window.innerWidth, window.innerHeight);
         const dpr = this.devicePixelRatio = window.devicePixelRatio || 1;
+        const {gl} = this;
 
         this.element.width = width * dpr;
         this.element.height = height * dpr;
         this.element.style.transform = `scale(${1 / dpr})`;
+
+        gl.viewport(0, 0, width * dpr, height * dpr);
+        gl.scissor(0, 0, width * dpr, height * dpr);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
         console.log(`resized to ${width} * ${height}, pixel ratio ${devicePixelRatio}`);
 
