@@ -18,6 +18,7 @@ import Scene from "./Scene";
 import ThumbnailUpdater from "./ThumbnailUpdater";
 import Model from "./Model";
 import * as Rx from "rx";
+const platform = require("platform");
 
 export default
     class Renderer extends ObservableDestination {
@@ -38,6 +39,8 @@ export default
     backgroundModel: BackgroundModel;
     boundingRect = Rect.empty;
     thumbnailUpdater: ThumbnailUpdater;
+     // In iOS flickers occur when preserveDrawingBuffer: true
+    preserveDrawingBufferSupported = platform.os.family != "iOS";
 
     canvas = new Variable<Canvas | undefined>(undefined);
 
@@ -95,7 +98,7 @@ export default
 
     private initGL() {
         const glOpts = {
-            preserveDrawingBuffer: true,
+            preserveDrawingBuffer: this.preserveDrawingBufferSupported,
             alpha: false,
             depth: false,
             stencil: false,
@@ -110,7 +113,9 @@ export default
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.clearColor(1, 1, 1, 1);
-        gl.enable(gl.SCISSOR_TEST);
+        if (this.preserveDrawingBufferSupported) {
+            gl.enable(gl.SCISSOR_TEST);
+        }
     }
 
     dispose() {
@@ -204,6 +209,9 @@ export default
     }
 
     render(rect?: Rect) {
+        if (!this.preserveDrawingBufferSupported) {
+            rect = undefined;
+        }
         const scene = new Scene(this.gl);
         scene.devicePixelRatio = this.devicePixelRatio;
         scene.size = this.size.value;
