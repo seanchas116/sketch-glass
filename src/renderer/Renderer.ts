@@ -16,7 +16,8 @@ import Variable from "../lib/rx/Variable";
 import ObservableDestination from "../lib/rx/ObservableDestination";
 import Scene from "./Scene";
 import ThumbnailUpdater from "./ThumbnailUpdater";
-import Model  from "./Model";
+import Model from "./Model";
+import * as Rx from "rx";
 
 export default
     class Renderer extends ObservableDestination {
@@ -77,6 +78,18 @@ export default
                 return model;
             }
         });
+
+        this.subscribe(
+            Rx.Observable.combineLatest(
+                this.strokeModels.changed,
+                this.size.changed,
+                this.transform.changed,
+                (models, size, transform) => {
+                    const sceneRect = new Rect(Vec2.zero, this.size.value).transform(this.transform.value.invert());
+                    return models.filter(m => !m.boundingRect.intersection(sceneRect).isEmpty);
+                }
+            ), this.visibleStrokeModels
+        )
 
         this.thumbnailUpdater = new ThumbnailUpdater(this);
     }
@@ -190,20 +203,10 @@ export default
     }
 
     models() {
-        const sceneRect = new Rect(Vec2.zero, this.size.value).transform(this.transform.value.invert());
-        const models: Model[] = [];
-
-        for (const model of this.strokeModels.value) {
-            if (model.boundingRect.intersection(sceneRect).isEmpty) {
-                continue;
-            }
-            models.push(model);
-        }
-
+        const models: Model[] = [...this.visibleStrokeModels.value];
         if (this.currentModel) {
             models.push(this.currentModel);
         }
-
         return models;
     }
 
