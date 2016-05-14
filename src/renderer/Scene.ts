@@ -26,13 +26,16 @@ export default
         }
         gl.viewport(0, 0, width * dpr, height * dpr);
         if (this.region) {
-            let {min, max} = this.region.transform(transform).boundingIntegerRect().intersection(new Rect(Vec2.zero, this.size));
+            const rect = this.region.transform(transform).boundingIntegerRect().intersection(new Rect(Vec2.zero, this.size));
+            if (rect.isEmpty) {
+                return;
+            }
+            let {min, max} = rect;
             min = min.mul(dpr);
             max = max.mul(dpr);
             gl.scissor(min.x, min.y, max.x - min.x, max.y - min.y);
         } else {
             gl.scissor(0, 0, width * dpr, height * dpr);
-            gl.clear(gl.COLOR_BUFFER_BIT);
         }
 
         for (const model of this.models) {

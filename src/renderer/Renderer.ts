@@ -50,12 +50,7 @@ export default
 
         this.shader = new StrokeShader(gl);
 
-        const backgroundShader = new Shader(gl);
-        backgroundShader.color = this.background.color;
-        this.backgroundModel = new BackgroundModel(gl, backgroundShader);
-
-        window.addEventListener('resize', this.onResize.bind(this));
-        this.onResize();
+        this.backgroundModel = new BackgroundModel(gl, this.shader);
 
         this.subscribe(this.strokeModels.changed, models => {
             this.boundingRect = models.reduce((a, x) => a.union(x.boundingRect), Rect.empty);
@@ -92,6 +87,9 @@ export default
         )
 
         this.thumbnailUpdater = new ThumbnailUpdater(this);
+
+        window.addEventListener('resize', this.onResize.bind(this));
+        this.onResize();
     }
 
     private initGL() {
