@@ -154,9 +154,13 @@ export default
             return;
         }
         const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
+        const boundingRect = Rect.boundingRect(vertices);
         const collider = new StrokeCollider(this.erasingWidth, vertices);
         const strokeToErase: Stroke[] = [];
         for (const model of this.strokeModels.value) {
+            if (boundingRect.intersection(model.boundingRect).isEmpty) {
+                continue;
+            }
             if (model.collider.collides(collider)) {
                 strokeToErase.push(model.stroke);
             }
