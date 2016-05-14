@@ -7,10 +7,10 @@ import Polygon from "./Polygon";
 export default
     class BackgroundModel implements Model {
     polygon = new Polygon(this.gl, this.shader, [
-        [new Vec2(-1, -1), new Vec2(0, 0)],
-        [new Vec2(-1, 1), new Vec2(0, 0)],
-        [new Vec2(1, -1), new Vec2(0, 0)],
-        [new Vec2(1, 1), new Vec2(0, 0)],
+        [new Vec2(-1, -1), 0],
+        [new Vec2(-1, 1), 0],
+        [new Vec2(1, -1), 0],
+        [new Vec2(1, 1), 0],
     ]);
 
     constructor(public gl: WebGLRenderingContext, public shader: Shader) {

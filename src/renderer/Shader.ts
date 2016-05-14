@@ -6,7 +6,7 @@ class Shader {
     static current: Shader|undefined;
 
     aPosition: number;
-    aUVCoord: number;
+    aAAOffset: number;
     uTransform: WebGLUniformLocation;
     uColor: WebGLUniformLocation;
 
@@ -20,10 +20,10 @@ class Shader {
       precision highp float;
       uniform mat3 uTransform;
       attribute vec2 aPosition;
-      attribute mediump vec2 aUVCoord;
-      varying mediump vec2 vUVCoord;
+      attribute lowp float aAAOffset;
+      varying lowp float vAAOffset;
       void main(void) {
-        vUVCoord = aUVCoord;
+        vAAOffset = aAAOffset;
         vec3 pos = uTransform * vec3(aPosition, 1.0);
         gl_Position = vec4(pos.xy, 0.0, 1.0);
       }
@@ -44,12 +44,12 @@ class Shader {
         this.setup();
 
         this.aPosition = gl.getAttribLocation(this.program, 'aPosition') !;
-        this.aUVCoord = gl.getAttribLocation(this.program, 'aUVCoord') !;
+        this.aAAOffset = gl.getAttribLocation(this.program, 'aAAOffset') !;
         this.uTransform = gl.getUniformLocation(this.program, 'uTransform') !;
         this.uColor = gl.getUniformLocation(this.program, 'uColor') !;
 
         gl.enableVertexAttribArray(this.aPosition);
-        gl.enableVertexAttribArray(this.aUVCoord);
+        gl.enableVertexAttribArray(this.aAAOffset);
     }
 
     get color() {

@@ -73,10 +73,10 @@ export default
 
         const toLeft = normal.mul(width / 2);
         const toRight = normal.mul(-width / 2);
-        vertices.push([last.add(toLeft), new Vec2(-1, 0)]);
-        vertices.push([last.add(toRight), new Vec2(1, 0)]);
-        vertices.push([point.add(toLeft), new Vec2(-1, 0)]);
-        vertices.push([point.add(toRight), new Vec2(1, 0)]);
+        vertices.push([last.add(toLeft), -1]);
+        vertices.push([last.add(toRight), 1]);
+        vertices.push([point.add(toLeft), -1]);
+        vertices.push([point.add(toRight), 1]);
     }
 
     drawSection(vertices: Vec2[]) {

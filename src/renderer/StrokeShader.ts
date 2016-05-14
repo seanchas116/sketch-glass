@@ -11,9 +11,9 @@ export default
       precision lowp float;
       uniform vec4 uColor;
       uniform float uHalfWidth;
-      varying vec2 vUVCoord;
+      varying float vAAOffset;
       void main(void) {
-        float dist = abs(vUVCoord.x);
+        float dist = abs(vAAOffset);
         float alpha = clamp(uHalfWidth * (1.0 - dist), 0.0, 1.0);
         gl_FragColor = uColor * alpha;
       }
