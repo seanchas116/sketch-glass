@@ -5,7 +5,7 @@ import Variable from "../rx/Variable";
 import * as Rx from "rx";
 
 export default
-    class Component extends ObservableDestination {
+class Component extends ObservableDestination {
     static template = "";
     static templateElement: Element | null;
 
@@ -43,11 +43,11 @@ export default
         mountPoint.parentElement.removeChild(mountPoint);
     }
 
-    elementFor(selector: string) {
-        return this.element.querySelector(selector);
+    elementFor<T extends Element>(selector: string) {
+        return this.element.querySelector(selector) as T;
     }
-    slotFor(selector: string) {
-        return new Slot(this.elementFor(selector));
+    slotFor<T extends Element>(selector: string) {
+        return new Slot(this.elementFor<T>(selector));
     }
     mountPointFor(selector: string) {
         return { parent: this, element: this.elementFor(selector) };

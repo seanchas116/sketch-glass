@@ -16,7 +16,7 @@ export default
     isEditing = new Variable(false);
     isEditingEnabled = new Variable(true);
     text = new Variable("");
-    editSlot = this.slotFor(".edit");
+    editSlot = this.slotFor<HTMLInputElement>(".edit");
     textSlot = this.slotFor(".text");
     textEdited = new Rx.Subject<string>();
 
@@ -37,13 +37,13 @@ export default
             return;
         }
         this.isEditing.value = true;
-        const edit = (this.editSlot.element as HTMLInputElement);
+        const edit = this.editSlot.element;
         edit.setSelectionRange(0, edit.value.length);
     }
 
     endEditing() {
         if (this.isEditing.value) {
-            const edit = (this.editSlot.element as HTMLInputElement);
+            const edit = this.editSlot.element;
             edit.blur();
             this.textEdited.onNext(edit.value);
             this.isEditing.value = false;
@@ -51,7 +51,7 @@ export default
     }
 
     cancelEditing() {
-        (this.editSlot.element as HTMLInputElement).value = this.text.value;
+        this.editSlot.element.value = this.text.value;
         this.isEditing.value = false;
     }
 }

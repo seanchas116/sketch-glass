@@ -2,8 +2,8 @@ import * as Rx from "rx";
 import {toggleClass} from "./util";
 
 export default
-class Slot {
-    constructor(public element: Element) {
+class Slot<T extends Element> {
+    constructor(public element: T) {
     }
 
     get class() {
