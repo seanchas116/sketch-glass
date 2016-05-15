@@ -72,7 +72,6 @@ export default
 
         this.subscribe(Rx.Observable.merge([this.searchSlot.enterPressed, this.searchSlot.blurred]), () => {
             appViewModel.fileSearchQuery.value = this.searchSlot.element.value;
-            appViewModel.fetchFiles();
             this.searchSlot.element.blur();
         });
         this.subscribe(this.searchSlot.escPressed, () => {

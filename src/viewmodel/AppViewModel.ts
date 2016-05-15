@@ -36,6 +36,8 @@ export default
             this.isNewCanvasNeeded.value = true;
         }
         this.isInitialized.value = true;
+
+        this.subscribe(this.fileSearchQuery.changed, () => this.fetchFiles());
     }
 
     async fetchUser() {
