@@ -32,6 +32,8 @@ export default
         ]);
         if (this.fileVMs.value.length > 0) {
             this.currentFileVM.value = this.fileVMs.value[0];
+        } else {
+            this.isNewCanvasNeeded.value = true;
         }
         this.isInitialized.value = true;
     }
@@ -51,6 +53,7 @@ export default
         const file = await CanvasFile.create(name);
         await this.fetchFiles();
         this.currentFileVM.value = this.fileVMs.value[0];
+        this.isNewCanvasNeeded.value = false;
     }
 
     async checkAuth() {
@@ -104,12 +107,6 @@ export default
                 vm.update(file);
             }
         });
-        this.subscribe(
-            Rx.Observable.combineLatest(
-                this.files.changed.map(files => files.length == 0),
-                this.isInitialized.changed,
-                (noFile, initialized) => noFile && initialized
-            ), this.isNewCanvasNeeded);
     }
 }
 
