@@ -15,6 +15,7 @@ export default
     user = new Variable<User>(User.empty());
     files = new Variable<CanvasFile[]>([]);
     fileVMs = new Variable<CanvasFileViewModel[]>([]);
+    fileSearchQuery = new Variable("");
     currentFileVM = new Variable<CanvasFileViewModel | undefined>(undefined);
     canvasViewModel = new Variable<CanvasViewModel | undefined>(undefined);
     toolBoxViewModel = new ToolBoxViewModel();
@@ -42,7 +43,7 @@ export default
 
     async fetchFiles() {
         await this.waitForAuth();
-        this.files.value = await CanvasFile.list();
+        this.files.value = await CanvasFile.list(this.fileSearchQuery.value);
     }
 
     async addFile(name: string) {

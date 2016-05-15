@@ -31,6 +31,7 @@ export default
 
     open = new Variable(false);
     sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "sidebar");
+    searchSlot = this.slotFor<HTMLInputElement>(".sg-search");
     avatarSlot = this.slotFor(".avatar")
     userNameSlot = this.slotFor(".userName");
 
@@ -68,6 +69,17 @@ export default
 
         this.subscribe(this.addCanvasClicked, () => this.addFile());
         this.subscribe(this.open.changed, () => this.refreshFiles());
+
+        this.subscribe(Rx.Observable.merge([this.searchSlot.enterPressed, this.searchSlot.blurred]), () => {
+            appViewModel.fileSearchQuery.value = this.searchSlot.element.value;
+            appViewModel.fetchFiles();
+            this.searchSlot.element.blur();
+        });
+        this.subscribe(this.searchSlot.escPressed, () => {
+            appViewModel.fileSearchQuery.value = "";
+            this.searchSlot.element.value = "";
+            this.searchSlot.element.blur();
+        });
     }
 
     addFile() {

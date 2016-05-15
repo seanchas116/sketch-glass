@@ -80,10 +80,14 @@ export default
         });
     }
 
-    static async list() {
+    static async list(nameQuery: string) {
+        let q = "appProperties has { key='showInList' and value='true' } and trashed = false";
+        if (nameQuery) {
+            q = `name contains ${JSON.stringify(nameQuery)} and ${q}`;
+        }
         const data = await GoogleAPI.get<any>("https://www.googleapis.com/drive/v3/files", {
             orderBy: "modifiedTime desc",
-            q: "appProperties has { key='showInList' and value='true' } and trashed = false",
+            q,
             fields: "files(id,modifiedTime,name,thumbnailLink),kind,nextPageToken"
         });
         return (data.files as any[]).map(d => this.fromData(d));

@@ -39,6 +39,12 @@ class Slot<T extends Element> {
         };
     }
 
+    property(name: string) {
+        return (value: any) => {
+            this.element[name] = value;
+        };
+    }
+
     toggleAttribute(name: string) {
         return (value: boolean) => {
             if (value) {
