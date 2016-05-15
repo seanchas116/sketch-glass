@@ -19,7 +19,7 @@ class NewCanvasDialog extends Component {
 
     nameSlot = this.slotFor<HTMLInputElement>(".name");
     okSlot = this.slotFor(".ok");
-    isCancellable = true;
+    isCancelable = true;
     backgroundClicked = this.slot.clicked;
 
     constructor(mountPoint: MountPoint) {
@@ -29,7 +29,13 @@ class NewCanvasDialog extends Component {
         this.subscribe(this.backgroundClicked, () => this.cancel());
         this.subscribe(this.nameSlot.enterPressed, () => this.ok());
         this.subscribe(this.nameSlot.escPressed, () => this.cancel());
-        this.nameSlot.element.focus();
+    }
+
+    static show(cancelable: boolean) {
+        const dialog = new NewCanvasDialog({});
+        dialog.isCancelable = cancelable;
+        dialog.showInRoot();
+        dialog.nameSlot.element.focus();
     }
 
     async ok() {
@@ -39,7 +45,7 @@ class NewCanvasDialog extends Component {
     }
 
     cancel() {
-        if (this.isCancellable) {
+        if (this.isCancelable) {
             this.dispose();
         }
     }

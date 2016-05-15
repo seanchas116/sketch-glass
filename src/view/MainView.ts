@@ -42,9 +42,7 @@ export default
             (noCanvas, authenticated) => noCanvas && authenticated
         );
         this.subscribe(showNewCanvas.filter(x => x), () => {
-            const dialog = new NewCanvasDialog({});
-            dialog.isCancellable = false;
-            dialog.showInRoot();
+            NewCanvasDialog.show(false);
         });
     }
 }
