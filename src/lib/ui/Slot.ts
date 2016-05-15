@@ -69,7 +69,7 @@ class Slot {
         return this.onEvent<KeyboardEvent>("keypress").filter(e => e.keyCode == 13);
     }
     get escPressed() {
-        return this.onEvent<KeyboardEvent>("keypress").filter(e => e.keyCode == 27);
+        return this.onEvent<KeyboardEvent>("keydown").filter(e => e.keyCode == 27);
     }
 
     get isHidden() {

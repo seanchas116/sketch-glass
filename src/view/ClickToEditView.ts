@@ -27,6 +27,7 @@ export default
         this.subscribe(this.text.changed, this.textSlot.text);
         this.subscribe(this.textSlot.clicked, () => this.startEditing());
         this.subscribe(this.editSlot.enterPressed, () => this.endEditing());
+        this.subscribe(this.editSlot.escPressed, () => this.cancelEditing());
         this.subscribe(this.isEditingEnabled.changed.filter(x => !x), () => this.endEditing());
         this.subscribe(this.editSlot.blurred, () => this.endEditing());
     }
@@ -41,9 +42,16 @@ export default
     }
 
     endEditing() {
-        const edit = (this.editSlot.element as HTMLInputElement);
-        edit.blur();
-        this.textEdited.onNext(edit.value);
+        if (this.isEditing.value) {
+            const edit = (this.editSlot.element as HTMLInputElement);
+            edit.blur();
+            this.textEdited.onNext(edit.value);
+            this.isEditing.value = false;
+        }
+    }
+
+    cancelEditing() {
+        (this.editSlot.element as HTMLInputElement).value = this.text.value;
         this.isEditing.value = false;
     }
 }
