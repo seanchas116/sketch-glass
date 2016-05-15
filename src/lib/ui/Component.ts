@@ -21,8 +21,6 @@ export default
     element = (this.constructor as typeof Component).getTemplateElement().cloneNode(true) as Element;
     slot = new Slot(this.element);
 
-    clicked = Rx.Observable.fromEvent(this.element, 'click');
-
     constructor(mountPoint: MountPoint) {
         super();
         if (mountPoint.parent != undefined) {

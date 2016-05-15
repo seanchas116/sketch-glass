@@ -11,7 +11,7 @@ export default
 
     isChecked = new Variable(false);
     isDisabled = new Variable(false);
-    clicked = Rx.Observable.fromEvent(this.element, 'click');
+    clicked = this.slot.clicked;
 
     constructor(mountPoint: MountPoint, kind: string) {
         super(mountPoint);

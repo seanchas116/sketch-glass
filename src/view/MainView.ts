@@ -31,7 +31,7 @@ export default
         super(mountPoint);
         const canvasVM = appViewModel.canvasViewModel;
         this.subscribe(canvasVM.changed, this.canvasView.canvasViewModel);
-        this.subscribe(appViewModel.isLoading.changed.map(x => !x), this.loadingBar.isHidden());
+        this.subscribe(appViewModel.isLoading.changed.map(x => !x), this.loadingBar.isHidden);
 
         this.subscribe(appViewModel.isLoginNeeded.changed.filter(x => x), () => {
             new LoginDialog({}).showInRoot();

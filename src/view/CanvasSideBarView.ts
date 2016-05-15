@@ -35,8 +35,8 @@ export default
     nameEdit = new ClickToEditView(this.mountPointFor(".canvas-name"));
     sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
     userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
-    revealClicked = Rx.Observable.fromEvent(this.elementFor(".reveal"), 'click');
-    addUserClicked = Rx.Observable.fromEvent(this.elementFor(".add-user"), 'click');
+    revealClicked = this.slotFor(".reveal").clicked;
+    addUserClicked = this.slotFor(".add-user").clicked;
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);

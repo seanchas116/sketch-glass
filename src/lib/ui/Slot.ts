@@ -2,11 +2,11 @@ import * as Rx from "rx";
 import {toggleClass} from "./util";
 
 export default
-    class Slot {
+class Slot {
     constructor(public element: Element) {
     }
 
-    addClass() {
+    get class() {
         let oldClass = "";
         return (newClass: string) => {
             const classes = new Set(this.element.className.split(" "));
@@ -23,7 +23,7 @@ export default
         };
     }
 
-    text() {
+    get text() {
         return (text: string) => {
             this.element.textContent = text;
         }
@@ -49,7 +49,30 @@ export default
         }
     }
 
-    isHidden() {
+    onEvent<T>(name: string) {
+        return Rx.Observable.fromEvent<T>(this.element, name);
+    }
+
+    get clicked() {
+        return this.onEvent<MouseEvent>("click");
+    }
+    get changed() {
+        return this.onEvent("change");
+    }
+    get focused() {
+        return this.onEvent("focus");
+    }
+    get blurred() {
+        return this.onEvent("blur");
+    }
+    get enterPressed() {
+        return this.onEvent<KeyboardEvent>("keypress").filter(e => e.keyCode == 13);
+    }
+    get escPressed() {
+        return this.onEvent<KeyboardEvent>("keypress").filter(e => e.keyCode == 27);
+    }
+
+    get isHidden() {
         return (hidden: boolean) => {
             if (hidden) {
                 this.element.setAttribute("hidden", "");

@@ -36,7 +36,7 @@ export default
 
     canvasListView = new ListView<CanvasFileCell>(this.mountPointFor(".canvas-list"));
     currentCanvasCell = new Variable<CanvasFileCell | undefined>(undefined);
-    addCanvasClicked = Rx.Observable.fromEvent(this.elementFor(".add-canvas"), 'click');
+    addCanvasClicked = this.slotFor(".add-canvas").clicked;
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -47,7 +47,7 @@ export default
                 component.subscribe(component.isSelected.changed, () => {
                     this.currentCanvasCell.value = component;
                 });
-                component.subscribe(component.clicked, () => {
+                component.subscribe(component.slot.clicked, () => {
                     appViewModel.currentFileVM.value = fileVM;
                 });
                 return component;
@@ -62,7 +62,7 @@ export default
         });
 
         this.subscribe(appViewModel.user.changed, user => {
-            this.userNameSlot.text()(user.displayName);
+            this.userNameSlot.text(user.displayName);
             this.avatarSlot.attribute("src")(user.photoLink);
         });
 

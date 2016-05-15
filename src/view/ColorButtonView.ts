@@ -16,7 +16,7 @@ export default
     isChecked = new Variable(false);
     isDisabled = new Variable(false);
     color = new Variable(Color.fromHSV(200, 0.9, 0.9));
-    clicked = Rx.Observable.fromEvent(this.element, 'click');
+    clicked = this.slot.clicked;
     colorElem = this.elementFor(".color") as HTMLElement;
 
     constructor(mountPoint: MountPoint) {

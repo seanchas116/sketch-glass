@@ -20,7 +20,7 @@ export default
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
-        this.subscribe(this.user.changed.map(u => u.displayName), this.nameSlot.text());
+        this.subscribe(this.user.changed.map(u => u.displayName), this.nameSlot.text);
         this.subscribe(this.user.changed.map(u => u.photoLink), this.avatarSlot.attribute("src"));
     }
 }

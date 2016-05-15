@@ -17,9 +17,9 @@ class NewCanvasDialog extends Component {
     </div>
   `;
 
-    clicked = Rx.Observable.fromEvent(this.elementFor(".ok"), 'click');
+    clicked = this.slotFor(".ok").clicked;
     isCancellable = true;
-    backgroundClicked = Rx.Observable.fromEvent(this.element, 'click');
+    backgroundClicked = this.slot.clicked;
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);

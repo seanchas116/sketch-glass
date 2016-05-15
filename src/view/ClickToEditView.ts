@@ -18,20 +18,17 @@ export default
     text = new Variable("");
     editSlot = this.slotFor(".edit");
     textSlot = this.slotFor(".text");
-    textClicked = Rx.Observable.fromEvent(this.textSlot.element, 'click');
-    editBlurred = Rx.Observable.fromEvent(this.editSlot.element, 'blur');
-    editEntered = Rx.Observable.fromEvent<KeyboardEvent>(this.editSlot.element, 'keypress').filter(e => e.keyCode == 13);
     textEdited = new Rx.Subject<string>();
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
         this.subscribe(this.isEditing.changed, this.slot.toggleClass("editing"));
         this.subscribe(this.text.changed, this.editSlot.attribute("value"));
-        this.subscribe(this.text.changed, this.textSlot.text());
-        this.subscribe(this.textClicked, () => this.startEditing());
-        this.subscribe(this.editEntered, () => this.endEditing());
+        this.subscribe(this.text.changed, this.textSlot.text);
+        this.subscribe(this.textSlot.clicked, () => this.startEditing());
+        this.subscribe(this.editSlot.enterPressed, () => this.endEditing());
         this.subscribe(this.isEditingEnabled.changed.filter(x => !x), () => this.endEditing());
-        this.subscribe(this.editBlurred, () => this.endEditing());
+        this.subscribe(this.editSlot.blurred, () => this.endEditing());
     }
 
     startEditing() {
