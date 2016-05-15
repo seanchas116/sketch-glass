@@ -1,6 +1,7 @@
 import Component from "../lib/ui/Component";
 import MountPoint from "../lib/ui/MountPoint";
 import ButtonView from "./ButtonView";
+import ColorDialog from "./ColorDialog";
 import Tool from "../model/Tool";
 import Variable from "../lib/rx/Variable";
 import ColorButtonView from "./ColorButtonView";
@@ -16,6 +17,7 @@ export default
       <div class="color-button"></div>
       <div class="undo-button"></div>
       <div class="redo-button"></div>
+      <div class="color-dialog"></div>
     </div>
   `;
 
@@ -24,6 +26,7 @@ export default
     eraserButton = new ButtonView(this.mountPointFor(".eraser-button"), "eraser");
     undoButton = new ButtonView(this.mountPointFor(".undo-button"), "undo");
     redoButton = new ButtonView(this.mountPointFor(".redo-button"), "redo");
+    colorDialog = new ColorDialog(this.mountPointFor(".color-dialog"));
     buttons = [this.penButton, this.eraserButton, this.undoButton, this.redoButton, this.colorButton];
 
     constructor(mountPoint: MountPoint) {
