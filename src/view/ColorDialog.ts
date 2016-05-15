@@ -16,16 +16,25 @@ class ColorDialog extends Component {
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
 
-        const colors = [0,1,2,3,4,5,6,7].map(x => 45 * x + 10).map(hue => Color.fromHSV(hue, 85, 75));
-        colors.unshift(Color.black);
+        const palette = [0,1,2,3,4,5].map(x => 60 * x - 10).map(hue => [
+            Color.fromHSV(hue, 85, 60),
+            Color.fromHSV(hue, 85, 90),
+        ]);
+        const grays = [75, 50, 25, 0].map(v => Color.fromHSV(0, 0, v));
+        const colors = [
+            grays[0], palette[0][0], palette[1][0], palette[2][0],
+            grays[1], palette[0][1], palette[1][1], palette[2][1],
+            grays[2], palette[3][0], palette[4][0], palette[5][0],
+            grays[3], palette[3][1], palette[4][1], palette[5][1],
+        ];
 
-        for (let y = 0; y < 3; ++y) {
+        for (let y = 0; y < 4; ++y) {
             const row = document.createElement("div");
             row.className = "row";
-            for (let x = 0; x < 3; ++x) {
+            for (let x = 0; x < 4; ++x) {
                 const cell = document.createElement("div");
                 cell.className = "cell";
-                const color = colors[y * 3 + x];
+                const color = colors[y * 4 + x];
                 cell.style.backgroundColor = color.toString();
                 cell.addEventListener("click", () => {
                     this.colorSelected.onNext(color);
