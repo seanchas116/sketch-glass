@@ -16,7 +16,7 @@ class ColorDialog extends Component {
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
 
-        const colors = [0,1,2,3,4,5,6,7].map(x => 45 * x + 10).map(hue => Color.fromHSV(hue, 85, 75));
+        const colors = [0,1,2,3,4,5,6,7].map(x => 45 * x + 10).map(hue => Color.fromHSV(hue, 85, 80));
         colors.unshift(Color.black);
 
         for (let y = 0; y < 3; ++y) {
