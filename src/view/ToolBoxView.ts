@@ -28,6 +28,7 @@ export default
     redoButton = new ButtonView(this.mountPointFor(".redo-button"), "redo");
     colorDialog = new ColorDialog(this.mountPointFor(".color-dialog"));
     buttons = [this.penButton, this.eraserButton, this.undoButton, this.redoButton, this.colorButton];
+    isColorsShown = new Variable(false);
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -63,13 +64,16 @@ export default
 
         this.subscribe(viewModel.color.changed, this.colorButton.color);
 
-        this.colorDialog.slot.isHidden(true);
+        this.subscribe(this.isColorsShown.changed.map(x => !x), this.colorDialog.slot.isHidden);
         this.subscribe(this.colorButton.clicked, () => {
-            this.colorDialog.slot.isHidden(false);
+            this.isColorsShown.value = !this.isColorsShown.value;
         });
         this.subscribe(this.colorDialog.colorSelected, color => {
             viewModel.color.value = color;
-            this.colorDialog.slot.isHidden(true);
+            this.isColorsShown.value = false;
+        });
+        this.subscribe(this.colorDialog.canceled, () => {
+            this.isColorsShown.value = false;
         });
     }
 

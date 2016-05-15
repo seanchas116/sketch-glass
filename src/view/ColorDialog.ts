@@ -7,14 +7,19 @@ export default
 class ColorDialog extends Component {
     static template = `
         <div class='sg-color-dialog'>
-            <div class='arrow'></div>
+            <section class='dialog'>
+                <div class='arrow'></div>
+            </section>
         </div>
     `;
 
     colorSelected = new Rx.Subject<Color>();
+    canceled = this.slot.clicked;
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
+        const dialog = this.elementFor(".dialog");
+        dialog.addEventListener("click", e => e.stopPropagation());
 
         const colors = [0,1,2,3,4,5,6,7].map(x => 45 * x + 10).map(hue => Color.fromHSV(hue, 85, 80));
         colors.unshift(Color.black);
@@ -32,7 +37,7 @@ class ColorDialog extends Component {
                 });
                 row.appendChild(cell);
             }
-            this.element.appendChild(row);
+            dialog.appendChild(row);
         }
     }
 }
