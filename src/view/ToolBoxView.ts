@@ -60,6 +60,17 @@ export default
                 dest.subscribe(canvasVM.canvas.canRedo.changed.map(x => !x), this.redoButton.isDisabled);
             }
         });
+
+        this.subscribe(viewModel.color.changed, this.colorButton.color);
+
+        this.colorDialog.slot.isHidden(true);
+        this.subscribe(this.colorButton.clicked, () => {
+            this.colorDialog.slot.isHidden(false);
+        });
+        this.subscribe(this.colorDialog.colorSelected, color => {
+            viewModel.color.value = color;
+            this.colorDialog.slot.isHidden(true);
+        });
     }
 
     undo() {

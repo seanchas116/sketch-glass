@@ -57,7 +57,7 @@ class Shader {
     }
     set color(color: Color) {
         if (!this._color.equals(color)) {
-            this.gl.uniform4fv(this.uColor, color.toData());
+            this.gl.uniform4fv(this.uColor, color.toGLData());
             this._color = color;
         }
     }

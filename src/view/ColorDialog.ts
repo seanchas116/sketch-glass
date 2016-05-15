@@ -1,6 +1,7 @@
 import Component from "../lib/ui/Component";
 import MountPoint from "../lib/ui/MountPoint";
 import Color from "../lib/geometry/Color";
+import * as Rx from "rx";
 
 export default
 class ColorDialog extends Component {
@@ -9,6 +10,8 @@ class ColorDialog extends Component {
             <div class='arrow'></div>
         </div>
     `;
+
+    colorSelected = new Rx.Subject<Color>();
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -22,7 +25,11 @@ class ColorDialog extends Component {
             for (let x = 0; x < 3; ++x) {
                 const cell = document.createElement("div");
                 cell.className = "cell";
-                cell.style.backgroundColor = colors[y * 3 + x].toString();
+                const color = colors[y * 3 + x];
+                cell.style.backgroundColor = color.toString();
+                cell.addEventListener("click", () => {
+                    this.colorSelected.onNext(color);
+                });
                 row.appendChild(cell);
             }
             this.element.appendChild(row);

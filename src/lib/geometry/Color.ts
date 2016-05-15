@@ -14,8 +14,8 @@ export default
         return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
     }
 
-    toData() {
-        return new Float32Array([this.r, this.g, this.b, this.a]);
+    toGLData() {
+        return new Float32Array([this.r / 255, this.g / 255, this.b / 255, this.a]);
     }
 
     static black = new Color(0, 0, 0, 1);
