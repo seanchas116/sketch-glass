@@ -7,20 +7,23 @@ interface CanvasFileInitData {
     name: string;
     modifiedTime: Date;
     thumbnailLink: string|undefined;
+    canEdit: boolean;
 }
 
 export default
-    class CanvasFile {
+class CanvasFile {
     id: string;
     name: string;
     modifiedTime: Date;
     thumbnailLink: string|undefined;
+    canEdit: boolean;
 
     constructor(data: CanvasFileInitData) {
         this.id = data.id;
         this.name = data.name;
         this.modifiedTime = data.modifiedTime;
         this.thumbnailLink = data.thumbnailLink;
+        this.canEdit = data.canEdit;
     }
 
     static async rename(id: string, newName: string) {
@@ -55,7 +58,7 @@ export default
 
     static empty() {
         return new CanvasFile({
-            id: "", name: "", modifiedTime: new Date(), thumbnailLink: undefined
+            id: "", name: "", modifiedTime: new Date(), thumbnailLink: undefined, canEdit: false
         });
     }
 
@@ -76,7 +79,8 @@ export default
             id: data.id,
             name: data.name,
             modifiedTime: new Date(data.modifiedTime),
-            thumbnailLink: data.thumbnailLink
+            thumbnailLink: data.thumbnailLink,
+            canEdit: data.capabilities.canEdit
         });
     }
 
@@ -88,7 +92,7 @@ export default
         const data = await GoogleAPI.get<any>("https://www.googleapis.com/drive/v3/files", {
             orderBy: "modifiedTime desc",
             q,
-            fields: "files(id,modifiedTime,name,thumbnailLink),kind,nextPageToken"
+            fields: "files(capabilities/canEdit,id,modifiedTime,name,thumbnailLink),kind,nextPageToken"
         });
         return (data.files as any[]).map(d => this.fromData(d));
     }

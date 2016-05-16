@@ -15,7 +15,7 @@ function loadDocument(fileId: string) {
 }
 
 export default
-    class Canvas {
+class Canvas {
     strokes = new Variable<Stroke[]>([]);
     strokeDataMap: gapi.drive.realtime.CollaborativeMap<StrokeData>;
     canUndo = new Variable(false);
