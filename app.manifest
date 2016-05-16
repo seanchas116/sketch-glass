@@ -21,8 +21,9 @@ dist/vendor/open-iconic/font/fonts/open-iconic.otf
 dist/vendor/open-iconic/font/fonts/open-iconic.svg
 dist/vendor/open-iconic/font/fonts/open-iconic.ttf
 dist/vendor/open-iconic/font/fonts/open-iconic.woff
+dist/vendor/perfect-scrollbar/dist/css/perfect-scrollbar.css
 
 NETWORK:
 *
 
-# hash: 070c4b7d0ca61a2d8465c786387b076e3fc8396c186298d19d7f5ad466a8d59e
+# hash: 38c2bfc457826ce82b18cb9b8483f87c748698d6d0e9ec7ab545cce02a9c0348
