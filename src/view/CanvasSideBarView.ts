@@ -36,7 +36,7 @@ export default
     sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
     userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
     revealClicked = this.slotFor(".reveal").clicked;
-    addUserClicked = this.slotFor(".add-user").clicked;
+    addUserSlot = this.slotFor(".add-user");
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -49,7 +49,7 @@ export default
         this.subscribeWithDestination(appViewModel.canvasViewModel.changed, (canvasVM, dest) => {
             if (canvasVM != undefined) {
                 dest.subscribe(canvasVM.users.changed, this.users);
-                dest.subscribe(this.addUserClicked, () => {
+                dest.subscribe(this.addUserSlot.clicked, () => {
                     //      ↓ FIXME: possibly a TypeScript bug
                     canvasVM!.fileVM.openShareDialog();
                 });
@@ -60,6 +60,8 @@ export default
                 dest.subscribe(canvasVM.fileVM.name.changed, this.nameEdit.text);
                 dest.subscribe(canvasVM.fileVM.thumbnailLink.changed, this.thumbnailSlot.attribute("src"));
                 dest.subscribe(this.nameEdit.textEdited, text => canvasVM!.fileVM.rename(text));
+                this.nameEdit.isEditingEnabled.value = canvasVM.canvas.canEdit;
+                this.addUserSlot.isHidden(!canvasVM.canvas.canEdit);
                 this.refreshUsers();
             } else {
                 this.users.value = [];

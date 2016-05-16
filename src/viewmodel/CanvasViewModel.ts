@@ -20,6 +20,8 @@ export default
     }
 
     async fetchUsers() {
-        this.users.value = await CanvasFile.fetchUsers(this.fileVM.id);
+        if (this.canvas.canEdit) {
+            this.users.value = await CanvasFile.fetchUsers(this.fileVM.id);
+        }
     }
 }
