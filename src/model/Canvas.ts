@@ -27,7 +27,7 @@ export default
         this.strokeDataMap = document.getModel().getRoot().get("shapes") as gapi.drive.realtime.CollaborativeMap<StrokeData>;
         this.strokeDataMap.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, (event) => {
             this.updateStroke();
-            if (event.isLocal) {
+            if (event.isLocal && !event.isUndo && !event.isRedo) {
                 this.editedInLocal.onNext(undefined);
             } else {
                 this.editedInRemote.onNext(undefined);
