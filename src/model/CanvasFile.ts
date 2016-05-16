@@ -1,6 +1,7 @@
 import * as GoogleAPI from "../lib/GoogleAPI";
 import User from "./User";
 const base64url = require("base64url");
+const deepAssign = require("deep-assign");
 
 interface CanvasFileInitData {
     id: string;
@@ -71,6 +72,7 @@ class CanvasFile {
             name,
             description: "Created by sketch-glass",
         });
+        deepAssign(data, {capabilities: {canEdit: true}});
         return this.fromData(data);
     }
 
