@@ -14,6 +14,7 @@ export default
     name = new Variable("");
     modifiedTime = new Variable(new Date());
     thumbnailLink = new Variable<string|undefined>(undefined);
+    canEdit = new Variable(false);
 
     thumbnailLinkForWidth(width: number) {
         if (this.thumbnailLink.value) {
@@ -33,6 +34,7 @@ export default
         this.name.value = file.name;
         this.modifiedTime.value = file.modifiedTime;
         this.thumbnailLink.value = file.thumbnailLink;
+        this.canEdit.value = file.canEdit;
     }
 
     get file() {
@@ -40,7 +42,8 @@ export default
             id: this.id,
             name: this.name.value,
             modifiedTime: this.modifiedTime.value,
-            thumbnailLink: this.thumbnailLink.value || ""
+            thumbnailLink: this.thumbnailLink.value || "",
+            canEdit: this.canEdit.value
         });
     }
 

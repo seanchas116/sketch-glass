@@ -65,7 +65,7 @@ class DrawingInteraction extends Interaction {
     }
 
     static canInitiate(canvasView: CanvasView, points: Vec2[], events: UIEvent[]) {
-        return toolBoxViewModel.tool.value == Tool.Pen;
+        return canvasView.canEdit.value && toolBoxViewModel.tool.value == Tool.Pen;
     }
 }
 
@@ -83,7 +83,7 @@ class ErasingInteraction extends Interaction {
     }
 
     static canInitiate(canvasView: CanvasView, points: Vec2[], events: UIEvent[]) {
-        return toolBoxViewModel.tool.value == Tool.Eraser;
+        return canvasView.canEdit.value && toolBoxViewModel.tool.value == Tool.Eraser;
     }
 }
 
@@ -291,6 +291,7 @@ class CanvasView extends Component {
     renderer = new Renderer(this.element as HTMLCanvasElement);
     interaction = new AutoDisposeVariable<Interaction>(undefined);
     isDragMode = new Variable(false);
+    canEdit = new Variable(false);
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -301,6 +302,7 @@ class CanvasView extends Component {
                 dest.subscribe(vm.transform.changed, t => this.renderer.transform.value = t);
             }
         });
+        this.subscribe(this.canvasViewModel.changed.map(vm => vm ? vm.canvas.canEdit : false), this.canEdit);
 
         if (window["PointerEvent"]) {
             this.element.addEventListener('pointermove', (ev) => this.onPointerMove(ev));

@@ -20,6 +20,7 @@ class Canvas {
     strokeDataMap: gapi.drive.realtime.CollaborativeMap<StrokeData>;
     canUndo = new Variable(false);
     canRedo = new Variable(false);
+    canEdit = this.file.canEdit;
     editedInLocal = new Rx.Subject<void>();
     editedInRemote = new Rx.Subject<void>();
 
