@@ -7,10 +7,12 @@ export default
     class ListView<TChild extends Component> extends Component {
     static template = `
     <div class="sg-list-view">
+        <div class="content"></div>
     </div>
   `;
 
     children = new Variable<TChild[]>([]);
+    content = this.elementFor(".content");
 
     constructor(mountPoint: MountPoint) {
         super(mountPoint);
@@ -28,9 +30,10 @@ export default
     }
 
     private _reorder() {
-        const {element} = this;
+        const {content} = this;
         for (const [index, child] of this.children.value.entries()) {
-            element.insertBefore(child.element, element.childNodes[index]);
+            content.insertBefore(child.element, content.childNodes[index]);
         }
+        Ps.update(this.element);
     }
 }

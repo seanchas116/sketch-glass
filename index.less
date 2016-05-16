@@ -13,8 +13,12 @@ button {
 }
 
 .sg-list-view {
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
+  position: relative;
+  overflow: hidden;
+  //-webkit-overflow-scrolling: touch;
+  > * {
+    .force-layer();
+  }
 }
 
 .sg-click-to-edit {

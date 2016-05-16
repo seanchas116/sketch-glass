@@ -54,6 +54,7 @@ gulp.task("copy-vendor", () => {
   const files = gulp.src([
     "node_modules/normalize.css/normalize.css",
     "node_modules/open-iconic/font/css/open-iconic.css",
+    "node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
     "node_modules/open-iconic/font/fonts/*",
   ], {base: "node_modules"});
   return files.pipe(gulp.dest("./dist/vendor"));
