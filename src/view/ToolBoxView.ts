@@ -35,8 +35,9 @@ export default
 
         const viewModel = appViewModel.toolBoxViewModel;
 
+        const disabled = appViewModel.canvasViewModel.changed.map(vm => vm ? !vm.canvas.canEdit : true);
         for (const button of this.buttons) {
-            this.subscribe(appViewModel.isLoading.changed, button.isDisabled);
+            this.subscribe(disabled, button.isDisabled);
         }
 
         this.subscribe(this.penButton.clicked, () => {
