@@ -7,9 +7,11 @@ import StrokeShader from "./StrokeShader";
 import Model from "./Model";
 import Transform from "../lib/geometry/Transform";
 import Rect from "../lib/geometry/Rect";
+import Color from "../lib/geometry/Color";
+import randomID from "../lib/randomID";
 
 export default
-    class StrokeModel implements Model {
+class StrokeModel implements Model {
     isDisposed = false;
     polygon = new Polygon(this.gl, this.shader, []);
     lastSectionLength = 0;
@@ -19,10 +21,16 @@ export default
     points: Vec2[] = [];
     boundingRect = Rect.empty;
 
-    constructor(public gl: WebGLRenderingContext, public shader: StrokeShader, public stroke: Stroke) {
-        for (const pos of stroke.points) {
-            this.drawPoint(pos);
+    static fromStroke(gl: WebGLRenderingContext, shader: StrokeShader, stroke: Stroke) {
+        const model = new StrokeModel(gl, shader, stroke.color, stroke.width, stroke.id, stroke.createdAt);
+        for (const p of stroke.points) {
+            model.addPoint(p);
         }
+        model.finalize();
+        return model;
+    }
+
+    constructor(public gl: WebGLRenderingContext, public shader: StrokeShader, public color: Color, public width: number, public id = randomID(), public createdAt = new Date()) {
     }
 
     dispose() {
@@ -33,8 +41,11 @@ export default
         }
     }
 
+    toStroke() {
+        return new Stroke(this.points, this.color, this.width, this.id, this.createdAt);
+    }
+
     addPoint(pos: Vec2) {
-        this.stroke.points.push(pos);
         const bounding = this.drawPoint(pos);
         this.polygon.updateBuffer(false);
         return bounding;
@@ -61,13 +72,13 @@ export default
     }
 
     finalize() {
-        this.collider = new StrokeCollider(this.stroke.width, this.vertices);
+        this.collider = new StrokeCollider(this.width, this.vertices);
         this.boundingRect = Rect.boundingRect(this.polygon.vertices.map(([xy, uv]) => xy));
         this.polygon.updateBuffer(true);
     }
 
     drawSegment(last: Vec2, point: Vec2) {
-        const {width} = this.stroke;
+        const {width} = this;
 
         const normal = point.sub(last).normal();
         if (normal == undefined) { return Rect.empty; }
@@ -104,12 +115,12 @@ export default
     }
 
     render(viewportTransform: Transform, sceneTransform: Transform) {
-        const {polygon, shader, stroke} = this;
+        const {polygon, shader, color, width} = this;
         if (polygon.vertices.length > 0) {
             shader.use();
             shader.transform = sceneTransform.merge(viewportTransform);
-            shader.color = stroke.color;
-            shader.displayWidth = stroke.width * sceneTransform.m11;
+            shader.color = color;
+            shader.displayWidth = width * sceneTransform.m11;
             polygon.draw();
         }
     }

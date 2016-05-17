@@ -49,9 +49,8 @@ class Canvas {
         this.updateCanUndoRedo();
     }
 
-    deleteStroke(stroke: Stroke) {
-        let index = -1;
-        this.strokeDataMap.delete(stroke.id);
+    deleteStroke(id: string) {
+        this.strokeDataMap.delete(id);
         this.updateCanUndoRedo();
     }
 

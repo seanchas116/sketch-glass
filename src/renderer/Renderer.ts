@@ -71,11 +71,7 @@ export default
 
         this.subscribeArrayWithTracking(this.strokes.changed, this.strokeModels, {
             getKey: stroke => stroke.id,
-            create: stroke => {
-                const model = new StrokeModel(gl, this.shader, stroke);
-                model.finalize();
-                return model;
-            }
+            create: stroke => StrokeModel.fromStroke(gl, this.shader, stroke)
         });
 
         this.subscribe(
@@ -132,8 +128,7 @@ export default
     }
 
     strokeBegin(width: number, color: Color) {
-        const stroke = new Stroke([], color, width);
-        this.currentModel = new StrokeModel(this.gl, this.shader, stroke);
+        this.currentModel = new StrokeModel(this.gl, this.shader, color, width);
     }
 
     strokeNext(pos: Vec2) {
@@ -152,7 +147,7 @@ export default
         if (canvas == undefined) {
             return;
         }
-        canvas.pushStroke(this.currentModel.stroke);
+        canvas.pushStroke(this.currentModel.toStroke());
         this.currentModel.dispose();
         this.currentModel = undefined;
     }
@@ -177,18 +172,18 @@ export default
         const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
         const boundingRect = Rect.boundingRect(vertices);
         const collider = new StrokeCollider(this.erasingWidth, vertices);
-        const strokeToErase: Stroke[] = [];
+        const modelsToErase: StrokeModel[] = [];
         for (const model of this.strokeModels.value) {
             if (boundingRect.intersection(model.boundingRect).isEmpty) {
                 continue;
             }
             if (model.collider.collides(collider)) {
-                strokeToErase.push(model.stroke);
+                modelsToErase.push(model);
             }
         }
-        if (strokeToErase.length > 0) {
-            for (const stroke of strokeToErase) {
-                canvas.deleteStroke(stroke);
+        if (modelsToErase.length > 0) {
+            for (const model of modelsToErase) {
+                canvas.deleteStroke(model.id);
             }
             this.render();
         }
