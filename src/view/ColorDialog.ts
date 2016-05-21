@@ -21,7 +21,7 @@ class ColorDialog extends Component {
         const dialog = this.elementFor(".dialog");
         dialog.addEventListener("click", e => e.stopPropagation());
 
-        const colors = [0,1,2,3,4,5,6,7].map(x => 45 * x + 10).map(hue => Color.fromHSV(hue, 85, 80));
+        const colors = [0,1,2,3,4,5,6,7].map(x => 45 * x + 10).map(hue => Color.fromHSV(hue, 90, 80));
         colors.unshift(Color.black);
 
         for (let y = 0; y < 3; ++y) {
