@@ -15,15 +15,15 @@ dist/fonts/sg-icon.ttf
 dist/fonts/sg-icon.woff
 dist/fonts/sg-icon.woff2
 dist/vendor/normalize.css/normalize.css
-dist/vendor/open-iconic/font/css/open-iconic.css
 dist/vendor/open-iconic/font/fonts/open-iconic.eot
 dist/vendor/open-iconic/font/fonts/open-iconic.otf
 dist/vendor/open-iconic/font/fonts/open-iconic.svg
 dist/vendor/open-iconic/font/fonts/open-iconic.ttf
 dist/vendor/open-iconic/font/fonts/open-iconic.woff
+dist/vendor/open-iconic/font/css/open-iconic.css
 dist/vendor/perfect-scrollbar/dist/css/perfect-scrollbar.css
 
 NETWORK:
 *
 
-# hash: 503106ae4a95dfd5935a3be708ee893411b1a1e4f8f2903f96307001d45878cd
+# hash: 4cd968b50d18fe8b1c983e91656b7cc42d9fd3ba369e8e5b0579cbac49b72879
