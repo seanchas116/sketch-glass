@@ -40,7 +40,7 @@ class NewCanvasDialog extends Component {
 
     async ok() {
         const name = this.nameSlot.element.value;
-        await appViewModel.addFile(name);
+        appViewModel.addFile(name);
         this.dispose();
     }
 
