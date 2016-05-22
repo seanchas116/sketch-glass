@@ -64,30 +64,28 @@ export default
             return;
         }
         const {boundingRect} = this.renderer;
-        if (boundingRect.isEmpty) {
-            return;
-        }
-
         this.framebuffer.using(() => {
             const scene = new Scene(this.gl);
             scene.size = thumbSize;
             scene.flip = true;
 
-            const scale = Math.min(thumbSize.width / boundingRect.width, thumbSize.height / boundingRect.height);
+            if (!boundingRect.isEmpty) {
+                const scale = Math.min(thumbSize.width / boundingRect.width, thumbSize.height / boundingRect.height);
 
-            scene.transform = Transform.translate(boundingRect.center.negate())
-                .scale(new Vec2(scale, scale))
-                .translate(thumbSize.mul(0.5));
+                scene.transform = Transform.translate(boundingRect.center.negate())
+                    .scale(new Vec2(scale, scale))
+                    .translate(thumbSize.mul(0.5));
 
-            const models = [this.renderer.backgroundModel, ...this.renderer.strokeModels.value];
-            if (this.renderer.currentModel) {
-                models.push(this.renderer.currentModel);
+                const models = [this.renderer.backgroundModel, ...this.renderer.strokeModels.value];
+                if (this.renderer.currentModel) {
+                    models.push(this.renderer.currentModel);
+                }
+                scene.models = models;
             }
-
-            scene.models = models;
 
             scene.render();
         });
+
         this.framebuffer.readPixels(new Uint8Array(this.imageData.data.buffer));
         this.context.putImageData(this.imageData, 0, 0);
         const jpeg = this.canvas.toDataURL("image/jpeg").replace(/^data:image\/jpeg;base64,/, "");
