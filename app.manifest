@@ -16,14 +16,14 @@ dist/fonts/sg-icon.woff
 dist/fonts/sg-icon.woff2
 dist/vendor/normalize.css/normalize.css
 dist/vendor/open-iconic/font/css/open-iconic.css
-dist/vendor/perfect-scrollbar/dist/css/perfect-scrollbar.css
 dist/vendor/open-iconic/font/fonts/open-iconic.eot
 dist/vendor/open-iconic/font/fonts/open-iconic.otf
 dist/vendor/open-iconic/font/fonts/open-iconic.svg
 dist/vendor/open-iconic/font/fonts/open-iconic.ttf
 dist/vendor/open-iconic/font/fonts/open-iconic.woff
+dist/vendor/perfect-scrollbar/dist/css/perfect-scrollbar.css
 
 NETWORK:
 *
 
-# hash: 10c1405ca06b92a54b129ff3b8aae076605b340785dae5a5f861eecbb02492c4
+# hash: 466ecd11f1907c2a3829723ca153bc673400cd9ce384984b2ccccf288729457b
