@@ -1,7 +1,6 @@
 CACHE MANIFEST
 
 CACHE:
-dist/CNAME
 dist/app.manifest
 dist/bundle.js
 dist/bundle.js.map
@@ -15,15 +14,15 @@ dist/fonts/sg-icon.ttf
 dist/fonts/sg-icon.woff
 dist/fonts/sg-icon.woff2
 dist/vendor/normalize.css/normalize.css
+dist/vendor/open-iconic/font/css/open-iconic.css
 dist/vendor/open-iconic/font/fonts/open-iconic.eot
 dist/vendor/open-iconic/font/fonts/open-iconic.otf
 dist/vendor/open-iconic/font/fonts/open-iconic.svg
 dist/vendor/open-iconic/font/fonts/open-iconic.ttf
 dist/vendor/open-iconic/font/fonts/open-iconic.woff
-dist/vendor/open-iconic/font/css/open-iconic.css
 dist/vendor/perfect-scrollbar/dist/css/perfect-scrollbar.css
 
 NETWORK:
 *
 
-# hash: 4cd968b50d18fe8b1c983e91656b7cc42d9fd3ba369e8e5b0579cbac49b72879
+# hash: 3575759fea6ad3d518d2dee4bd734bbc98589be8402cffc3cf54128f0949eebe
