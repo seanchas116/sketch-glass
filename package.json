@@ -29,7 +29,7 @@
     "gutil": "^1.6.4",
     "merge-stream": "^1.0.0",
     "tslint": "^3.9.0",
-    "typescript": "^1.9.0-dev.20160516",
+    "typescript": "^1.9.0-dev.20160523-1.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0",

@@ -1,10 +1,8 @@
 {
-  "dependencies": {},
-  "ambientDependencies": {
+  "globalDependencies": {
     "gapi": "registry:dt/gapi#0.0.0+20160412153822",
-    "node": "registry:dt/node#4.0.0+20160330064709",
-    "page": "registry:dt/page#0.0.0+20160317120654",
+    "node": "registry:dt/node#6.0.0+20160523035754",
     "rx": "npm:rx/ts/rx.all.d.ts",
-    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160412133644"
+    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160523035005"
   }
 }
