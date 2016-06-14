@@ -16,7 +16,6 @@ export default
     <div class="sg-canvas-sidebar">
       <aside class="sg-sidebar-content">
         <div class="canvas-header">
-          <img class="thumbnail">
           <div class="canvas-name"></div>
           <span class="oi reveal" data-glyph="external-link"></span>
         </div>
@@ -31,7 +30,6 @@ export default
 
     open = new Variable(false);
     users = new Variable<User[]>([]);
-    thumbnailSlot = this.slotFor(".thumbnail");
     nameEdit = new ClickToEditView(this.mountPointFor(".canvas-name"));
     sidebarButton = new ButtonView(this.mountPointFor(".sidebar-button"), "info");
     userListView = new ListView<UserCell>(this.mountPointFor(".user-list"));
@@ -58,7 +56,6 @@ export default
                     window.open(`https://drive.google.com/drive/blank?action=locate&id=${id}`, "_blank");
                 });
                 dest.subscribe(canvasVM.fileVM.name.changed, this.nameEdit.text);
-                dest.subscribe(canvasVM.fileVM.thumbnailLink.changed, this.thumbnailSlot.attribute("src"));
                 dest.subscribe(this.nameEdit.textEdited, text => canvasVM!.fileVM.rename(text));
                 this.nameEdit.isEditingEnabled.value = canvasVM.canvas.canEdit;
                 this.addUserSlot.isHidden(!canvasVM.canvas.canEdit);

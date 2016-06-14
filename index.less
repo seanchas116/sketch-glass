@@ -2,6 +2,10 @@
   transform: translateZ(0);
 }
 
+@gray1: #3B4149;
+@gray2: #4B535D;
+@gray3: #E2E6EB;
+
 .no-select {
   -ms-user-select: none;
   -moz-user-select: none;
@@ -34,6 +38,8 @@ button {
     width: 100%;
   }
   .text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   &.editing {
     .edit {
@@ -102,7 +108,7 @@ button {
   top: 0;
   position: absolute;
   overflow: hidden;
-  background-color: #252526;
+  background-color: @gray1;
   transition: width 0.2s ease;
 
   &.open {
@@ -167,7 +173,7 @@ button {
   height: 48px;
   vertical-align: middle;
   &:hover {
-    background-color: #2D2E30;
+    background-color: @gray2;
   }
 }
 
@@ -223,11 +229,13 @@ button {
 
   .sg-canvas-cell {
     &.selected {
-      background-color: #3D3E3F;
-      border-left: 4px solid #1568C9;
+      background-color: #268BBD;
     }
     &:hover {
-      background-color: #2D2E30;
+      background-color: @gray2;
+    }
+    &.selected:hover {
+      background-color: #268BBD;
     }
     border-left: 4px solid transparent;
     color: white;
@@ -275,18 +283,11 @@ button {
     display: flex;
     align-items: center;
 
-    .thumbnail {
-      width: 48px;
-      height: 36px;
-      margin: 0 18px;
-      background-color: white;
-      border: 1px solid #979797;
-    }
-
     .sg-click-to-edit {
       color: white;
       flex: 1;
       margin: 0;
+      margin-left: 16px;
       font-size: 20px;
       font-weight: normal;
       line-height: 32px;
@@ -353,9 +354,9 @@ button {
   @button-size: 36px;
   @icon-size: @button-size - 2 * @border-width;
   @border-width: 2px;
-  @color: #7F7F7F;
-  @hover-color: #5F5F5F;
-  @disabled-color: #b6b6b6;
+  @color: @gray2;
+  @hover-color: @gray1;
+  @disabled-color: @gray3;
 
   &::before {
     line-height: @icon-size;
@@ -462,10 +463,14 @@ button {
   top: 12px;
 }
 
-.sg-login-dialog {
+.sg-dialog {
   position: absolute;
   top: 0; left: 0; width: 100vw; height: 100vh;
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(59, 65, 73, 0.1);
+}
+
+.sg-login-dialog {
+  .sg-dialog();
   display: flex;
   justify-content: center;
   align-items: center;
@@ -501,9 +506,7 @@ button {
 }
 
 .sg-new-canvas-dialog {
-  position: absolute;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background-color: rgba(0,0,0,0.1);
+  .sg-dialog();
 
   .dialog {
     background-color: white;
@@ -559,7 +562,7 @@ button {
     position: absolute;
     width: @size;
     height: @size;
-    background-color: #E8E8E8;
+    background-color: @gray3;
     top: 64px;
     left: 0; right: 0;
     margin: 0 auto;
@@ -576,7 +579,7 @@ button {
       height: 0;
       border-style: solid;
       border-width: 0 16px 16px 16px;
-      border-color: transparent transparent #E8E8E8 transparent;
+      border-color: transparent transparent @gray3 transparent;
     }
 
     .row {
