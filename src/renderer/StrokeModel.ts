@@ -1,7 +1,7 @@
 import Stroke from "../model/Stroke";
 import Polygon from "./Polygon";
 import Vec2 from "../lib/geometry/Vec2";
-import Curve from "../lib/geometry/Curve";
+import QuadraticCurve from "../lib/geometry/QuadraticCurve";
 import StrokeCollider from "./StrokeCollider";
 import StrokeShader from "./StrokeShader";
 import Model from "./Model";
@@ -61,12 +61,29 @@ class StrokeModel implements Model {
             bounding = bounding.union(this.drawSection(points));
         } else if (nPoints === 3) {
             this.rewindLastSection();
-            bounding = bounding.union(this.drawSection(Curve.bSpline(points[0], points[0], points[1], points[2]).subdivide()));
-            bounding = bounding.union(this.drawSection(Curve.bSpline(points[0], points[1], points[2], points[2]).subdivide()));
-        } else if (nPoints > 3) {
+            const c = new QuadraticCurve(points[0], points[1], points[2]);
+            bounding = bounding.union(this.drawSection(c.subdivide()));
+        } else if (nPoints === 4) {
             this.rewindLastSection();
-            bounding = bounding.union(this.drawSection(Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide()));
-            bounding = bounding.union(this.drawSection(Curve.bSpline(points[nPoints - 3], points[nPoints - 2], points[nPoints - 1], points[nPoints - 1]).subdivide()));
+            const mid = points[1].add(points[2]).mul(0.5);
+            const c1 = new QuadraticCurve(points[0], points[1], mid);
+            const c2 = new QuadraticCurve(mid, points[2], points[3]);
+            bounding = bounding.union(this.drawSection(c1.subdivide()));
+            bounding = bounding.union(this.drawSection(c2.subdivide()));
+        } else if (nPoints > 4) {
+            this.rewindLastSection();
+            const c1 = new QuadraticCurve(
+                points[nPoints - 4].midpoint(points[nPoints - 3]),
+                points[nPoints - 3],
+                points[nPoints - 3].midpoint(points[nPoints - 2])
+            );
+            const c2 = new QuadraticCurve(
+                points[nPoints - 3].midpoint(points[nPoints - 2]),
+                points[nPoints - 2],
+                points[nPoints - 1]
+            );
+            bounding = bounding.union(this.drawSection(c1.subdivide()));
+            bounding = bounding.union(this.drawSection(c2.subdivide()));
         }
         return bounding;
     }
