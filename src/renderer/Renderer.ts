@@ -1,7 +1,6 @@
 import Color from '../lib/geometry/Color';
 import Vec2 from '../lib/geometry/Vec2';
 import Rect from '../lib/geometry/Rect';
-import Curve from "../lib/geometry/Curve";
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
 import Background from "../lib/geometry/Background";
