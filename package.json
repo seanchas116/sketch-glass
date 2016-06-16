@@ -39,8 +39,6 @@
   "dependencies": {
     "babel-regenerator-runtime": "^6.5.0",
     "base64url": "^1.0.6",
-    "bezier-js": "^2.0.0",
-    "bezier-subdivide": "0.0.1",
     "deep-assign": "^2.0.0",
     "firebase": "^3.0.2",
     "moment": "^2.13.0",
