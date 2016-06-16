@@ -1,9 +1,9 @@
 import Stroke from "../model/Stroke";
+import Shader from "./Shader";
 import Polygon from "./Polygon";
 import Vec2 from "../lib/geometry/Vec2";
 import QuadraticCurve from "../lib/geometry/QuadraticCurve";
 import StrokeCollider from "./StrokeCollider";
-import StrokeShader from "./StrokeShader";
 import Model from "./Model";
 import Transform from "../lib/geometry/Transform";
 import Rect from "../lib/geometry/Rect";
@@ -21,7 +21,7 @@ class StrokeModel implements Model {
     points: Vec2[] = [];
     boundingRect = Rect.empty;
 
-    static fromStroke(gl: WebGLRenderingContext, shader: StrokeShader, stroke: Stroke) {
+    static fromStroke(gl: WebGLRenderingContext, shader: Shader, stroke: Stroke) {
         const model = new StrokeModel(gl, shader, stroke.color, stroke.width, stroke.id, stroke.createdAt);
         for (const p of stroke.points) {
             model.addPoint(p);
@@ -30,7 +30,7 @@ class StrokeModel implements Model {
         return model;
     }
 
-    constructor(public gl: WebGLRenderingContext, public shader: StrokeShader, public color: Color, public width: number, public id = randomID(), public createdAt = new Date()) {
+    constructor(public gl: WebGLRenderingContext, public shader: Shader, public color: Color, public width: number, public id = randomID(), public createdAt = new Date()) {
     }
 
     dispose() {
@@ -137,7 +137,6 @@ class StrokeModel implements Model {
             shader.use();
             shader.transform = sceneTransform.merge(viewportTransform);
             shader.color = color;
-            shader.displayWidth = width * sceneTransform.m11;
             polygon.draw();
         }
     }

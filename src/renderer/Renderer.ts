@@ -4,7 +4,6 @@ import Rect from '../lib/geometry/Rect';
 import Transform from '../lib/geometry/Transform';
 import Stroke from '../model/Stroke';
 import Background from "../lib/geometry/Background";
-import StrokeShader from "./StrokeShader";
 import Polygon from "./Polygon";
 import Shader from "./Shader";
 import Canvas from "../model/Canvas";
@@ -34,7 +33,7 @@ export default
     gl: WebGLRenderingContext;
     transform = new Variable(Transform.identity);
     viewportTransform = Transform.identity;
-    shader: StrokeShader;
+    shader: Shader;
     backgroundModel: BackgroundModel;
     boundingRect = Rect.empty;
     thumbnailUpdater: ThumbnailUpdater;
@@ -50,7 +49,7 @@ export default
 
         this.background = new Background(Color.white);
 
-        this.shader = new StrokeShader(gl);
+        this.shader = new Shader(gl);
 
         this.backgroundModel = new BackgroundModel(gl, this.shader);
 
@@ -97,7 +96,7 @@ export default
             alpha: false,
             depth: false,
             stencil: false,
-            antialias: false,
+            antialias: true,
             premultipliedAlpha: true,
         };
 
