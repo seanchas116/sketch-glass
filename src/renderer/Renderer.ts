@@ -166,10 +166,10 @@ export default
         const points = this.erasingPoints;
         points.push(pos);
         const nPoints = points.length;
-        if (nPoints <= 3) {
+        if (nPoints <= 1) {
             return;
         }
-        const vertices = Curve.bSpline(points[nPoints - 4], points[nPoints - 3], points[nPoints - 2], points[nPoints - 1]).subdivide();
+        const vertices = [points[nPoints - 2], points[nPoints - 1]];
         const boundingRect = Rect.boundingRect(vertices);
         const collider = new StrokeCollider(this.erasingWidth, vertices);
         const modelsToErase: StrokeModel[] = [];
